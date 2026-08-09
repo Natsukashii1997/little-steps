@@ -5793,6 +5793,7 @@ select:focus-visible {
   max-height: 100%;
   flex: 0 0 auto;
   overflow: hidden;
+  container-type: inline-size;
 }
 
 @supports (width: 1cqh) {
@@ -5813,6 +5814,243 @@ select:focus-visible {
   -webkit-user-drag: none;
   -webkit-touch-callout: none;
 }
+
+/* Home keeps the approved illustration as its base while real records render live above it. */
+.home-live-overlay {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  color: #11100e;
+  font-family: "ZCOOL KuaiLe", "Gaegu", cursive;
+  font-weight: 400;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.home-live-overlay *,
+.home-live-overlay *::before,
+.home-live-overlay *::after { box-sizing: border-box; }
+
+.home-live-date,
+.home-live-age,
+.home-live-metric,
+.home-live-card-copy,
+.home-live-check,
+.home-live-todo-row {
+  position: absolute;
+  margin: 0;
+}
+
+.home-live-date {
+  top: 2.35%;
+  left: 18.5%;
+  width: 55.5%;
+  height: 4.8%;
+  font-size: 20px;
+  font-size: 5.05cqi;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.home-live-age {
+  top: 17.35%;
+  left: 57.1%;
+  width: 36%;
+  height: 3.3%;
+  font-family: "Gaegu", "ZCOOL KuaiLe", cursive;
+  font-size: 18px;
+  font-size: 4.55cqi;
+  font-weight: 700;
+  line-height: 1;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.home-live-metric {
+  display: grid;
+  height: 5.3%;
+  padding: 0;
+  align-content: start;
+  border: 0;
+  background: transparent;
+  color: #11100e;
+  pointer-events: auto;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.home-live-metric strong {
+  display: block;
+  font-size: 18px;
+  font-size: 4.55cqi;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.home-live-metric strong small {
+  font-size: 0.62em;
+  font-weight: 400;
+}
+
+.home-live-metric > span {
+  display: block;
+  margin-top: 0.22em;
+  color: #666054;
+  font-size: 10px;
+  font-size: 2.35cqi;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.home-live-weight { top: 36.45%; left: 20.2%; width: 16.4%; }
+.home-live-height { top: 36.45%; left: 48.9%; width: 15.5%; }
+.home-live-current-age { top: 36.45%; left: 79%; width: 16%; }
+.home-live-current-age strong small { margin-left: 0.16em; font-size: 0.66em; }
+
+.home-live-card-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  line-height: 1.05;
+}
+
+.home-live-card-copy > span {
+  font-size: 13px;
+  font-size: 3.15cqi;
+  font-weight: 400;
+}
+
+.home-live-card-copy > strong {
+  margin-top: 0.16em;
+  font-size: 14px;
+  font-size: 3.4cqi;
+  font-weight: 400;
+}
+
+.home-live-feeding-summary { top: 47.15%; left: 21.6%; width: 25.2%; height: 4.1%; }
+.home-live-feeding-details { top: 52.95%; left: 11.1%; width: 35.2%; height: 8.2%; gap: 0.22em; }
+.home-live-feeding-details > span { font-size: 13px; font-size: 3.15cqi; line-height: 1.05; white-space: nowrap; }
+.home-live-feeding-details > span strong { font-weight: 400; }
+
+.home-live-sleep-summary { top: 47.15%; left: 67.5%; width: 25.5%; height: 4.1%; }
+.home-live-sleep-total { top: 54.0%; left: 64%; width: 29.5%; height: 5%; text-align: center; }
+.home-live-sleep-total > strong { font-size: 15px; font-size: 3.75cqi; }
+
+.home-live-poop-latest { top: 67.15%; left: 21.4%; width: 25%; height: 3.1%; flex-direction: row; align-items: baseline; gap: 0.45em; white-space: nowrap; }
+.home-live-poop-latest > strong { margin-top: 0; }
+.home-live-poop-count { top: 71.65%; left: 21.4%; width: 14.8%; height: 3%; flex-direction: row; align-items: baseline; gap: 0.35em; white-space: nowrap; }
+.home-live-poop-count > strong { margin-top: 0; }
+
+.home-live-health-copy { top: 67.15%; left: 67.2%; width: 26%; height: 3.7%; }
+.home-live-health-copy > strong { font-size: 13px; font-size: 3.2cqi; }
+
+.home-live-check {
+  display: flex;
+  min-width: 0;
+  padding: 0;
+  align-items: center;
+  gap: 0.45em;
+  border: 0;
+  background: transparent;
+  color: #11100e;
+  font: inherit;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.home-live-check > span {
+  display: grid;
+  width: 16px;
+  width: 3.8cqi;
+  height: 16px;
+  height: 3.8cqi;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1.5px solid #11100e;
+  border-radius: 22% 28% 20% 26%;
+  background: rgba(255, 251, 241, 0.68);
+}
+
+.home-live-check.is-checked > span { background: rgba(203, 211, 161, 0.9); }
+.home-live-check svg { width: 82%; height: 82%; }
+.home-live-check b { font-size: 12px; font-size: 2.95cqi; font-weight: 400; white-space: nowrap; }
+.home-live-poop-check { top: 70.95%; left: 36.5%; width: 11.6%; height: 4.2%; }
+.home-live-health-check { top: 71.1%; left: 67.2%; width: 25%; height: 4.2%; }
+
+.home-live-todos {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+
+.home-live-todo-row {
+  left: 7.4%;
+  width: 44.4%;
+  height: 3.15%;
+  pointer-events: none;
+}
+
+.home-live-todo-check,
+.home-live-todo-title {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #11100e;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.home-live-todo-check {
+  left: 0;
+  display: grid;
+  width: 7.2cqi;
+  place-items: center;
+}
+
+.home-live-todo-check svg { width: 4.4cqi; height: 4.4cqi; stroke-width: 2.4; }
+.home-live-todo-title {
+  left: 8.2cqi;
+  width: calc(100% - 8.2cqi);
+  overflow: hidden;
+  font: 400 14px/1 "Gaegu", "ZCOOL KuaiLe", cursive;
+  font-size: 3.6cqi;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home-live-todo-title.is-complete { color: #6f6a5e; text-decoration: line-through; text-decoration-thickness: 1.5px; }
+
+.home-live-metric:focus-visible,
+.home-live-check:focus-visible,
+.home-live-todo-check:focus-visible,
+.home-live-todo-title:focus-visible {
+  outline: 3px solid rgba(34, 91, 142, 0.92);
+  outline-offset: 1px;
+  border-radius: 7px 9px 6px 8px;
+}
+
+.full-screen-image-page[data-page="home"] .full-screen-nav-hotspots { height: 6.2%; }
+
+.fixed-profile-summary {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1.5px solid rgba(17, 16, 14, 0.72);
+  border-radius: 13px 17px 12px 15px;
+  background: rgba(242, 189, 91, 0.2);
+}
+.fixed-profile-summary strong { font-size: 24px; }
+.fixed-profile-summary span { color: var(--muted); font-size: 14px; }
 
 .full-screen-action-hotspots {
   position: absolute;
@@ -5959,6 +6197,12 @@ select:focus-visible {
     place-items: start center;
     overflow: hidden;
     background: #f6f0e2;
+  }
+
+  /* Real phones already provide their own physical frame and camera cutout. */
+  .phone-bezel,
+  .device-camera {
+    display: none !important;
   }
 
   .device-menu-bar { display: none !important; }
@@ -6110,3 +6354,1317 @@ select:focus-visible {
 .study-manager-actions button { display: grid; min-height: 44px; padding: 0; place-items: center; border: 0; border-right: 1px dashed rgba(17, 16, 14, 0.3); background: transparent; color: var(--ink); }
 .study-manager-actions button:last-child { border-right: 0; }
 .study-manager-actions button.active { background: rgba(136, 167, 207, 0.36); }
+
+/* Dynamic Health Record: the vaccine schedule is real data, not a baked screenshot. */
+.health-dynamic-shell {
+  --health-safe-top: 54px;
+  --health-chrome-height: 164px;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 512px 512px;
+}
+
+.mobile-app-viewport[data-platform="android"] .health-dynamic-shell {
+  --health-safe-top: 64px;
+  --health-chrome-height: 174px;
+}
+
+.health-dynamic-chrome {
+  position: absolute;
+  z-index: 18;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--health-chrome-height);
+  padding: var(--health-safe-top) 16px 9px;
+  border-bottom: 1px solid rgba(17, 16, 14, 0.18);
+  background-color: rgba(248, 241, 225, 0.98);
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 512px 512px;
+}
+
+.health-dynamic-topbar {
+  display: grid;
+  height: 47px;
+  grid-template-columns: 88px minmax(0, 1fr) 88px;
+  align-items: center;
+}
+
+.health-dynamic-topbar > button,
+.health-dynamic-topbar > div > button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  touch-action: manipulation;
+}
+
+.health-dynamic-topbar > button { justify-self: start; }
+.health-dynamic-topbar > div {
+  display: flex;
+  justify-content: flex-end;
+}
+.health-dynamic-topbar > div > button { width: 44px; }
+.health-dynamic-topbar svg { width: 28px; height: 28px; stroke-width: 1.9px; }
+
+.health-dynamic-topbar h1 {
+  margin: 0;
+  font-size: clamp(29px, 8.1cqi, 34px);
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.health-dynamic-tabs {
+  height: 50px !important;
+  min-height: 50px !important;
+  margin-top: 3px !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.health-dynamic-tabs button {
+  min-height: 44px !important;
+  font-size: clamp(17px, 4.9cqi, 20px) !important;
+}
+
+.health-dynamic-scroll {
+  z-index: 2;
+  background-color: transparent;
+}
+
+.health-dynamic-scroll .mobile-scroll-content {
+  min-height: 100%;
+  padding: var(--health-chrome-height) 16px 108px;
+}
+
+.mobile-app-viewport:not([data-platform="android"]) .health-dynamic-scroll .mobile-scroll-content {
+  padding-bottom: 122px;
+}
+
+.health-dynamic-content {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 0 20px;
+  animation: paper-arrive 180ms ease-out both;
+}
+
+.vaccine-schedule-panel,
+.health-secondary-panel { min-width: 0; }
+
+.vaccine-schedule-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 8px;
+  padding: 14px 14px 13px;
+  border: 1.8px solid var(--ink);
+  border-radius: 18px 15px 20px 16px;
+  background-color: rgba(255, 251, 241, 0.72);
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 340px;
+  background-blend-mode: multiply;
+}
+
+.vaccine-intro-copy { min-width: 0; }
+.vaccine-intro-copy > span {
+  color: var(--sage-deep);
+  font-size: 13px;
+  line-height: 1;
+}
+.vaccine-intro-copy h2 {
+  margin: 3px 0 2px;
+  font-size: clamp(24px, 6.9cqi, 29px);
+  font-weight: 700;
+  line-height: 1;
+}
+.vaccine-intro-copy p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.15;
+}
+.vaccine-intro-copy p strong { color: var(--coral-deep); font-size: 18px; }
+
+.vaccine-add-button,
+.health-secondary-intro > button {
+  display: inline-flex;
+  min-width: 78px;
+  min-height: 44px;
+  align-items: center;
+  align-self: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 12px;
+  border: 1.6px solid var(--ink);
+  border-radius: 18px 15px 20px 14px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  touch-action: manipulation;
+}
+.vaccine-add-button svg,
+.health-secondary-intro > button svg { width: 18px; height: 18px; }
+
+.vaccine-progress-track {
+  position: relative;
+  grid-column: 1 / -1;
+  overflow: hidden;
+  height: 8px;
+  border: 1px solid rgba(17, 16, 14, 0.5);
+  border-radius: 999px;
+  background: rgba(174, 183, 129, 0.22);
+}
+.vaccine-progress-track > span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: inherit;
+  background: var(--sage);
+  transition: width 180ms ease;
+}
+
+.vaccine-age-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.vaccine-age-card {
+  overflow: hidden;
+  border: 1.8px solid var(--ink);
+  border-radius: 17px 14px 19px 15px;
+  background: rgba(255, 251, 241, 0.64);
+}
+
+.vaccine-age-heading {
+  display: flex;
+  min-height: 39px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 12px 4px;
+  border-bottom: 1px solid rgba(17, 16, 14, 0.48);
+  background: rgba(247, 197, 78, 0.5);
+}
+.vaccine-age-card.age-tone-1 .vaccine-age-heading { background: rgba(174, 183, 129, 0.5); }
+.vaccine-age-card.age-tone-2 .vaccine-age-heading { background: rgba(136, 167, 207, 0.46); }
+.vaccine-age-label { font-size: 21px; font-weight: 700; line-height: 1; }
+.vaccine-age-heading > span:last-child { color: var(--muted); font-size: 13px; }
+
+.vaccine-dose-list { display: grid; }
+.vaccine-dose-row {
+  display: grid;
+  min-height: 84px;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: start;
+  padding: 10px 9px 10px 8px;
+  border-top: 1px dashed rgba(17, 16, 14, 0.32);
+}
+.vaccine-dose-row:first-child { border-top: 0; }
+.vaccine-dose-row.is-completed { background: rgba(174, 183, 129, 0.13); }
+.vaccine-dose-row.is-alternative { background: rgba(136, 167, 207, 0.09); }
+.vaccine-dose-row.is-alternative .vaccine-check-button { border-style: dashed; }
+.vaccine-dose-row.is-alternative .vaccine-choice-badge {
+  background: rgba(136, 167, 207, 0.24);
+  color: var(--blue-deep);
+}
+
+.vaccine-check-button,
+.vaccine-edit-button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 1.6px solid var(--ink);
+  background: rgba(255, 251, 241, 0.72);
+  color: var(--ink);
+  touch-action: manipulation;
+}
+.vaccine-check-button { border-radius: 13px 10px 14px 11px; }
+.vaccine-check-button > span {
+  width: 21px;
+  height: 21px;
+  border: 1px dashed rgba(17, 16, 14, 0.3);
+  border-radius: 6px 4px 7px 5px;
+}
+.vaccine-check-button[aria-pressed="true"] { background: var(--sage); }
+.vaccine-check-button svg { width: 24px; height: 24px; stroke-width: 2.6px; }
+.vaccine-edit-button { border: 0; border-radius: 50%; background: transparent; }
+.vaccine-edit-button svg { width: 20px; height: 20px; }
+
+.vaccine-dose-copy { min-width: 0; }
+.vaccine-dose-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 7px;
+}
+.vaccine-dose-title strong { font-size: 18px; font-weight: 700; line-height: 1.08; }
+.vaccine-dose-title em {
+  padding: 3px 7px 2px;
+  border: 1px solid rgba(17, 16, 14, 0.55);
+  border-radius: 8px 6px 9px 7px;
+  background: rgba(239, 118, 90, 0.13);
+  font-size: 13px;
+  font-style: normal;
+  line-height: 1;
+  white-space: nowrap;
+}
+.vaccine-choice-badge {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 3px 7px 2px;
+  border-radius: 8px 6px 9px 7px;
+  background: rgba(174, 183, 129, 0.38);
+  color: var(--sage-deep);
+  font-size: 12px;
+  line-height: 1.15;
+}
+.vaccine-dose-copy p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.25;
+}
+.vaccine-planned-date {
+  display: block;
+  margin-top: 6px;
+  color: var(--blue-deep);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.vaccine-completed-date {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+  margin-top: 7px;
+  color: var(--sage-deep);
+  font-size: 13px;
+  font-weight: 700;
+}
+.vaccine-completed-date > span { white-space: nowrap; }
+.vaccine-completed-date input {
+  min-width: 0;
+  width: 142px;
+  height: 44px;
+  padding: 3px 5px;
+  border: 1px solid rgba(17, 16, 14, 0.58);
+  border-radius: 8px 6px 9px 7px;
+  background: rgba(255, 251, 241, 0.8);
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.vaccine-medical-note {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+  padding: 11px 12px;
+  border: 1px dashed rgba(17, 16, 14, 0.55);
+  border-radius: 16px 13px 18px 14px;
+  background: rgba(247, 197, 78, 0.16);
+}
+.vaccine-medical-note img { width: 48px; height: 48px; object-fit: contain; mix-blend-mode: multiply; }
+.vaccine-medical-note p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.3; }
+.vaccine-medical-note strong { color: var(--ink); }
+
+.health-secondary-panel { display: grid; gap: 12px; }
+.health-secondary-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 15px 14px;
+  border: 1.8px solid var(--ink);
+  border-radius: 18px 15px 20px 16px;
+  background: rgba(255, 251, 241, 0.7);
+}
+.health-secondary-intro span { color: var(--sage-deep); font-size: 13px; }
+.health-secondary-intro h2 { margin: 3px 0; font-size: 27px; line-height: 1; }
+.health-secondary-intro p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.25; }
+.health-secondary-list { display: grid; gap: 10px; }
+.health-secondary-record {
+  display: grid;
+  min-height: 88px;
+  grid-template-columns: 66px minmax(0, 1fr) 28px;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  border: 1.6px solid var(--ink);
+  border-radius: 16px 13px 18px 14px;
+  background: rgba(255, 251, 241, 0.66);
+  color: var(--ink);
+  text-align: left;
+  touch-action: manipulation;
+}
+.health-secondary-record > img,
+.health-secondary-calendar {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(174, 183, 129, 0.38);
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+.health-secondary-calendar img { width: 42px; height: 42px; object-fit: contain; }
+.health-secondary-record time { display: block; color: var(--sage-deep); font-size: 13px; }
+.health-secondary-record strong { display: block; font-size: 20px; line-height: 1.05; }
+.health-secondary-record p { margin: 3px 0 0; color: var(--muted); font-size: 13px; line-height: 1.2; }
+.health-secondary-record em { display: block; margin-top: 3px; color: var(--coral-deep); font-size: 12px; font-style: normal; }
+.health-secondary-record > svg { width: 22px; height: 22px; }
+
+.health-dynamic-navigation {
+  z-index: 25;
+  bottom: 0;
+  height: 73px;
+}
+.mobile-app-viewport:not([data-platform="android"]) .health-dynamic-navigation {
+  bottom: 0;
+  height: 88px;
+  padding-bottom: 17px;
+}
+.mobile-app-viewport[data-platform="android"] .health-dynamic-navigation { bottom: 0; }
+.health-dynamic-navigation button.active {
+  border-radius: 18px 15px 20px 14px;
+  background: rgba(247, 197, 78, 0.34);
+}
+.health-dynamic-navigation button.active > span:last-child::after { display: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  .device-screen:has(.health-dynamic-shell),
+  .device-screen:has(.health-dynamic-shell) * {
+    cursor: default !important;
+  }
+
+  .device-screen:has(.health-dynamic-shell)
+    :is(button, [role="tab"], [role="button"], label:has(input)) {
+    cursor: pointer !important;
+  }
+}
+
+.device-screen:has(.health-dynamic-shell) :focus-visible {
+  outline: 2px solid var(--blue-deep) !important;
+  outline-offset: 2px;
+}
+
+@container (max-width: 380px) {
+  .health-dynamic-chrome { padding-right: 13px; padding-left: 13px; }
+  .health-dynamic-scroll .mobile-scroll-content { padding-right: 13px; padding-left: 13px; }
+  .health-dynamic-topbar { grid-template-columns: 88px minmax(0, 1fr) 88px; }
+  .vaccine-schedule-intro { padding-right: 11px; padding-left: 11px; }
+  .vaccine-dose-row { grid-template-columns: 44px minmax(0, 1fr) auto; gap: 7px; padding-right: 7px; padding-left: 7px; }
+  .vaccine-dose-title strong { font-size: 17px; }
+  .vaccine-completed-date { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .vaccine-completed-date input { width: 136px; }
+}
+
+/* Health Record v2 — selected ImageGen layout, implemented with live data. */
+.health-dynamic-shell {
+  --health-safe-top: 8px;
+  --health-chrome-height: 121px;
+  font-family: var(--app-font);
+}
+
+.mobile-app-viewport[data-platform="android"] .health-dynamic-shell {
+  --health-safe-top: 8px;
+  --health-chrome-height: 121px;
+}
+
+.health-dynamic-chrome {
+  height: var(--health-chrome-height);
+  padding: var(--health-safe-top) 16px 7px;
+  border-bottom: 0;
+  background-color: rgba(248, 241, 225, 0.985);
+}
+
+.health-dynamic-topbar {
+  height: 56px;
+  grid-template-columns: 78px minmax(0, 1fr) 88px;
+}
+
+.health-dynamic-topbar > button,
+.health-dynamic-topbar > div > button {
+  width: 44px;
+  height: 44px;
+}
+
+.health-dynamic-topbar h1 {
+  font-family: var(--app-font);
+  font-size: clamp(30px, 8.2cqi, 34px);
+  font-weight: 700;
+  letter-spacing: 0.055em;
+}
+
+.health-dynamic-tabs {
+  height: 49px !important;
+  min-height: 49px !important;
+  margin-top: 0 !important;
+  padding: 3px !important;
+  border-width: 1.8px !important;
+  border-radius: 22px 19px 23px 20px !important;
+}
+
+.health-dynamic-tabs button {
+  min-height: 41px !important;
+  border-radius: 18px 15px 19px 16px !important;
+  font-family: var(--app-font);
+  font-size: clamp(17px, 4.8cqi, 20px) !important;
+  font-weight: 700 !important;
+}
+
+.health-dynamic-tabs #health-tab-vaccine > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.health-dynamic-tabs #health-tab-vaccine > span::after {
+  width: 23px;
+  height: 23px;
+  background: url("/assets/baby/health-title-syringe-v1.png") center / contain no-repeat;
+  content: "";
+  mix-blend-mode: multiply;
+}
+
+.health-dynamic-scroll .mobile-scroll-content,
+.mobile-app-viewport:not([data-platform="android"]) .health-dynamic-scroll .mobile-scroll-content {
+  padding: var(--health-chrome-height) 16px 91px;
+}
+
+.health-dynamic-content {
+  padding: 12px 0 22px;
+  font-family: var(--app-font);
+}
+
+.vaccine-schedule-intro {
+  position: relative;
+  display: block;
+  min-height: 118px;
+  padding: 15px 128px 15px 14px;
+  overflow: hidden;
+  border: 1.5px solid #9f947d;
+  border-radius: 19px 16px 21px 17px;
+  background-color: rgba(255, 251, 241, 0.62);
+  box-shadow: 0 2px 0 rgba(17, 16, 14, 0.05);
+}
+
+.vaccine-intro-copy { position: relative; z-index: 2; }
+.vaccine-intro-copy > span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.vaccine-intro-copy h2 {
+  width: 210px;
+  margin: 4px 0 0;
+  font-family: var(--app-font);
+  font-size: clamp(23px, 6.4cqi, 27px);
+  font-weight: 700;
+  line-height: 1.02;
+  white-space: nowrap;
+}
+
+.vaccine-intro-copy p {
+  position: absolute;
+  top: 61px;
+  left: 0;
+  width: 235px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.vaccine-intro-copy p::before {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+  vertical-align: -5px;
+  background: url("/assets/baby/health-title-shield-v1.png") center / contain no-repeat;
+  content: "";
+  mix-blend-mode: multiply;
+}
+
+.vaccine-intro-copy p strong {
+  color: var(--coral-deep);
+  font-size: 16px;
+}
+
+.vaccine-intro-art {
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  right: 69px;
+  width: 116px;
+  height: 78px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.vaccine-intro-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 25% center;
+  mix-blend-mode: multiply;
+}
+
+.vaccine-add-button {
+  position: absolute;
+  z-index: 3;
+  right: 12px;
+  bottom: 12px;
+  min-width: 76px;
+  min-height: 44px;
+  padding: 0 11px;
+  border-width: 1.7px;
+  border-radius: 18px 15px 20px 14px;
+  font-family: var(--app-font);
+  font-size: 16px;
+}
+
+.vaccine-age-list {
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.vaccine-age-card {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.vaccine-age-heading {
+  position: relative;
+  min-height: 34px;
+  padding: 0;
+  border: 0;
+  background: transparent !important;
+}
+
+.vaccine-age-heading::after {
+  position: absolute;
+  z-index: 0;
+  right: 2px;
+  bottom: 9px;
+  left: 128px;
+  border-bottom: 1.3px dashed rgba(116, 105, 83, 0.62);
+  content: "";
+}
+
+.vaccine-age-label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 13px 3px;
+  border-radius: 15px 13px 17px 14px;
+  background-color: rgba(174, 183, 129, 0.48);
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 220px;
+  color: var(--ink);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.vaccine-age-label svg { width: 17px; height: 17px; color: var(--sage-deep); }
+.vaccine-age-card.age-tone-1 .vaccine-age-label { background-color: rgba(247, 197, 78, 0.52); }
+.vaccine-age-card.age-tone-2 .vaccine-age-label { background-color: rgba(136, 167, 207, 0.42); }
+.vaccine-age-heading > span:last-child { display: none; }
+
+.vaccine-dose-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 7px;
+}
+
+.vaccine-dose-row {
+  position: relative;
+  display: grid;
+  min-height: 94px;
+  grid-template-columns: 58px minmax(0, 1fr) 96px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 8px 8px 9px;
+  overflow: hidden;
+  border: 1.35px solid #aaa087;
+  border-radius: 17px 14px 19px 15px;
+  background-color: rgba(255, 251, 241, 0.64);
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 340px;
+  background-blend-mode: multiply;
+  box-shadow: 0 1px 0 rgba(17, 16, 14, 0.04);
+}
+
+.vaccine-dose-row:first-child { border-top: 1.35px solid #aaa087; }
+.vaccine-dose-row.is-completed { min-height: 108px; background-color: rgba(207, 214, 174, 0.28); }
+.vaccine-dose-row.is-alternative { opacity: 0.74; background-color: rgba(188, 204, 220, 0.24); }
+
+.vaccine-dose-art {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+}
+
+.vaccine-dose-art img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
+.vaccine-dose-copy {
+  min-width: 0;
+  align-self: center;
+}
+
+.vaccine-dose-title {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+}
+
+.vaccine-dose-title strong {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: var(--app-font);
+  font-size: clamp(16px, 4.35cqi, 18px);
+  font-weight: 700;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vaccine-dose-title em {
+  padding: 4px 9px 3px;
+  border: 1px dashed rgba(82, 98, 44, 0.62);
+  border-radius: 9px 7px 10px 8px;
+  background: rgba(174, 183, 129, 0.3);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.age-tone-1 .vaccine-dose-title em {
+  border-color: rgba(164, 112, 21, 0.6);
+  background: rgba(247, 197, 78, 0.26);
+}
+
+.age-tone-2 .vaccine-dose-title em {
+  border-color: rgba(39, 70, 111, 0.55);
+  background: rgba(136, 167, 207, 0.24);
+}
+
+.vaccine-choice-badge,
+.vaccine-alternative-note {
+  display: block;
+  max-width: 100%;
+  margin-top: 5px;
+  overflow: hidden;
+  color: var(--sage-deep);
+  font-size: 10.5px;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vaccine-choice-badge {
+  padding: 0;
+  background: transparent;
+}
+
+.vaccine-alternative-note { color: var(--blue-deep); }
+
+.vaccine-dose-status {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 76px;
+  align-content: center;
+  justify-items: center;
+  padding-left: 8px;
+  border-left: 1px dashed rgba(116, 105, 83, 0.58);
+  text-align: center;
+}
+
+.vaccine-dose-status > strong {
+  margin-top: 1px;
+  color: var(--blue-deep);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.vaccine-dose-row.is-completed .vaccine-dose-status > strong { color: var(--sage-deep); }
+
+.vaccine-check-button {
+  display: grid;
+  width: 44px;
+  height: 40px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+}
+
+.vaccine-check-button > span,
+.vaccine-check-button svg {
+  width: 27px;
+  height: 27px;
+  padding: 3px;
+  border: 1.7px solid var(--ink);
+  border-radius: 8px 6px 9px 7px;
+  background: rgba(255, 251, 241, 0.78);
+}
+
+.vaccine-check-button[aria-pressed="true"] svg { background: rgba(174, 183, 129, 0.72); }
+
+.vaccine-planned-date {
+  display: block;
+  margin-top: 5px;
+  color: var(--blue-deep);
+  font-size: 11.5px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.vaccine-completed-date {
+  display: block;
+  width: 100%;
+  margin-top: 3px;
+  color: var(--sage-deep);
+}
+
+.vaccine-completed-date input {
+  width: 100%;
+  height: 36px;
+  min-height: 36px;
+  padding: 1px 2px;
+  border: 0;
+  border-radius: 7px 5px 8px 6px;
+  background: rgba(255, 251, 241, 0.56);
+  color: var(--sage-deep);
+  font-family: var(--app-font);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.vaccine-edit-button {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 44px;
+  height: 44px;
+}
+
+.vaccine-medical-note {
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 8px;
+  min-height: 75px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1.25px dashed #9f947d;
+  border-radius: 17px 14px 19px 15px;
+  background: rgba(247, 197, 78, 0.12);
+}
+
+.vaccine-medical-note img { width: 60px; height: 48px; }
+.vaccine-medical-note p { font-size: 12.5px; line-height: 1.28; }
+
+.health-secondary-intro,
+.health-secondary-record {
+  border-color: #9f947d;
+  border-width: 1.4px;
+  background-color: rgba(255, 251, 241, 0.64);
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 340px;
+  background-blend-mode: multiply;
+}
+
+.health-secondary-intro h2,
+.health-secondary-record strong { font-family: var(--app-font); }
+
+.health-dynamic-navigation,
+.mobile-app-viewport:not([data-platform="android"]) .health-dynamic-navigation {
+  bottom: 0;
+  height: 73px;
+  padding-bottom: 2px;
+}
+
+.health-dynamic-navigation button.active {
+  border-radius: 18px 15px 20px 14px;
+  background: rgba(247, 197, 78, 0.43);
+}
+
+/* The selected Health mock owns the full phone canvas like the image-backed pages. */
+.device-screen:has(.health-dynamic-shell) > .status-bar,
+.device-screen:has(.health-dynamic-shell) > .home-indicator-svg,
+.device-screen:has(.health-dynamic-shell) > .android-navigation-bar,
+.device-screen:has(.health-dynamic-shell) > .device-camera {
+  display: none !important;
+}
+
+.device-screen:has(.health-dynamic-shell) > .mobile-app-viewport {
+  inset: 0 !important;
+  bottom: 0 !important;
+}
+
+@container (max-width: 380px) {
+  .health-dynamic-chrome,
+  .health-dynamic-scroll .mobile-scroll-content { padding-right: 13px; padding-left: 13px; }
+  .health-dynamic-topbar { grid-template-columns: 74px minmax(0, 1fr) 84px; }
+  .vaccine-schedule-intro { padding-left: 12px; }
+  .vaccine-intro-art { right: 65px; width: 104px; }
+  .vaccine-intro-copy h2 { width: 195px; font-size: 23px; }
+  .vaccine-intro-copy p { width: 224px; font-size: 11.8px; }
+  .vaccine-dose-row { grid-template-columns: 54px minmax(0, 1fr) 91px; gap: 6px; padding-right: 6px; padding-left: 7px; }
+  .vaccine-dose-art,
+  .vaccine-dose-art img { width: 54px; height: 54px; }
+  .vaccine-dose-title strong { font-size: 16px; }
+  .vaccine-completed-date { display: block; }
+  .vaccine-completed-date input { width: 100%; height: 36px; }
+}
+
+/* Health Record v2 secondary tabs — same paper, ink and type system as Vaccines. */
+.health-dynamic-tabs :is(#health-tab-ability, #health-tab-checkup) > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.health-dynamic-tabs :is(#health-tab-ability, #health-tab-checkup) > span::after {
+  display: none !important;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  content: "";
+  mix-blend-mode: multiply;
+}
+
+.health-dynamic-tabs #health-tab-ability.active > span::after,
+.health-dynamic-tabs #health-tab-checkup.active > span::after { display: none !important; }
+
+.health-secondary-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.health-secondary-intro {
+  position: relative;
+  display: block;
+  min-height: 120px;
+  padding: 14px 130px 14px 14px;
+  overflow: hidden;
+  border: 1.5px solid #9f947d;
+  border-radius: 19px 16px 21px 17px;
+  background-color: rgba(255, 251, 241, 0.64);
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 340px;
+  background-blend-mode: multiply;
+  box-shadow: 0 2px 0 rgba(17, 16, 14, 0.05);
+}
+
+.health-secondary-intro-copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+
+.health-secondary-intro-copy h2 {
+  width: 222px;
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: var(--app-font);
+  font-size: clamp(23px, 6.3cqi, 27px);
+  font-weight: 700;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.health-secondary-intro-copy p {
+  width: 220px;
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.health-secondary-intro-copy > span {
+  position: absolute;
+  top: 67px;
+  left: 0;
+  width: 222px;
+  color: var(--sage-deep);
+  font-size: 12.5px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.health-secondary-intro-copy > span strong {
+  color: var(--coral-deep);
+  font-size: 16px;
+}
+
+.health-secondary-intro-art {
+  position: absolute;
+  z-index: 1;
+  top: 6px;
+  right: 57px;
+  width: 142px;
+  height: 88px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.health-secondary-intro-art img {
+  position: absolute;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.health-secondary-intro-bear {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover !important;
+  object-position: 62% center;
+}
+
+.health-secondary-intro-symbol {
+  top: 3px;
+  right: 0;
+  width: 38px;
+  height: 38px;
+  filter: drop-shadow(0 1px 0 rgba(255, 251, 241, 0.9));
+}
+
+.health-secondary-intro > button {
+  position: absolute;
+  z-index: 3;
+  right: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  min-width: 76px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 11px;
+  border: 1.7px solid var(--ink);
+  border-radius: 18px 15px 20px 14px;
+  background: rgba(247, 197, 78, 0.5);
+  color: var(--ink);
+  font-family: var(--app-font);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.health-secondary-intro > button svg { width: 17px; height: 17px; }
+
+.health-secondary-list {
+  display: grid;
+  gap: 12px;
+}
+
+.health-development-list {
+  position: relative;
+  padding-left: 19px;
+}
+
+.health-development-list::before {
+  position: absolute;
+  z-index: 0;
+  top: 27px;
+  bottom: 27px;
+  left: 7px;
+  border-left: 1.5px dashed rgba(82, 98, 44, 0.55);
+  content: "";
+}
+
+.health-secondary-record {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  overflow: hidden;
+  border: 1.35px solid #aaa087;
+  border-radius: 17px 14px 19px 15px;
+  background-color: rgba(255, 251, 241, 0.64);
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 340px;
+  background-blend-mode: multiply;
+  box-shadow: 0 1px 0 rgba(17, 16, 14, 0.04);
+  color: var(--ink);
+  font-family: var(--app-font);
+  text-align: left;
+  touch-action: manipulation;
+}
+
+.health-development-record {
+  min-height: 138px;
+  grid-template-columns: 88px minmax(0, 1fr) 26px;
+  gap: 9px;
+  padding: 12px 9px 12px 10px;
+  overflow: visible;
+}
+
+.health-development-record::before {
+  position: absolute;
+  top: 50%;
+  left: -18px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #5f6d3a;
+  border-radius: 50%;
+  background: #f8f1e1;
+  content: "";
+  transform: translateY(-50%);
+}
+
+.health-secondary-record-art {
+  display: grid;
+  width: 86px;
+  height: 86px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50% 46% 52% 44%;
+  background: rgba(174, 183, 129, 0.34);
+}
+
+.health-development-record:nth-child(3n + 2) .health-secondary-record-art { background: rgba(247, 197, 78, 0.32); }
+.health-development-record:nth-child(3n) .health-secondary-record-art { background: rgba(136, 167, 207, 0.3); }
+
+.health-secondary-record-art img {
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.health-secondary-record-art.is-uploaded img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: normal;
+}
+
+.health-secondary-record-copy {
+  display: block;
+  min-width: 0;
+}
+
+.health-secondary-record-copy time {
+  display: inline-block;
+  padding: 3px 8px 2px;
+  border-radius: 9px 7px 10px 8px;
+  background: rgba(174, 183, 129, 0.33);
+  color: var(--sage-deep);
+  font-size: 12.5px;
+  line-height: 1;
+}
+
+.health-secondary-record-copy strong {
+  display: block;
+  margin-top: 5px;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: var(--app-font);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.health-secondary-record-copy p {
+  display: -webkit-box;
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.22;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.health-development-record .health-secondary-record-copy em {
+  display: inline-flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px;
+  padding: 2px 7px 1px;
+  border-radius: 8px 6px 9px 7px;
+  background: rgba(238, 113, 78, 0.12);
+  color: var(--coral-deep);
+  font-size: 11.5px;
+  font-style: normal;
+  line-height: 1;
+}
+
+.health-development-record .health-secondary-record-copy em svg { width: 12px; height: 12px; }
+
+.health-secondary-chevron {
+  display: grid;
+  width: 26px;
+  height: 44px;
+  place-items: center;
+  color: var(--ink);
+}
+
+.health-secondary-chevron svg { width: 21px; height: 21px; }
+
+.health-checkup-panel { gap: 10px; }
+
+.checkup-record-list { gap: 8px; }
+
+.health-checkup-record {
+  min-height: 142px;
+  grid-template-columns: 86px minmax(0, 1fr) 26px;
+  gap: 10px;
+  padding: 12px 9px 12px 10px;
+}
+
+.health-secondary-calendar {
+  display: grid;
+  width: 84px;
+  height: 84px;
+  place-items: center;
+  border-radius: 50% 46% 52% 44%;
+  background: transparent;
+}
+
+.health-checkup-record:nth-child(3n + 2) .health-secondary-calendar,
+.health-checkup-record:nth-child(3n) .health-secondary-calendar { background: transparent; }
+.health-secondary-calendar img { width: 84px; height: 84px; object-fit: contain; mix-blend-mode: multiply; }
+
+.health-checkup-status {
+  display: inline-flex !important;
+  min-height: 22px;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px !important;
+  padding: 2px 8px 1px;
+  border-radius: 8px 6px 9px 7px;
+  background: rgba(174, 183, 129, 0.26);
+  color: var(--sage-deep) !important;
+  font-size: 11.5px !important;
+  font-style: normal;
+  line-height: 1;
+}
+
+.health-checkup-status.is-planned {
+  background: rgba(136, 167, 207, 0.23);
+  color: var(--blue-deep) !important;
+}
+
+.health-checkup-status svg,
+.health-checkup-status > span { width: 12px; height: 12px; }
+.health-checkup-status > span { border: 1.3px solid currentColor; border-radius: 4px 3px 5px 3px; }
+
+.health-checkup-tips {
+  padding-top: 5px;
+  border-top: 1px dashed rgba(116, 105, 83, 0.48);
+}
+
+.health-checkup-tips b { color: var(--blue-deep); font-weight: 700; }
+
+.health-secondary-encouragement {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 13px;
+  border: 1.25px dashed #9f947d;
+  border-radius: 17px 14px 19px 15px;
+  background: rgba(247, 197, 78, 0.12);
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.25;
+}
+
+.health-secondary-encouragement svg {
+  width: 23px;
+  height: 23px;
+  flex: 0 0 23px;
+  color: var(--coral-deep);
+}
+
+.health-ability-upload-preview img { object-fit: cover; }
+
+.vaccine-check-button,
+.vaccine-completed-date input { min-height: 44px; }
+
+.vaccine-completed-date input { height: 44px; }
+
+@container (max-width: 380px) {
+  .health-secondary-intro { min-height: 116px; padding-right: 116px; padding-left: 12px; }
+  .health-secondary-intro-copy h2 { width: 204px; font-size: 23px; }
+  .health-secondary-intro-copy p { width: 205px; font-size: 12px; }
+  .health-secondary-intro-copy > span { width: 205px; font-size: 11.8px; }
+  .health-secondary-intro-art { right: 55px; width: 126px; }
+  .health-secondary-intro-bear { width: 100%; }
+  .health-secondary-intro-symbol { width: 38px; height: 38px; }
+  .health-development-list { padding-left: 16px; }
+  .health-development-list::before { left: 6px; }
+  .health-development-record { min-height: 130px; grid-template-columns: 76px minmax(0, 1fr) 22px; gap: 7px; padding: 10px 7px 10px 8px; }
+  .health-development-record::before { left: -15px; }
+  .health-secondary-record-art { width: 74px; height: 74px; }
+  .health-secondary-record-art img { width: 70px; height: 70px; }
+  .health-secondary-record-copy strong { font-size: 18px; }
+  .health-checkup-panel { gap: 10px; }
+  .health-checkup-panel .checkup-record-list { gap: 8px; }
+  .health-checkup-record { min-height: 130px; grid-template-columns: 74px minmax(0, 1fr) 22px; gap: 7px; padding: 9px 7px 9px 8px; }
+  .health-secondary-calendar { width: 72px; height: 72px; }
+  .health-secondary-calendar img { width: 72px; height: 72px; }
+  .health-secondary-chevron { width: 22px; }
+  .health-checkup-panel .health-secondary-encouragement { min-height: 46px; padding: 6px 10px; font-size: 12.5px; }
+}
+
+/* The real Health page uses the app itself, not the simulator's bezel/cursor overlay. */
+.phone-device:has(.health-dynamic-shell) > .phone-bezel,
+.device-screen:has(.health-dynamic-shell) > .mobile-cursor {
+  display: none !important;
+}

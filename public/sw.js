@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "little-steps-pwa";
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v4-zh-cn-health-journal";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 
 const CORE_ASSETS = [
@@ -10,12 +10,37 @@ const CORE_ASSETS = [
   "/assets/app-icons/icon-192.png",
   "/assets/app-icons/icon-512.png",
   "/assets/app-icons/icon-maskable-512.png",
-  "/assets/baby/final-screens/01-home.png",
-  "/assets/baby/final-screens/02-memory-book.png",
-  "/assets/baby/final-screens/03-growth-curve.png",
-  "/assets/baby/final-screens/04-health-record.png",
-  "/assets/baby/final-screens/05-early-education.png",
-  "/assets/baby/final-screens/06-study-record.png",
+  "/assets/baby/final-screens/zh-CN/01-home-dynamic.png",
+  "/assets/baby/final-screens/zh-CN/02-memory-book.png",
+  "/assets/baby/final-screens/zh-CN/03-growth-curve.png",
+  "/assets/baby/final-screens/zh-CN/04-health-record.png",
+  "/assets/baby/final-screens/zh-CN/05-early-education.png",
+  "/assets/baby/final-screens/zh-CN/06-study-record.png",
+  "/assets/baby/paper-texture.png",
+  "/assets/baby/icon-age.png",
+  "/assets/baby/icon-health.png",
+  "/assets/baby/nav-home.png",
+  "/assets/baby/nav-memory.png",
+  "/assets/baby/nav-growth.png",
+  "/assets/baby/nav-health.png",
+  "/assets/baby/nav-education.png",
+  "/assets/baby/nav-study.png",
+  "/assets/baby/health-title-syringe-v1.png",
+  "/assets/baby/health-title-shield-v1.png",
+  "/assets/baby/health-title-shield-cluster-v1.png",
+  "/assets/baby/health-vaccine-hepb-v1.png",
+  "/assets/baby/health-vaccine-five-in-one-v1.png",
+  "/assets/baby/health-vaccine-mmr-v1.png",
+  "/assets/baby/health-footer-illustration-v2.png",
+  "/assets/baby/health-intro-companions-v1.png",
+  "/assets/baby/health-development-flag-v1.png",
+  "/assets/baby/health-development-rollover-v1.png",
+  "/assets/baby/health-development-sitting-v1.png",
+  "/assets/baby/health-development-crawling-v1.png",
+  "/assets/baby/health-checkup-stethoscope-v1.png",
+  "/assets/baby/health-checkup-newborn-v2.png",
+  "/assets/baby/health-checkup-one-month-v2.png",
+  "/assets/baby/health-checkup-four-month-v2.png",
 ];
 
 async function precacheAppShell() {

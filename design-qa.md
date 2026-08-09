@@ -1,80 +1,67 @@
-# Design QA · 六张最终页面图与真实功能验收
+# Design QA · 婴儿成长工作台
 
-## 唯一视觉来源
+## 当前页面架构
 
-- Home：`public/assets/baby/final-screens/01-home.png`（853 × 1844）
-- Memory：`public/assets/baby/final-screens/02-memory-book.png`（862 × 1824）
-- Growth：`public/assets/baby/final-screens/03-growth-curve.png`（853 × 1844）
-- Health：`public/assets/baby/final-screens/04-health-record.png`（853 × 1844）
-- Education：`public/assets/baby/final-screens/05-early-education.png`（853 × 1843）
-- Study：`public/assets/baby/final-screens/06-study-record.png`（853 × 1844）
+- Home：`public/assets/baby/final-screens/zh-CN/01-home-dynamic.png` 作为手绘数据底图，实时叠加日期、英文月龄、当前成长与照护数据。
+- Memory：`public/assets/baby/final-screens/zh-CN/02-memory-book.png` 完整主视觉层。
+- Growth：`public/assets/baby/final-screens/zh-CN/03-growth-curve.png` 完整主视觉层。
+- Health：真实可滚动的动态页面；`04-health-record.png` 仅保留为视觉参考，不进入当前运行路径。
+- Education：`public/assets/baby/final-screens/zh-CN/05-early-education.png` 完整主视觉层。
+- Study：`public/assets/baby/final-screens/zh-CN/06-study-record.png` 完整主视觉层。
 
-六张文件从 `baby-app-ui-final-6-screens.zip` 原样复制，保留 PNG 格式；源文件与项目副本逐一通过 SHA-256 一致性校验。旧 DOM 页面和旧素材未删除，但已退出六个主页面的运行时视觉路径。
+底部导航始终保持 Home / Memory / Growth / Health / Education / Study 英文标签。主产品语言为中文；功能词按上下文保留英文。
 
-## 实现范围
+## Health · 疫苗页验收
 
-- 六个主页面统一渲染为完整页面 PNG，不再叠加旧 Header、卡片或可见底部导航。
-- 图片水平居中、顶部对齐、保持原始宽高比，并使用 `object-fit: contain`；未使用 `cover`、裁切、拉伸、圆角、阴影或设备外框。
-- 页面底色为暖象牙色 `#f6f0e2`；图片禁止拖拽和选择。
-- 底部六个透明热区按 Home、Memory、Growth、Health、Education、Study 固定顺序复用原页面状态切换；每个入口含正确的 `aria-label` 与 `aria-current`。
-- Memory、Growth、Health、Education、Study 的左上返回热区可回到 Home。六张图中具备明确操作含义的按钮、卡片、Tab、播放键、复选框和编辑入口均已覆盖真实点击热区，并复用项目现有业务数据与处理逻辑。
-- 受保护的 Mobile Runtime 文件未修改；仅在最终图片页面作用域内隐藏额外系统栏、Home Indicator 和设备边框，避免重复视觉。桌面预览保留运行时模拟光标，便于看清移动位置和点击反馈。
+- 已将用户提供的三张 2026 接种表完整转录为 43 条参考记录，按 16 个年龄段从“24小时内”到“6周岁”依次分组。
+- 每条只展示年龄、疫苗名称和针次，不展示价格。
+- 疫苗列表位于 `MobileScroll` 中，顶部标题、三个 Tab 与底部主导航固定；长内容可连续上下滚动，末条记录不会被底栏遮挡。
+- 每一针均有 44 × 44 像素可点击勾选区。勾选后显示完成标记和实际接种日期；日期限制在出生日期至今天之间。
+- 完成状态、实际接种日期与自定义疫苗记录保存在本机 `localStorage`，刷新页面或重新打开应用后仍会恢复。
+- 4 组替代接种路径不会被误判为全部必打；当家庭已记录其中一种路径时，直接勾选冲突方案会被阻止并给出清晰提示。
+- 预置 43 条计划作为时间参考，不允许误删或改坏；用户仍可通过 `+ Add` 新增、编辑和删除自己的补充记录。
+- 到期提醒优先展示逾期项目，并排除未选择的替代路径；不存在用“43 条全部完成”误导家庭的百分比进度。
+- 页面明确提示：计划仅作家庭记录参考，不含价格，实际接种以接种门诊评估与当地安排为准。
+- Vaccines / Development / Checkups 三个 Tab 均为真实可切换页面；发育与儿保记录继续支持新增、编辑和删除。
 
-## 真实功能范围
+## Health · 发育与儿保页验收
 
-- Home：通知、宝宝基本报告预览/分享/下载、宝宝资料和照片上传、喂养/睡眠/尿布/补剂记录的新增编辑删除、补剂打卡，以及待办的新增、完成、编辑、删除。
-- Memory：All / Moments / Photos / Notes 分类管理；新增、详情、编辑、删除；Photos 支持真实本地照片选择与上传。
-- Growth：完整生长记录管理；新增、编辑、删除体重、身高和备注，不再只绑定图片中前三条示例记录。
-- Health：Vaccines / Development / Checkups 三类资料管理；新增、编辑、删除；能力记录继续同步到 Memory 里程碑。
-- Education：Music / Stories 两个资料库；音乐支持本地音频上传、播放、暂停、原位置续播和进度拖动；故事支持封面上传、资料库封面预览与真实外部链接跳转。
-- Study：English / Chinese 两个学习库，每页可管理 15+ 张学习卡；支持图例上传、增删改和系统语音朗读/停止。
-- 数据保存在浏览器本机：结构化记录使用 `localStorage`，上传的图片与音频使用 IndexedDB；刷新后仍可读取。
-- 本地持久化数据按记录类型逐条校验；日期与日期时间做严格日历语义校验，异常或旧损坏记录会被安全忽略，所有日期展示函数另有不可解析值回退，不会导致白屏。
-- 正在播放或暂停的音乐被重新上传替换时，旧播放器与进度会立即重置，下一次播放必定使用新音源。
-- 弹层编辑、删除确认和资料库管理之间保留返回上下文；关闭弹层后键盘焦点恢复到原操作入口。
+- Development 与 Checkups 已按 Vaccines 的同一设计系统重构：暖象牙再生纸底、手绘不规则墨线边框、低饱和黄/鼠尾草绿/蓝色点缀、统一 `var(--app-font)` 字体，以及一致的固定标题栏、Tab 和英文底部导航。
+- Development 使用纵向里程碑日记结构，不再混入旧版横向摘要。每条展示日期、能力名称、说明、手绘示意图与“已同步到成长回忆”状态；点击整卡可编辑，`+ Add` 可新增，上传图片使用正常色彩与裁切，不套丝网混合效果。
+- Development 的新增、编辑、删除及“同步到成长回忆”均复用真实数据链路；上传 JPG / PNG / WebP 后写入 IndexedDB，刷新后可恢复，资源缺失时回退到内置绘本插画。
+- Checkups 使用纵向儿保手册结构，每条展示日期、项目名、计划/已记录状态和两行 Tips；点击整卡可编辑，`+ Add` 可新增，编辑器保留删除与持久化。
+- 两页的介绍卡复用经内置 gpt-image-2 清理后的坐姿白熊、鸭子与植物素材；儿保记录的三张圆形示意图来自已选定的中文儿保视觉稿裁切，未用 CSS 或占位符临摹。
+- 演示发育记录已调整为固定出生日期 2026-08-04 后、当前日期 2026-08-08 前的真实已发生里程碑；未来儿保项目明确显示“计划日期”，避免把预约当成已完成记录。
+- 393 × 852 与 427 × 952 均完成同尺寸截图复核；页面无横向溢出、无双重系统栏、内容可滚动到末项，卡片与固定底栏不互相遮挡。
+- 三页最终对比图位于 `qa/health-record-redesign-2026-08-08/`：`comparison-vaccine-393x852-final.png`、`comparison-development-393x852-final-v2.png`、`comparison-checkups-393x852-final-v3.png`。三张均将参考视觉与实现截图并排后再检查，未发现阻断级视觉差异。
+- 发育与儿保卡片区域已用真实触控拖动复测：手指从整张记录卡起手仍可顺畅滚动，不会因卡片点击行为形成滚动死区。
+- 儿保日期在表单与保存逻辑中均限制不得早于 2026-08-04；演示回忆也全部迁移到出生日期之后，避免出现出生前记录。
 
-## 尺寸与视觉对照
+## 其他真实功能
 
-已在真实运行页面逐页检查：
+- Home：顶部为本机当前日期 `YYYY.MM.DD 星期X`；固定出生日期为 2026-08-04，姓名下方英文月龄实时计算。当前体重与身高来自最新成长记录，出生值固定为 2.4 kg / 48 cm。
+- Home：喂养显示最新记录相对当前时间；睡眠合并重叠区间后计算今日总时长；便便快速勾选会记录当前时间并增加今日次数；Vitamin D 可确认或取消今日状态；`Today's To-do` 保持英文并支持完整管理。
+- Memory：All / Moments / Photos / Notes 管理；照片真实上传，记录可新增、编辑和删除。
+- Growth：成长记录可新增、编辑和删除。
+- Education：音乐上传、播放、暂停、续播和进度拖动；故事封面上传、预览和外链打开。
+- Study：English / Chinese 学习卡管理，图片上传与系统发音可用。
+- 结构化数据使用 `localStorage`；图片、封面和音频使用 IndexedDB。
 
-- iPhone：393 × 852。
-- 精确响应式检查：430 × 932（临时 QA 尺寸覆盖，检查后已移除，不进入生产代码）。
-- 项目生产 Android 预设：427 × 952。
-- 桌面移动端预览：1280 × 720 浏览器画布，设备页面居中且不向宽屏拉伸。
+## 响应式与交互检查
 
-六页在以上尺寸均无横向滚动、图片裁切、比例变形、异常白边、双重 Header、双重底栏或旧页面残留。Memory 与 Education 因原图纵横比不同，底部少量剩余区域使用同色纸张背景承接，不裁切、不放大。
-
-参考图与运行页使用同尺寸并排检查；静态交付截图在指针移出页面后采集，因此不包含动态光标。实际操作态保留运行时模拟光标，不改变底图布局、比例或视觉内容。最终复核无 P0 / P1 / P2 布局问题。
-
-## 交互与运行检查
-
-- 六个底部入口全部实测可双向切换，当前页高亮完全由图片自身呈现，不生成第二套可见导航。
-- 五个非 Home 页面返回热区均实测可回到 Home。
-- 每页恰好存在六个透明主导航按钮和一个 `aria-current` 入口。
-- 每次切换均加载正确文件路径及正确 PNG 原始尺寸。
-- 使用真实文件完成 Memory 照片上传、Education 音频上传与播放/暂停；测试数据随后已删除。
-- 实测完成 Todo、Growth、Health、Memory、Education、Study 的新增、编辑、删除闭环；管理器分类切换和关闭返回行为正确。
-- 实测故事外链打开正确目标，Study 英文发音可开始并停止。
-- 实测通知弹层关闭后焦点回到通知入口，主页面切换后焦点落在当前导航入口。
-- 控制台最终检查无新增 error 或 warn。
-- 桌面预览中模拟光标已实测可随鼠标在页面内移动；六个透明底部入口在光标恢复后仍全部切换成功。
-- QA 证据目录：`qa/final-six-screen-delivery-2026-08-08/`，包括 393 × 852、430 × 932、六页联系表及逐页参考图并排对照。
+- iPhone 393 × 852：Health 疫苗页 43 条、16 组完整渲染，无横向溢出，滚动可到 6 周岁最后一条；固定导航不遮挡内容。
+- Pixel 427 × 952：同样无横向溢出；标题、Tab、`+ Add`、复选框和日期输入均满足 44 像素触控高度。
+- 真实浏览器实测：接种勾选、刷新后持久化、取消勾选、替代方案冲突保护、三个 Health Tab、六个底部主导航均正常。
+- 动态 Health 页面在真实手机和 standalone 模式隐藏桌面预览机框与相机装饰；桌面预览继续保持居中设备预览。
+- 最终控制台无新增 error 或 warning。
 
 ## 构建与测试
 
-- `npm run check:runtime`：受保护运行时完整性通过。
-- `npm run build`：TypeScript 与 Vite 生产构建通过。
+- `npm run check:runtime`：通过，28 个受保护运行时文件完整。
+- `npm run build`：通过，TypeScript、Vite 与 Sites 产物生成成功。
 - `npm run test:runtime`：8 / 8 通过。
 - `npm run test:sites`：4 / 4 通过。
-- 项目没有独立 Lint 命令；未为本任务新增工具。类型检查由 `npm run build` 中的 `tsc` 完成。
-
-## 手机安装与离线交付
-
-- 已加入正式 Web App Manifest、180 / 192 / 512 像素应用图标、iOS 主屏幕元信息和 Service Worker。
-- iPhone Safari 与 Android Chrome 均可从生产地址“添加到主屏幕 / 安装应用”，以独立应用窗口和竖屏模式运行。
-- 首次联网完整打开后，应用壳、六张正式页面图、字体与构建资源进入离线缓存；后续可在断网时重新打开主页面。
-- 真实手机与 standalone 模式移除桌面预览外壳，使用 `100dvh` 铺满屏幕；桌面预览仍保留设备框、选择器和模拟光标。
-- 393 × 852 应用内浏览器实测：页面尺寸与视口一致，页面滚动宽高均无溢出，六个主导航逐一切换成功，真实待办管理器可打开，控制台 error / warn 为 0。
-- `dist/client/manifest.webmanifest`、`dist/client/sw.js`、主屏图标、六张页面图、`dist/server/index.js` 和 `dist/.openai/hosting.json` 均已进入生产构建。
+- 项目没有独立 Lint 命令；未为本次修改引入新工具。
+- 构建仅保留 Vite 大体积 chunk 提示，不影响当前功能。
 
 final result: passed
