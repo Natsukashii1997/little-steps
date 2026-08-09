@@ -3686,7 +3686,7 @@ select:focus-visible {
 
 .health-ability-list > button > img {
   width: 70px;
-  height: 70px;
+  height: 76px;
   border-radius: 50%;
   object-fit: cover;
   mix-blend-mode: multiply;
@@ -5821,7 +5821,7 @@ select:focus-visible {
   z-index: 6;
   inset: 0;
   color: #11100e;
-  font-family: "ZCOOL KuaiLe", "Gaegu", cursive;
+  font-family: var(--app-font);
   font-weight: 400;
   pointer-events: none;
   user-select: none;
@@ -5835,17 +5835,16 @@ select:focus-visible {
 .home-live-date,
 .home-live-age,
 .home-live-metric,
-.home-live-card-copy,
-.home-live-check,
+.home-live-care-card,
 .home-live-todo-row {
   position: absolute;
   margin: 0;
 }
 
 .home-live-date {
-  top: 2.35%;
-  left: 18.5%;
-  width: 55.5%;
+  top: 2.78%;
+  left: 17.5%;
+  width: 56.5%;
   height: 4.8%;
   font-size: 20px;
   font-size: 5.05cqi;
@@ -5855,7 +5854,7 @@ select:focus-visible {
 }
 
 .home-live-age {
-  top: 17.35%;
+  top: 18.45%;
   left: 57.1%;
   width: 36%;
   height: 3.3%;
@@ -5864,8 +5863,34 @@ select:focus-visible {
   font-size: 4.55cqi;
   font-weight: 700;
   line-height: 1;
+  color: #c96050;
+  opacity: 0.9;
   text-align: left;
   white-space: nowrap;
+}
+
+.home-live-name-patch,
+.home-live-tagline-patch {
+  position: absolute;
+  display: block;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.home-live-name-patch {
+  top: 11.25%;
+  left: 52.8%;
+  width: 34%;
+  height: 8.95%;
+}
+
+.home-live-tagline-patch {
+  top: 21.35%;
+  left: 51%;
+  width: 44.6%;
+  height: 7.9%;
 }
 
 .home-live-metric {
@@ -5911,46 +5936,190 @@ select:focus-visible {
 .home-live-current-age { top: 36.45%; left: 79%; width: 16%; }
 .home-live-current-age strong small { margin-left: 0.16em; font-size: 0.66em; }
 
-.home-live-card-copy {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+.home-live-care-card {
+  overflow: hidden;
+  color: #11100e;
+  font-family: var(--app-font);
+  font-variant-numeric: tabular-nums;
   line-height: 1.05;
+  pointer-events: none;
 }
 
-.home-live-card-copy > span {
-  font-size: 13px;
-  font-size: 3.15cqi;
+.home-live-card--feeding { top: 42.5%; left: 4%; width: 45.4%; height: 19.8%; }
+.home-live-card--sleep { top: 42.5%; left: 50.4%; width: 45.8%; height: 19.8%; }
+.home-live-card--poop { top: 63.2%; left: 4%; width: 45.4%; height: 13.2%; }
+.home-live-card--health { top: 63.2%; left: 50.4%; width: 45.8%; height: 13.2%; }
+
+.home-live-care-summary {
+  position: absolute;
+  top: 22.5%;
+  right: 7%;
+  left: 39%;
+  display: grid;
+  min-width: 0;
+  gap: 0.14em;
+  text-align: left;
+}
+
+.home-live-care-summary > span,
+.home-live-sleep-total > span {
+  font-size: clamp(11px, 2.85cqi, 12.5px);
   font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
 }
 
-.home-live-card-copy > strong {
-  margin-top: 0.16em;
-  font-size: 14px;
-  font-size: 3.4cqi;
+.home-live-care-summary > strong,
+.home-live-sleep-total > strong {
+  overflow: hidden;
+  font-size: clamp(11px, 2.95cqi, 13px);
   font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.home-live-feeding-summary { top: 47.15%; left: 21.6%; width: 25.2%; height: 4.1%; }
-.home-live-feeding-details { top: 52.95%; left: 11.1%; width: 35.2%; height: 8.2%; gap: 0.22em; }
-.home-live-feeding-details > span { font-size: 13px; font-size: 3.15cqi; line-height: 1.05; white-space: nowrap; }
-.home-live-feeding-details > span strong { font-weight: 400; }
+.home-live-card--feeding .home-live-care-summary > strong,
+.home-live-card--sleep .home-live-care-summary > strong {
+  color: #c96050;
+  font-weight: 400;
+  opacity: 0.9;
+}
 
-.home-live-sleep-summary { top: 47.15%; left: 67.5%; width: 25.5%; height: 4.1%; }
-.home-live-sleep-total { top: 54.0%; left: 64%; width: 29.5%; height: 5%; text-align: center; }
-.home-live-sleep-total > strong { font-size: 15px; font-size: 3.75cqi; }
+.home-live-feeding-details {
+  position: absolute;
+  top: 53.5%;
+  right: 7%;
+  left: 15.5%;
+  display: grid;
+  min-width: 0;
+  gap: clamp(3px, 0.7cqi, 4px);
+}
 
-.home-live-poop-latest { top: 67.15%; left: 21.4%; width: 25%; height: 3.1%; flex-direction: row; align-items: baseline; gap: 0.45em; white-space: nowrap; }
-.home-live-poop-latest > strong { margin-top: 0; }
-.home-live-poop-count { top: 71.65%; left: 21.4%; width: 14.8%; height: 3%; flex-direction: row; align-items: baseline; gap: 0.35em; white-space: nowrap; }
-.home-live-poop-count > strong { margin-top: 0; }
+.home-live-feeding-details > span {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 2px;
+  font-size: clamp(11px, 2.85cqi, 12.5px);
+  line-height: 1.08;
+  white-space: nowrap;
+}
 
-.home-live-health-copy { top: 67.15%; left: 67.2%; width: 26%; height: 3.7%; }
-.home-live-health-copy > strong { font-size: 13px; font-size: 3.2cqi; }
+.home-live-feeding-details > span b,
+.home-live-feeding-details > span strong {
+  overflow: hidden;
+  font-weight: 400;
+  text-overflow: ellipsis;
+}
+
+.home-live-sleep-total {
+  position: absolute;
+  top: 58%;
+  right: 7%;
+  left: 15.5%;
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 6px;
+  text-align: left;
+}
+
+.home-live-sleep-total > strong {
+  min-width: 0;
+  font-size: clamp(11px, 2.95cqi, 13px);
+}
+
+.home-live-card--poop .home-live-care-summary {
+  top: 36.5%;
+  right: 7%;
+  left: 39%;
+  display: grid;
+  overflow: hidden;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 4px;
+}
+
+.home-live-card--health .home-live-care-summary {
+  top: 36.5%;
+  right: 7%;
+  left: 39%;
+  overflow: hidden;
+}
+
+.home-live-card--poop .home-live-care-summary > span,
+.home-live-card--poop .home-live-care-summary > strong,
+.home-live-card--health .home-live-care-summary > span,
+.home-live-card--health .home-live-care-summary > strong {
+  min-width: 0;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-live-card--health .home-live-care-summary > span {
+  font-size: clamp(10.5px, 2.7cqi, 12px);
+}
+
+.home-live-care-summary--inline {
+  align-items: baseline;
+}
+
+.home-live-care-action-row {
+  position: absolute;
+  top: 60%;
+  right: 7%;
+  left: 39%;
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35em;
+}
+
+.home-live-card--poop .home-live-care-action-row {
+  top: 56.5%;
+  right: 7%;
+  left: 15.5%;
+  grid-template-columns: minmax(0, 1fr) auto;
+  justify-content: stretch;
+  gap: 6px;
+}
+
+.home-live-card--poop .home-live-check,
+.home-live-card--health .home-live-check {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+.home-live-care-action-row > p {
+  display: flex;
+  min-width: 0;
+  margin: 0;
+  align-items: baseline;
+  gap: 0.35em;
+  font-size: clamp(11px, 2.85cqi, 12.5px);
+  white-space: nowrap;
+}
+
+.home-live-care-action-row > p strong { font-weight: 400; }
+.home-live-care-action-row--health {
+  top: 56.5%;
+  right: 7%;
+  left: 15.5%;
+  grid-template-columns: minmax(0, 1fr) auto;
+  justify-content: stretch;
+  gap: 6px;
+}
 
 .home-live-check {
   display: flex;
   min-width: 0;
+  min-height: 44px;
   padding: 0;
   align-items: center;
   gap: 0.45em;
@@ -5978,9 +6147,7 @@ select:focus-visible {
 
 .home-live-check.is-checked > span { background: rgba(203, 211, 161, 0.9); }
 .home-live-check svg { width: 82%; height: 82%; }
-.home-live-check b { font-size: 12px; font-size: 2.95cqi; font-weight: 400; white-space: nowrap; }
-.home-live-poop-check { top: 70.95%; left: 36.5%; width: 11.6%; height: 4.2%; }
-.home-live-health-check { top: 71.1%; left: 67.2%; width: 25%; height: 4.2%; }
+.home-live-check b { font-size: clamp(11px, 2.75cqi, 12px); font-weight: 400; white-space: nowrap; }
 
 .home-live-todos {
   position: absolute;
@@ -8262,4 +8429,608 @@ select:focus-visible {
   .health-secondary-record-copy strong {
     font-size: 20px;
   }
+}
+
+/* Shared bottom navigation — Home is the single visual baseline for every main page. */
+.unified-bottom-navigation {
+  position: absolute;
+  z-index: 30;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  height: 70px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  padding: 3px 7px 2px;
+  border-top: 0;
+  background-color: #f8f1e1;
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 512px;
+  box-shadow: 0 -1px 0 rgba(17, 16, 14, 0.04);
+  font-family: "Gaegu", "ZCOOL KuaiLe", system-ui, sans-serif;
+}
+
+.unified-bottom-navigation::before {
+  position: absolute;
+  top: -9px;
+  right: 0;
+  left: 0;
+  height: 9px;
+  background-color: #f8f1e1;
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 512px;
+  content: "";
+}
+
+.unified-bottom-navigation button {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  border: 0;
+  background: transparent;
+  color: #11100e;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.unified-bottom-navigation button:not(:last-child)::after {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  height: 44px;
+  border-right: 1px dashed rgba(17, 16, 14, 0.27);
+  content: "";
+}
+
+.unified-nav-icon {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  flex: 0 0 auto;
+  border-radius: 48% 52% 46% 54%;
+}
+
+.unified-nav-icon img {
+  display: block;
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  object-position: center top;
+  mix-blend-mode: multiply;
+  transform: translate(-1px, -1px);
+  pointer-events: none;
+}
+
+.unified-nav-label {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: -1px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.unified-bottom-navigation button.active .unified-nav-icon {
+  background: rgba(247, 197, 78, 0.2);
+}
+
+.unified-bottom-navigation button.active .unified-nav-label::after {
+  position: absolute;
+  z-index: -1;
+  right: -8px;
+  bottom: -2px;
+  left: -8px;
+  height: 10px;
+  border-radius: 56% 44% 52% 48%;
+  background: rgba(247, 197, 78, 0.58);
+  content: "";
+}
+
+.unified-bottom-navigation button:focus:not(:focus-visible) {
+  outline: 0;
+}
+
+.unified-bottom-navigation button:focus-visible {
+  outline: 2px solid var(--blue-deep);
+  outline-offset: -2px;
+  border-radius: 10px 8px 11px 9px;
+}
+
+.health-dynamic-scroll .mobile-scroll-content,
+.mobile-app-viewport:not([data-platform="android"]) .health-dynamic-scroll .mobile-scroll-content {
+  padding-bottom: 90px;
+}
+
+/* Keep all three Health heroes spacious and free from copy/illustration overlap. */
+.vaccine-intro-copy h2 {
+  width: 174px;
+}
+
+.vaccine-intro-copy p {
+  width: 205px;
+}
+
+.vaccine-intro-art {
+  right: 52px;
+  width: 86px;
+  height: 92px;
+}
+
+.health-secondary-intro-copy h2,
+.health-secondary-intro-copy p,
+.health-secondary-intro-copy > span {
+  width: 190px;
+}
+
+.health-secondary-intro-art {
+  right: 42px;
+  width: 112px;
+  height: 105px;
+}
+
+.health-secondary-intro-bear,
+.health-checkup-intro-art .health-secondary-intro-bear {
+  width: 86px;
+  height: 96px;
+}
+
+.health-development-intro-baby {
+  top: 11px;
+  right: -1px;
+  width: 62px;
+  height: 48px;
+}
+
+.health-checkup-intro-art .health-secondary-intro-symbol {
+  top: 25px;
+  right: -1px;
+  width: 52px;
+  height: 58px;
+}
+
+@container (min-width: 421px) {
+  .unified-bottom-navigation { height: 80px; }
+  .unified-nav-icon { width: 46px; height: 46px; }
+  .unified-nav-icon img { width: 48px; height: 48px; }
+  .unified-nav-label { font-size: 12.5px; }
+}
+
+@container (max-width: 380px) {
+  .vaccine-intro-copy h2 { width: 164px; }
+  .vaccine-intro-copy p { width: 190px; }
+  .vaccine-intro-art { right: 50px; width: 82px; height: 90px; }
+  .health-secondary-intro-copy h2,
+  .health-secondary-intro-copy p,
+  .health-secondary-intro-copy > span { width: 178px; }
+  .health-secondary-intro-art { right: 40px; width: 105px; height: 101px; }
+}
+
+/* One real top bar keeps title typography and icon baselines identical on all six pages. */
+.unified-top-navigation {
+  position: absolute;
+  z-index: 32;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: grid;
+  height: 64px;
+  padding: 4px 13px 3px;
+  /* Equal side columns keep every page title geometrically centered. */
+  grid-template-columns: 88px minmax(0, 1fr) 88px;
+  align-items: center;
+  background-color: #f8f1e1;
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 512px;
+  color: #11100e;
+  font-family: var(--app-font);
+  box-shadow: 0 1px 0 rgba(17, 16, 14, 0.035);
+}
+
+.unified-top-leading,
+.unified-top-actions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+}
+
+.unified-top-leading { justify-content: flex-start; }
+.unified-top-actions { justify-content: flex-end; }
+
+.unified-top-navigation button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.unified-top-navigation button svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 1.8px;
+}
+
+.unified-top-navigation h1,
+.unified-top-navigation time {
+  overflow: hidden;
+  margin: 0;
+  font-family: var(--app-font);
+  font-weight: 400;
+  line-height: 1;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unified-top-navigation h1 {
+  font-size: clamp(27px, 7.3cqi, 30px);
+  letter-spacing: 0.055em;
+}
+
+.unified-top-navigation time {
+  font-size: clamp(18px, 5.1cqi, 21px);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.unified-top-navigation.is-home {
+  background: transparent;
+  box-shadow: none;
+}
+
+.unified-top-navigation.is-home::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 0 70px;
+  background-color: #f8f1e1;
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 512px;
+  content: "";
+}
+
+.unified-top-navigation > * { position: relative; z-index: 1; }
+
+.unified-top-notification { position: relative; }
+
+.unified-top-notification > span {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ee6544;
+}
+
+.unified-top-navigation .unified-top-add {
+  display: flex;
+  width: auto;
+  min-width: 82px;
+  height: 42px;
+  padding: 0 13px;
+  gap: 5px;
+  border: 1.55px solid #11100e;
+  border-radius: 48% 52% 46% 54% / 54% 47% 53% 46%;
+  background: rgba(247, 197, 78, 0.72);
+  font-family: "Gaegu", var(--app-font);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.unified-top-navigation .unified-top-add svg {
+  width: 20px;
+  height: 20px;
+}
+
+.unified-top-navigation button:focus:not(:focus-visible) { outline: 0; }
+.unified-top-navigation button:focus-visible {
+  outline: 2px solid var(--blue-deep);
+  outline-offset: -2px;
+  border-radius: 10px 8px 11px 9px;
+}
+
+/* Health keeps the same top bar; its tab chrome begins directly underneath. */
+.health-dynamic-chrome {
+  padding: 64px 17px 4px;
+}
+
+.health-dynamic-topbar { display: none; }
+
+@container (min-width: 421px) {
+  .unified-top-navigation {
+    height: 66px;
+    padding-right: 15px;
+    padding-left: 15px;
+    grid-template-columns: 88px minmax(0, 1fr) 88px;
+  }
+
+  .unified-top-navigation h1 { font-size: 31px; }
+  .unified-top-navigation time { font-size: 21px; }
+  .health-dynamic-chrome { padding-top: 66px; }
+}
+
+/* Growth is a live journal page: the chart and history now render from the same
+   persisted measurements used by Home. */
+.growth-dynamic-shell {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 512px;
+}
+
+.growth-dynamic-scroll {
+  z-index: 2;
+  background: transparent;
+}
+
+.growth-dynamic-scroll .mobile-scroll-content,
+.mobile-app-viewport:not([data-platform="android"]) .growth-dynamic-scroll .mobile-scroll-content {
+  min-height: 100%;
+  padding: 64px 0 90px;
+}
+
+.growth-dynamic-scroll .growth-page {
+  min-height: 100%;
+  padding: 12px 17px 20px;
+  background: transparent;
+}
+
+.growth-dynamic-shell .growth-chart-card {
+  height: 315px;
+}
+
+.growth-dynamic-shell .growth-plot-area {
+  height: 250px;
+}
+
+.growth-dynamic-shell .growth-history-card {
+  height: auto;
+  min-height: 284px;
+}
+
+.growth-dynamic-shell .growth-history-rows {
+  max-height: none;
+}
+
+/* Every real + Add control follows the Home button as one visual component. */
+.baby-app-shell .app-add-button,
+.unified-top-navigation .app-add-button,
+.growth-dynamic-shell .app-add-button,
+.health-dynamic-shell .app-add-button {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  width: clamp(68px, 17.3cqi, 74px);
+  min-width: clamp(68px, 17.3cqi, 74px);
+  height: clamp(44px, 11.2cqi, 48px);
+  min-height: 44px;
+  padding: 0 clamp(7px, 1.78cqi, 7.7px);
+  align-items: center;
+  justify-content: center;
+  gap: clamp(3px, 0.76cqi, 3.3px);
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: #11100e;
+  font-family: "Gaegu", var(--app-font);
+  font-size: clamp(14px, 3.56cqi, 15.3px);
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.baby-app-shell .app-add-button::before,
+.unified-top-navigation .app-add-button::before,
+.growth-dynamic-shell .app-add-button::before,
+.health-dynamic-shell .app-add-button::before {
+  position: absolute;
+  z-index: -1;
+  inset: clamp(8.5px, 2.16cqi, 9.3px) clamp(4px, 1.02cqi, 4.4px);
+  border: 1.5px solid #11100e;
+  border-radius: 999px;
+  background-color: #f2be62;
+  background-image: url("/assets/baby/paper-texture.png");
+  background-size: 120px;
+  background-blend-mode: multiply;
+  box-shadow: none;
+  content: "";
+  pointer-events: none;
+}
+
+.baby-app-shell .app-add-button svg,
+.unified-top-navigation .app-add-button svg,
+.growth-dynamic-shell .app-add-button svg,
+.health-dynamic-shell .app-add-button svg {
+  width: clamp(14px, 3.56cqi, 15.3px);
+  height: clamp(14px, 3.56cqi, 15.3px);
+  flex: 0 0 auto;
+  stroke-width: 1.7;
+}
+
+.growth-dynamic-shell .growth-add-record {
+  min-width: clamp(68px, 17.3cqi, 74px);
+}
+
+.baby-app-shell .full-screen-static-add {
+  position: absolute;
+  z-index: 7;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+.vaccine-schedule-intro > .app-add-button,
+.health-secondary-intro > .app-add-button {
+  position: absolute;
+  z-index: 3;
+  right: 10px;
+  bottom: 13px;
+}
+
+/* The dynamic Growth page uses the same full-screen mobile canvas as the
+   approved image pages and dynamic Health page. */
+.device-screen:has(.growth-dynamic-shell) > .status-bar,
+.device-screen:has(.growth-dynamic-shell) > .home-indicator-svg,
+.device-screen:has(.growth-dynamic-shell) > .android-navigation-bar,
+.device-screen:has(.growth-dynamic-shell) > .device-camera {
+  display: none !important;
+}
+
+.device-screen:has(.growth-dynamic-shell) > .mobile-app-viewport {
+  inset: 0 !important;
+}
+
+.phone-device:has(.growth-dynamic-shell) > .phone-bezel {
+  display: none !important;
+}
+
+@container (min-width: 421px) {
+  .growth-dynamic-scroll .mobile-scroll-content,
+  .mobile-app-viewport:not([data-platform="android"]) .growth-dynamic-scroll .mobile-scroll-content {
+    padding-top: 66px;
+  }
+}
+
+@container (max-width: 380px) {
+  .growth-dynamic-scroll .growth-page {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .growth-dynamic-shell .growth-add-record {
+    min-width: clamp(68px, 17.3cqi, 74px);
+  }
+}
+
+/* Vaccine hero: reserve independent copy, illustration, and action zones.
+   The source artwork stays intact; only its responsive slot is repositioned. */
+.health-dynamic-shell .vaccine-schedule-intro {
+  min-height: 128px;
+  padding: 14px 0 13px 14px;
+}
+
+.health-dynamic-shell .vaccine-intro-copy {
+  width: 180px;
+}
+
+.health-dynamic-shell .vaccine-intro-copy h2,
+.health-dynamic-shell .vaccine-intro-copy > span,
+.health-dynamic-shell .vaccine-intro-copy p {
+  width: 180px;
+}
+
+.health-dynamic-shell .vaccine-intro-copy p {
+  top: 67px;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  column-gap: 4px;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.health-dynamic-shell .vaccine-intro-copy p::before {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.health-dynamic-shell .vaccine-intro-copy p > span {
+  grid-column: 2;
+  display: block;
+  min-width: 0;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.health-dynamic-shell .vaccine-intro-art {
+  top: 8px;
+  right: 84px;
+  width: 76px;
+  height: 88px;
+}
+
+.health-dynamic-shell .vaccine-schedule-intro > .app-add-button {
+  right: 10px;
+  bottom: 13px;
+}
+
+@container (min-width: 421px) {
+  .health-dynamic-shell .vaccine-intro-art {
+    right: 84px;
+    width: 82px;
+    height: 92px;
+  }
+}
+
+/* Home is the paper source of truth. Dynamic canvases and shared chrome use a
+   mechanically colour-matched copy of the same paper grain; image pages keep
+   their artwork untouched and only expose this texture in genuine canvas gaps. */
+.baby-app-shell,
+.app-screen,
+.full-screen-image-page,
+.growth-dynamic-shell,
+.health-dynamic-shell,
+.health-dynamic-chrome,
+.unified-top-navigation:not(.is-home),
+.unified-top-navigation.is-home::before,
+.unified-bottom-navigation,
+.unified-bottom-navigation::before {
+  background-color: #f6eee3;
+  background-image: url("/assets/baby/paper-texture-home-v1.png");
+  background-size: 512px 512px;
+}
+
+/* Development hero: reproduce the approved composition at the same responsive
+   scale — bear at lower left, baby at upper right, real Add control below it.
+   Both v3 assets are mechanical crops of the approved v2 artwork with only
+   captured neighbouring page fragments removed. */
+.health-dynamic-shell .health-development-panel .health-secondary-intro-development {
+  min-height: clamp(128px, 32.36cqi, 139px);
+}
+
+.health-dynamic-shell .health-development-panel .health-development-intro-art {
+  top: clamp(16px, 4.45cqi, 19px);
+  right: 0;
+  width: clamp(162px, 43.38cqi, 187px);
+  height: clamp(92px, 24.62cqi, 106px);
+}
+
+.health-dynamic-shell .health-development-panel .health-development-intro-art .health-secondary-intro-bear {
+  top: 0;
+  bottom: auto;
+  left: 0;
+  width: clamp(94px, 25.21cqi, 109px);
+  height: clamp(92px, 24.62cqi, 106px);
+}
+
+.health-dynamic-shell .health-development-panel .health-development-intro-baby {
+  top: clamp(2px, 0.586cqi, 3px);
+  right: 0;
+  width: clamp(72px, 19.34cqi, 84px);
+  height: clamp(53px, 14.07cqi, 61px);
 }

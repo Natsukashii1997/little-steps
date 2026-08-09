@@ -51,13 +51,21 @@ type ImageHotspot = {
   layer?: "default" | "foreground";
 };
 
+type StaticAddControl = {
+  id: string;
+  label: string;
+  centerX: number;
+  centerY: number;
+  onClick: () => void;
+};
+
 const finalScreenImages: Record<Page, { src: string; label: string; width: number; height: number }> = {
-  home: { src: "/assets/baby/final-screens/zh-CN/01-home-dynamic.png", label: "首页", width: 853, height: 1844 },
-  memory: { src: "/assets/baby/final-screens/zh-CN/02-memory-book.png", label: "成长回忆", width: 862, height: 1824 },
+  home: { src: "/assets/baby/final-screens/zh-CN/01-home-dynamic-add-clean.png", label: "首页", width: 853, height: 1844 },
+  memory: { src: "/assets/baby/final-screens/zh-CN/02-memory-book-home-paper-v1.png", label: "成长回忆", width: 862, height: 1824 },
   growth: { src: "/assets/baby/final-screens/zh-CN/03-growth-curve.png", label: "生长曲线", width: 853, height: 1844 },
   health: { src: "/assets/baby/final-screens/zh-CN/04-health-record.png", label: "健康记录", width: 853, height: 1844 },
-  education: { src: "/assets/baby/final-screens/zh-CN/05-early-education.png", label: "早期教育", width: 853, height: 1843 },
-  study: { src: "/assets/baby/final-screens/zh-CN/06-study-record.png", label: "学习记录", width: 853, height: 1844 },
+  education: { src: "/assets/baby/final-screens/zh-CN/05-early-education-add-clean-home-paper-v1.png", label: "早期教育", width: 853, height: 1843 },
+  study: { src: "/assets/baby/final-screens/zh-CN/06-study-record-add-clean-home-paper-v1.png", label: "学习记录", width: 853, height: 1844 },
 };
 
 const finalScreenSummaries: Record<Page, string> = {
@@ -78,11 +86,94 @@ const finalNavigation: { id: Page; label: string }[] = [
   { id: "study", label: "Study" },
 ];
 
+const unifiedPageTitles: Record<Exclude<Page, "home">, string> = {
+  memory: "回忆册",
+  growth: "成长曲线",
+  health: "健康记录",
+  education: "早期教育",
+  study: "学习记录",
+};
+
+function UnifiedTopNavigation({
+  page,
+  homeDate,
+  onBack,
+  onNotifications,
+  onReport,
+  onMemoryAdd,
+  variant,
+}: {
+  page: Page;
+  homeDate?: string;
+  onBack: () => void;
+  onNotifications: (trigger: HTMLButtonElement) => void;
+  onReport: (trigger: HTMLButtonElement) => void;
+  onMemoryAdd?: (trigger: HTMLButtonElement) => void;
+  variant: "image" | "dynamic";
+}) {
+  const isHome = page === "home";
+  const title = isHome ? homeDate : unifiedPageTitles[page];
+
+  return <header className={`unified-top-navigation is-${variant}${isHome ? " is-home" : ""}`}>
+    <div className="unified-top-leading">
+      {isHome
+        ? <span className="visually-hidden">晴间多云</span>
+        : <button type="button" onClick={onBack} aria-label="返回首页" data-scroll-drag="ignore"><ArrowLeftIcon /></button>}
+    </div>
+
+    {isHome
+      ? <time dateTime={homeDate?.slice(0, 10).replaceAll(".", "-")}>{title}</time>
+      : <h1>{title}</h1>}
+
+    <div className="unified-top-actions">
+      {page === "memory" && onMemoryAdd ? <button className="unified-top-add app-add-button" type="button" onClick={(event) => onMemoryAdd(event.currentTarget)} aria-label="新增成长回忆" data-scroll-drag="ignore"><PlusIcon /><span>Add</span></button> : <>
+        <button className="unified-top-notification" type="button" onClick={(event) => onNotifications(event.currentTarget)} aria-label="查看通知" data-scroll-drag="ignore"><BellIcon /><span aria-hidden="true" /></button>
+        <button type="button" onClick={(event) => onReport(event.currentTarget)} aria-label="生成并分享宝宝报告" data-scroll-drag="ignore"><ExternalLinkIcon /></button>
+      </>}
+    </div>
+  </header>;
+}
+
+function UnifiedBottomNavigation({
+  activePage,
+  onNavigate,
+  variant,
+}: {
+  activePage: Page;
+  onNavigate: (page: Page, restoreKeyboardFocus?: boolean) => void;
+  variant: "image" | "dynamic";
+}) {
+  return <nav className={`unified-bottom-navigation is-${variant}`} aria-label="主要页面">
+    {finalNavigation.map((item) => <button
+      key={item.id}
+      className={activePage === item.id ? "active" : ""}
+      type="button"
+      aria-label={`前往 ${item.label}`}
+      aria-current={activePage === item.id ? "page" : undefined}
+      onClick={(event) => {
+        const trigger = event.currentTarget;
+        onNavigate(item.id, event.detail === 0);
+        if (event.detail > 0) requestAnimationFrame(() => trigger.blur());
+      }}
+      data-scroll-drag="ignore"
+      data-testid={`final-nav-${item.id}`}
+    >
+      <span className="unified-nav-icon"><img src={`/assets/baby/nav-${item.id}.png`} alt="" aria-hidden="true" draggable={false} /></span>
+      <span className="unified-nav-label">{item.label}</span>
+    </button>)}
+  </nav>;
+}
+
 function FullScreenImagePage({
   page,
   hotspots,
   onNavigate,
   onActionTrigger,
+  onNotifications,
+  onReport,
+  onMemoryAdd,
+  staticAdd,
+  homeDate,
   summary,
   children,
 }: {
@@ -90,6 +181,11 @@ function FullScreenImagePage({
   hotspots: ImageHotspot[];
   onNavigate: (page: Page) => void;
   onActionTrigger: (trigger: HTMLButtonElement) => void;
+  onNotifications: (trigger: HTMLButtonElement) => void;
+  onReport: (trigger: HTMLButtonElement) => void;
+  onMemoryAdd?: (trigger: HTMLButtonElement) => void;
+  staticAdd?: StaticAddControl;
+  homeDate?: string;
   summary?: string;
   children?: ReactNode;
 }) {
@@ -120,18 +216,23 @@ function FullScreenImagePage({
 
         {children}
 
-        {page !== "home" ? (
+        {staticAdd ? <>
           <button
-            className="full-screen-back-hotspot"
+            className={`full-screen-static-add is-${page} app-add-button`}
             type="button"
-            aria-label="返回首页"
-            onClick={() => onNavigate("home")}
-            data-testid="final-screen-back"
-          />
-        ) : null}
+            aria-label={staticAdd.label}
+            onClick={(event) => {
+              onActionTrigger(event.currentTarget);
+              staticAdd.onClick();
+            }}
+            style={{ left: `${staticAdd.centerX}%`, top: `${staticAdd.centerY}%` }}
+            data-scroll-drag="ignore"
+            data-testid={`screen-action-${staticAdd.id}`}
+          ><PlusIcon /><span>Add</span></button>
+        </> : null}
 
         <div className="full-screen-action-hotspots" role="group" aria-label={`${screen.label} 页面功能`}>
-          {hotspots.map((hotspot) => (
+          {hotspots.filter((hotspot) => !hotspot.id.endsWith("-notifications") && !hotspot.id.endsWith("-report") && hotspot.id !== "memory-add" && hotspot.id !== staticAdd?.id).map((hotspot) => (
             <button
               key={hotspot.id}
               className={`full-screen-action-hotspot${hotspot.layer === "foreground" ? " is-foreground" : ""}`}
@@ -156,19 +257,17 @@ function FullScreenImagePage({
           ))}
         </div>
 
-        <nav className="full-screen-nav-hotspots" aria-label="主要页面">
-          {finalNavigation.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              aria-label={item.label}
-              aria-current={page === item.id ? "page" : undefined}
-              onClick={() => onNavigate(item.id)}
-              data-testid={`final-nav-${item.id}`}
-            />
-          ))}
-        </nav>
       </div>
+      <UnifiedTopNavigation
+        page={page}
+        homeDate={homeDate}
+        onBack={() => onNavigate("home")}
+        onNotifications={onNotifications}
+        onReport={onReport}
+        onMemoryAdd={onMemoryAdd}
+        variant="image"
+      />
+      <UnifiedBottomNavigation activePage={page} onNavigate={onNavigate} variant="image" />
     </main>
   );
 }
@@ -996,7 +1095,21 @@ function loadData(): AppData {
       "Sitting so tall": "坐得越来越稳。",
       "Growing steadily": "稳稳长大中。",
     };
-    let growthRecords = [...(parsed.growthRecords ?? [])]
+    const persistedGrowthRecords = [...(parsed.growthRecords ?? [])];
+    const persistedDemoGrowthRecords = persistedGrowthRecords.filter((item) => demoIds.has(item.id));
+    const legacyGrowthRecordIds = new Set(persistedGrowthRecords.filter((item) => (
+      demoIds.has(item.id)
+      || (parsed.demoMode && item.date === "2026-08-06" && item.weight === 7.2 && item.height === 66)
+    )).map((item) => item.id));
+    const hasLegacyDemoGrowthTimeline = parsed.demoMode && persistedGrowthRecords.some((item) => (
+      legacyGrowthRecordIds.has(item.id) && (
+        item.date < FIXED_BIRTH_DATE
+        || item.date > today()
+        || (item.date === "2026-08-06" && item.weight === 7.2 && item.height === 66)
+      )
+    ));
+    let growthRecords = persistedGrowthRecords
+      .filter((item) => item.date >= FIXED_BIRTH_DATE && item.date <= today())
       .sort((a, b) => +new Date(a.date) - +new Date(b.date))
       .map((item, index) => parsed.demoMode && demoIds.has(item.id)
         ? { ...item, note: item.note ? legacyGrowthNoteMap[item.note] ?? item.note : demoGrowthNotes[Math.min(index, demoGrowthNotes.length - 1)] }
@@ -1006,9 +1119,9 @@ function loadData(): AppData {
     const hasFixedBirthRecord = demoGrowthRecords.some((item) => item.date === FIXED_BIRTH_DATE
       && item.weight === FIXED_BIRTH_WEIGHT
       && item.height === FIXED_BIRTH_HEIGHT);
-    if (parsed.demoMode && !hasFixedBirthRecord) {
+    if (parsed.demoMode && (hasLegacyDemoGrowthTimeline || !hasFixedBirthRecord)) {
       const homeGrowthSeed = createHomeGrowthSeed();
-      const oldGrowthIds = new Set(demoGrowthRecords.map((item) => item.id));
+      const oldGrowthIds = legacyGrowthRecordIds;
       growthRecords = [
         ...homeGrowthSeed,
         ...growthRecords.filter((item) => !oldGrowthIds.has(item.id)),
@@ -1249,7 +1362,7 @@ function GrowthXAxisTick({ x = 0, y = 0, payload }: { x?: number; y?: number; pa
   return (
     <g transform={`translate(${x},${y})`}>
       <text x={0} y={12} textAnchor="middle" fill="#2a2823" fontSize={11.5} fontWeight={700}>{date}</text>
-      <text x={0} y={25} textAnchor="middle" fill="#655f54" fontSize={10.5}>({age})</text>
+      {age ? <text x={0} y={25} textAnchor="middle" fill="#655f54" fontSize={10.5}>({age})</text> : null}
     </g>
   );
 }
@@ -1277,11 +1390,16 @@ function homeEnglishAgeLabel(value: { months: number; days: number }) {
 function homeRelativeTime(value: string, now = Date.now()) {
   const date = parsedDate(value);
   if (!date) return "时间未知";
-  const minutes = Math.max(0, Math.round((now - date.getTime()) / 60_000));
-  if (minutes < 60) return `${minutes} 分钟前`;
+  const minutes = Math.max(0, Math.floor((now - date.getTime()) / 60_000));
+  if (minutes < 60) return `${minutes}分钟前`;
+  if (minutes >= 1_440) {
+    const days = Math.floor(minutes / 1_440);
+    const remainingHours = Math.floor((minutes % 1_440) / 60);
+    return remainingHours ? `${days}天${remainingHours}小时前` : `${days}天前`;
+  }
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
-  return rest ? `${hours} 小时 ${rest} 分钟前` : `${hours} 小时前`;
+  return rest ? `${hours}小时${rest}分钟前` : `${hours}小时前`;
 }
 
 function durationLabel(start: string, end: string) {
@@ -2540,12 +2658,14 @@ export default function Prototype() {
       const current = mergedByDate.get(item.date);
       mergedByDate.set(item.date, {
         date: item.date,
-        axisLabel: `${new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date)}|${growthAgeLabel(data.baby.birthDate, item.date)}`,
+        axisLabel: `${new Intl.DateTimeFormat("zh-CN", { month: "numeric", day: "numeric" }).format(date)}|${growthAgeLabel(FIXED_BIRTH_DATE, item.date)}`,
         height: typeof item.height === "number" ? item.height : current?.height,
         weight: typeof item.weight === "number" ? item.weight : current?.weight,
       });
     });
-    const chartData = sampleGrowthPoints(Array.from(mergedByDate.values()), 5);
+    const chartData = Array.from(mergedByDate.values()).filter((item) => typeof item.height === "number" || typeof item.weight === "number");
+    const xAxisTicks = sampleGrowthPoints(chartData, Math.min(5, chartData.length)).map((item) => item.axisLabel);
+    const showPointLabels = chartData.length <= 6;
     const hasHeight = chartData.some((item) => typeof item.height === "number");
     const hasWeight = chartData.some((item) => typeof item.weight === "number");
     const heightValues = chartData.flatMap((item) => typeof item.height === "number" ? [item.height] : []);
@@ -2558,15 +2678,6 @@ export default function Prototype() {
       : [0, 10];
     return (
       <main className="screen-content page-content journal-page growth-page" aria-label="成长曲线">
-        <header className="journal-topbar growth-topbar">
-          <DoodleButton className="growth-back" label="返回首页" onClick={goHome}><ArrowLeftIcon /></DoodleButton>
-          <h1>Growth Curve</h1>
-          <div className="growth-top-actions">
-            <DoodleButton className="notification-button" label="查看通知" onClick={() => setOverlay({ type: "notifications" })}><BellIcon /></DoodleButton>
-            <DoodleButton label="生成宝宝成长报告" onClick={() => setOverlay({ type: "report" })}><ExternalLinkIcon /></DoodleButton>
-          </div>
-        </header>
-
         <section className="growth-profile-card" aria-label={`${data.baby.name} 的出生与月龄资料`}>
           <div className="growth-profile-visual">
             <img className="growth-profile-star" src="/assets/baby/memory-ref-star-transparent-v1.png" alt="" aria-hidden="true" />
@@ -2579,23 +2690,23 @@ export default function Prototype() {
           <div className="growth-profile-stats">
             <div className="growth-profile-stat">
               <img src="/assets/baby/icon-age.png" alt="" />
-              <span>Birth date</span>
-              <strong>{growthDisplayDate(data.baby.birthDate)}</strong>
+              <span>出生日期</span>
+              <strong>{growthDisplayDate(FIXED_BIRTH_DATE)}</strong>
             </div>
             <div className="growth-profile-stat">
               <img src="/assets/baby/icon-weight.png" alt="" />
-              <span>Birth weight</span>
-              <strong>{data.baby.birthWeight ? `${data.baby.birthWeight} kg` : "Not added"}</strong>
+              <span>出生体重</span>
+              <strong>{FIXED_BIRTH_WEIGHT.toFixed(1)} kg</strong>
             </div>
             <div className="growth-profile-stat">
               <img src="/assets/baby/icon-height.png" alt="" />
-              <span>Birth height</span>
-              <strong>{data.baby.birthHeight ? `${data.baby.birthHeight.toFixed(1)} cm` : "Not added"}</strong>
+              <span>出生身高</span>
+              <strong>{FIXED_BIRTH_HEIGHT.toFixed(0)} cm</strong>
             </div>
             <div className="growth-profile-stat">
               <img src="/assets/baby/memory-ref-smile-v1.png" alt="" />
-              <span>Current age</span>
-              <strong>{age.months} months <em>{age.days} days</em></strong>
+              <span>当前月龄</span>
+              <strong>{age.months}个月 <em>{age.days}天</em></strong>
             </div>
           </div>
         </section>
@@ -2604,18 +2715,18 @@ export default function Prototype() {
           <div className="growth-chart-heading">
             <img src="/assets/baby/memory-ref-star-transparent-v1.png" alt="" aria-hidden="true" />
             <div className="growth-chart-legend" id="growth-chart-title">
-              <span><i className="growth-legend-swatch height" /> Height (cm)</span>
-              <span><i className="growth-legend-swatch weight" /> Weight (kg)</span>
+              <span><i className="growth-legend-swatch height" /> 身高（cm）</span>
+              <span><i className="growth-legend-swatch weight" /> 体重（kg）</span>
             </div>
             <img className="growth-chart-weather" src="/assets/baby/weather.png" alt="" aria-hidden="true" />
           </div>
-          <div className="growth-axis-captions" aria-hidden="true"><span>Height (cm)</span><span>Weight (kg)</span></div>
+          <div className="growth-axis-captions" aria-hidden="true"><span>身高（cm）</span><span>体重（kg）</span></div>
           <p className="visually-hidden">成长图按日期同时展示身长厘米与体重千克。当前共有 {data.growthRecords.length} 条成长记录。</p>
           <div className="growth-plot-area" role="img" aria-label={`成长曲线：按日期展示 ${data.baby.name} 的身长厘米与体重千克`}>
             {chartData.length ? <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 350, height: 200 }}>
               <LineChart data={chartData} margin={{ top: 15, right: 16, left: 16, bottom: 8 }}>
                 <CartesianGrid stroke="#c7bda9" strokeDasharray="3 5" vertical={false} />
-                <XAxis dataKey="axisLabel" height={38} interval={0} tick={<GrowthXAxisTick />} axisLine={{ stroke: "#2a2823", strokeWidth: 1 }} tickLine={false} />
+                <XAxis dataKey="axisLabel" ticks={xAxisTicks} height={38} interval={0} tick={<GrowthXAxisTick />} axisLine={{ stroke: "#2a2823", strokeWidth: 1 }} tickLine={false} />
                 {hasHeight ? <YAxis
                   yAxisId="height"
                   width={28}
@@ -2638,14 +2749,14 @@ export default function Prototype() {
                   tickLine={{ stroke: "#2a2823" }}
                 /> : null}
                 <Tooltip cursor={{ stroke: "#8c8374", strokeDasharray: "3 4" }} contentStyle={{ background: "#fffaf0", border: "1.5px solid #111", borderRadius: 10, fontFamily: "Gaegu", fontSize: 13 }} labelFormatter={(label) => String(label).split("|")[0]} />
-                {hasHeight ? <Line yAxisId="height" type="monotone" dataKey="height" name="Height (cm)" stroke="#245a98" strokeWidth={2.4} connectNulls dot={{ r: 3.6, fill: "#fff9ed", stroke: "#245a98", strokeWidth: 2 }} activeDot={{ r: 5 }}>
-                  <LabelList dataKey="height" position="top" fill="#245a98" fontSize={10.5} fontWeight={700} formatter={(value: unknown) => Number(value).toFixed(1)} />
+                {hasHeight ? <Line yAxisId="height" type="linear" dataKey="height" name="身高（cm）" stroke="#245a98" strokeWidth={2.4} connectNulls dot={{ r: 3.6, fill: "#fff9ed", stroke: "#245a98", strokeWidth: 2 }} activeDot={{ r: 5 }}>
+                  {showPointLabels ? <LabelList dataKey="height" position="top" fill="#245a98" fontSize={10.5} fontWeight={700} formatter={(value: unknown) => Number(value).toFixed(1)} /> : null}
                 </Line> : null}
-                {hasWeight ? <Line yAxisId="weight" type="monotone" dataKey="weight" name="Weight (kg)" stroke="#59682f" strokeWidth={2.4} connectNulls dot={{ r: 3.6, fill: "#fff9ed", stroke: "#59682f", strokeWidth: 2 }} activeDot={{ r: 5 }}>
-                  <LabelList dataKey="weight" position="bottom" fill="#59682f" fontSize={10.5} fontWeight={700} formatter={(value: unknown) => Number(value).toFixed(1)} />
+                {hasWeight ? <Line yAxisId="weight" type="linear" dataKey="weight" name="体重（kg）" stroke="#59682f" strokeWidth={2.4} connectNulls dot={{ r: 3.6, fill: "#fff9ed", stroke: "#59682f", strokeWidth: 2 }} activeDot={{ r: 5 }}>
+                  {showPointLabels ? <LabelList dataKey="weight" position="bottom" fill="#59682f" fontSize={10.5} fontWeight={700} formatter={(value: unknown) => Number(value).toFixed(1)} /> : null}
                 </Line> : null}
               </LineChart>
-            </ResponsiveContainer> : <div className="growth-chart-empty">Add a record to draw {data.baby.name}’s first growth line.</div>}
+            </ResponsiveContainer> : <div className="growth-chart-empty">添加第一条成长记录后，这里会自动生成曲线。</div>}
           </div>
           <img className="growth-chart-sprig" src="/assets/baby/memory-ref-sprig-transparent-v1.png" alt="" aria-hidden="true" />
           <img className="growth-chart-corgi" src="/assets/baby/corgi-companion-v2.png" alt="" aria-hidden="true" />
@@ -2654,12 +2765,12 @@ export default function Prototype() {
         <section className="growth-history-card" aria-labelledby="growth-history-title">
           <div className="growth-history-heading">
             <img src="/assets/baby/memory-ref-sprig-transparent-v1.png" alt="" aria-hidden="true" />
-            <h2 id="growth-history-title">Growth History</h2>
-            <button className="growth-add-record" type="button" onClick={() => openEditor("growth")} data-scroll-drag="ignore"><PlusIcon /> Add new record</button>
+            <h2 id="growth-history-title">成长记录</h2>
+            <button className="growth-add-record app-add-button" type="button" onClick={(event) => { lastPageActionRef.current = event.currentTarget; openEditor("growth"); }} data-scroll-drag="ignore" aria-label="新增成长记录"><PlusIcon /> Add</button>
           </div>
           <div className="growth-history-table" role="table" aria-label="成长记录历史">
             <div className="growth-history-columns" role="row">
-              <span role="columnheader">Date</span><span role="columnheader">Weight (kg)</span><span role="columnheader">Height (cm)</span><span role="columnheader">Notes</span><span role="columnheader">Edit</span>
+              <span role="columnheader">日期</span><span role="columnheader">体重（kg）</span><span role="columnheader">身高（cm）</span><span role="columnheader">备注</span><span role="columnheader">编辑</span>
             </div>
             <div className="growth-history-rows" role="rowgroup">
               {sortedGrowth.map((item, index) => (
@@ -2671,7 +2782,7 @@ export default function Prototype() {
                   <button className="growth-edit-button" type="button" onClick={() => openEditor("growth", item as unknown as Record<string, unknown>)} aria-label={`编辑 ${growthDisplayDate(item.date)} 的成长记录`} data-scroll-drag="ignore"><Pencil1Icon /></button>
                 </div>
               ))}
-              {!sortedGrowth.length ? <button className="growth-history-empty" type="button" onClick={() => openEditor("growth")}><PlusIcon /> Add {data.baby.name}’s first record</button> : null}
+              {!sortedGrowth.length ? <button className="growth-history-empty app-add-button" type="button" onClick={(event) => { lastPageActionRef.current = event.currentTarget; openEditor("growth"); }} aria-label="新增成长记录"><PlusIcon /> Add</button> : null}
             </div>
           </div>
         </section>
@@ -2737,12 +2848,14 @@ export default function Prototype() {
         {healthTab === "vaccine" ? <section id="health-panel-vaccine" className="vaccine-schedule-panel" role="tabpanel" aria-labelledby="health-tab-vaccine" data-testid="health-vaccine-panel">
           <header className="vaccine-schedule-intro">
             <div className="vaccine-intro-copy">
-              <h2>硕之的接种时间表</h2>
+              <h2>疫苗接种</h2>
               <span>宝宝疫苗接种指南</span>
-              <p>已记录 <strong>{completedVaccineCount}</strong> 条接种记录 · {sortedVaccines.length} 条时间参考</p>
+              <p>
+                <span>已记录 <strong>{completedVaccineCount}</strong> 条接种记录</span>
+              </p>
             </div>
             <span className="vaccine-intro-art" aria-hidden="true"><img src="/assets/baby/health-vaccine-hero-reference-v2.png" alt="" /></span>
-            <button className="vaccine-add-button" type="button" onClick={() => openEditor("vaccine")} aria-label="新增其他疫苗记录" data-scroll-drag="ignore"><PlusIcon /> Add</button>
+            <button className="vaccine-add-button app-add-button" type="button" onClick={(event) => { lastPageActionRef.current = event.currentTarget; openEditor("vaccine"); }} aria-label="新增其他疫苗记录" data-scroll-drag="ignore"><PlusIcon /> Add</button>
           </header>
 
           <div className="vaccine-age-list">
@@ -2819,15 +2932,15 @@ export default function Prototype() {
         {healthTab === "ability" ? <section id="health-panel-ability" className="health-secondary-panel health-development-panel" role="tabpanel" aria-labelledby="health-tab-ability" data-testid="health-development-panel">
           <header className="health-secondary-intro health-secondary-intro-development">
             <div className="health-secondary-intro-copy">
-              <h2>硕之的发育里程碑</h2>
+              <h2>发育里程碑</h2>
               <p>每一次小小进步，都值得珍藏</p>
               <span>已记录 <strong>{sortedAbilities.length}</strong> 个里程碑</span>
             </div>
             <span className="health-secondary-intro-art health-development-intro-art" aria-hidden="true">
-              <img className="health-secondary-intro-bear" src="/assets/baby/health-development-hero-bear-reference-v2.png" alt="" />
-              <img className="health-development-intro-baby" src="/assets/baby/health-development-hero-baby-reference-v2.png" alt="" />
+              <img className="health-secondary-intro-bear" src="/assets/baby/health-development-hero-bear-reference-v3.png" alt="" />
+              <img className="health-development-intro-baby" src="/assets/baby/health-development-hero-baby-reference-v3.png" alt="" />
             </span>
-            <button type="button" onClick={() => openEditor("ability")} aria-label="新增发育里程碑" data-scroll-drag="ignore"><PlusIcon /> Add</button>
+            <button className="app-add-button" type="button" onClick={(event) => { lastPageActionRef.current = event.currentTarget; openEditor("ability"); }} aria-label="新增发育里程碑" data-scroll-drag="ignore"><PlusIcon /> Add</button>
           </header>
           <div className="health-secondary-list health-development-list" aria-label="发育里程碑记录">
             {sortedAbilities.map((item) => {
@@ -2852,7 +2965,7 @@ export default function Prototype() {
         {healthTab === "checkup" ? <section id="health-panel-checkup" className="health-secondary-panel health-checkup-panel" role="tabpanel" aria-labelledby="health-tab-checkup" data-testid="health-checkup-panel">
           <header className="health-secondary-intro health-secondary-intro-checkup">
             <div className="health-secondary-intro-copy">
-              <h2>硕之的儿保记录</h2>
+              <h2>儿保记录</h2>
               <p>把每次检查与建议，温柔收好</p>
               <span>已保存 <strong>{sortedCheckups.length}</strong> 次儿保记录</span>
             </div>
@@ -2860,7 +2973,7 @@ export default function Prototype() {
               <img className="health-secondary-intro-bear" src="/assets/baby/health-checkup-hero-bear-reference-v2.png" alt="" />
               <img className="health-secondary-intro-symbol" src="/assets/baby/health-checkup-hero-stethoscope-reference-v2.png" alt="" />
             </span>
-            <button type="button" onClick={() => openEditor("checkup")} aria-label="新增儿保记录" data-scroll-drag="ignore"><PlusIcon /> Add</button>
+            <button className="app-add-button" type="button" onClick={(event) => { lastPageActionRef.current = event.currentTarget; openEditor("checkup"); }} aria-label="新增儿保记录" data-scroll-drag="ignore"><PlusIcon /> Add</button>
           </header>
           <div className="health-secondary-list checkup-record-list" aria-label="儿保记录">
             {sortedCheckups.map((item) => {
@@ -3068,7 +3181,8 @@ export default function Prototype() {
     const measurement = (value: number | undefined) => value === undefined ? "—" : String(Number(value.toFixed(2)));
 
     return <div className="home-live-overlay" data-testid="home-live-overlay">
-      <time className="home-live-date" dateTime={localDateValue(new Date(homeNow))}>{homeDateHeading(homeNow)}</time>
+      <img className="home-live-name-patch" src="/assets/baby/home-name-regular-script-v2.png" alt="" aria-hidden="true" draggable={false} />
+      <img className="home-live-tagline-patch" src="/assets/baby/home-tagline-growing-v2.png" alt="" aria-hidden="true" draggable={false} />
       <p className="home-live-age" lang="en">{homeEnglishAgeLabel(age)}</p>
 
       <button className="home-live-metric home-live-weight" type="button" onClick={(event) => rememberHomeTrigger(event, openCurrentGrowthEditor)} aria-label={`修改当前体重，现在是 ${weight ?? "未填写"} 千克`} data-scroll-drag="ignore">
@@ -3084,46 +3198,55 @@ export default function Prototype() {
         <span>{age.days}天</span>
       </button>
 
-      <div className="home-live-card-copy home-live-feeding-summary">
-        <span>上次喂奶</span>
-        <strong>{lastFeed ? homeRelativeTime(lastFeed.time, homeNow) : "暂无记录"}</strong>
-      </div>
-      <div className="home-live-card-copy home-live-feeding-details">
-        <span>时间：<strong>{lastFeed ? displayTime(lastFeed.time) : "--:--"}</strong></span>
-        <span>奶量：<strong>{lastFeed ? `${lastFeed.amount} ml` : "未记录"}</strong></span>
-        <span>类型：<strong>{lastFeed ? homeMilkLabel(lastFeed.milkType) : "未记录"}</strong></span>
-      </div>
+      <section className="home-live-care-card home-live-card--feeding" aria-label="喂养摘要">
+        <div className="home-live-care-summary">
+          <span>上次喂奶</span>
+          <strong>{lastFeed ? homeRelativeTime(lastFeed.time, homeNow) : "暂无记录"}</strong>
+        </div>
+        <div className="home-live-feeding-details">
+          <span><b>时间：</b><strong>{lastFeed ? displayTime(lastFeed.time) : "--:--"}</strong></span>
+          <span><b>奶量：</b><strong>{lastFeed ? `${lastFeed.amount} ml` : "未记录"}</strong></span>
+          <span><b>类型：</b><strong>{lastFeed ? homeMilkLabel(lastFeed.milkType) : "未记录"}</strong></span>
+        </div>
+      </section>
 
-      <div className="home-live-card-copy home-live-sleep-summary">
-        <span>最近睡眠</span>
-        <strong>{lastSleep ? `${displayTime(lastSleep.start)} - ${displayTime(lastSleep.end)}` : "暂无记录"}</strong>
-      </div>
-      <div className="home-live-card-copy home-live-sleep-total">
-        <span>今日总时长</span>
-        <strong>{homeMinutesLabel(todaySleepMinutes)}</strong>
-      </div>
+      <section className="home-live-care-card home-live-card--sleep" aria-label="睡眠摘要">
+        <div className="home-live-care-summary">
+          <span>最近睡眠</span>
+          <strong>{lastSleep ? `${displayTime(lastSleep.start)}–${displayTime(lastSleep.end)}` : "暂无记录"}</strong>
+        </div>
+        <div className="home-live-sleep-total">
+          <span>今日总时长</span>
+          <strong>{homeMinutesLabel(todaySleepMinutes)}</strong>
+        </div>
+      </section>
 
-      <div className="home-live-card-copy home-live-poop-latest">
-        <span>最新记录</span>
-        <strong>{lastPoop ? displayTime(lastPoop.time) : "--:--"}</strong>
-      </div>
-      <div className="home-live-card-copy home-live-poop-count">
-        <span>今日</span>
-        <strong>{todayPoopCount} 次</strong>
-      </div>
-      <button className={`home-live-check home-live-poop-check${poopCheckPulse ? " is-checked" : ""}`} type="button" onClick={(event) => rememberHomeTrigger(event, quickLogPoop)} aria-label={`记录现在便便，今日已记录 ${todayPoopCount} 次`} data-scroll-drag="ignore">
-        <span aria-hidden="true">{poopCheckPulse ? <CheckIcon /> : null}</span>
-        <b>记录</b>
-      </button>
+      <section className="home-live-care-card home-live-card--poop" aria-label="便便摘要">
+        <div className="home-live-care-summary home-live-care-summary--inline">
+          <span>最新记录</span>
+          <strong>{lastPoop ? displayTime(lastPoop.time) : "--:--"}</strong>
+        </div>
+        <div className="home-live-care-action-row">
+          <p><span>今日</span><strong>{todayPoopCount}次</strong></p>
+          <button className={`home-live-check${poopCheckPulse ? " is-checked" : ""}`} type="button" onClick={(event) => rememberHomeTrigger(event, quickLogPoop)} aria-label={`记录现在便便，今日已记录 ${todayPoopCount} 次`} data-scroll-drag="ignore">
+            <span aria-hidden="true">{poopCheckPulse ? <CheckIcon /> : null}</span>
+            <b>记录</b>
+          </button>
+        </div>
+      </section>
 
-      <div className="home-live-card-copy home-live-health-copy">
-        <span>Vitamin D</span>
-        <strong>{vitaminDCompleted ? "今天已服用" : "今天未服用"}</strong>
-      </div>
-      <button className={`home-live-check home-live-health-check${vitaminDCompleted ? " is-checked" : ""}`} type="button" onClick={(event) => rememberHomeTrigger(event, quickToggleVitaminD)} aria-label={`${vitaminDCompleted ? "取消" : "确认"}今天服用维生素 D`} aria-pressed={vitaminDCompleted} data-scroll-drag="ignore">
-        <span aria-hidden="true">{vitaminDCompleted ? <CheckIcon /> : null}</span>
-        <b>{vitaminDCompleted ? "已确认" : "点击确认"}</b>
-      </button>
+      <section className="home-live-care-card home-live-card--health" aria-label="健康摘要">
+        <div className="home-live-care-summary">
+          <span>Vitamin D</span>
+        </div>
+        <div className="home-live-care-action-row home-live-care-action-row--health">
+          <p><strong>{vitaminDCompleted ? "今天已服用" : "今天未服用"}</strong></p>
+          <button className={`home-live-check${vitaminDCompleted ? " is-checked" : ""}`} type="button" onClick={(event) => rememberHomeTrigger(event, quickToggleVitaminD)} aria-label={`${vitaminDCompleted ? "取消" : "确认"}今天服用维生素 D`} aria-pressed={vitaminDCompleted} data-scroll-drag="ignore">
+            <span aria-hidden="true">{vitaminDCompleted ? <CheckIcon /> : null}</span>
+            <b>确认</b>
+          </button>
+        </div>
+      </section>
 
       <div className="home-live-todos" aria-label="Today's To-do">
         {visibleHomeTodos.map((item, index) => <div className="home-live-todo-row" key={item.id} style={{ top: `${82.75 + index * 3.48}%` }}>
@@ -3292,18 +3415,41 @@ export default function Prototype() {
     ];
   };
 
-  const navigatePage = (nextPage: Page) => {
+  const navigatePage = (nextPage: Page, restoreKeyboardFocus = false) => {
     keyboard.hide();
     setPage(nextPage);
-    requestAnimationFrame(() => {
-      document.querySelector<HTMLButtonElement>(`[data-testid="final-nav-${nextPage}"]`)?.focus({ preventScroll: true });
-    });
+    if (restoreKeyboardFocus) {
+      requestAnimationFrame(() => {
+        document.querySelector<HTMLButtonElement>(`[data-testid="final-nav-${nextPage}"]`)?.focus({ preventScroll: true });
+      });
+    }
   };
 
   const renderPage = () => {
     const homeSummary = page === "home"
       ? `${homeDateHeading(homeNow)}，硕之出生 ${homeEnglishAgeLabel(age)}。当前体重 ${latestWeightRecord?.weight ?? "未填写"} kg，身高 ${latestHeightRecord?.height ?? "未填写"} cm，出生体重 ${FIXED_BIRTH_WEIGHT} kg，出生身高 ${FIXED_BIRTH_HEIGHT} cm。今日睡眠 ${homeMinutesLabel(todaySleepMinutes)}，便便 ${todayPoopCount} 次，维生素 D ${todayVitaminD?.completed ? "已服用" : "未服用"}。`
       : undefined;
+    const openHeaderNotifications = (trigger: HTMLButtonElement) => {
+      lastPageActionRef.current = trigger;
+      setOverlay({ type: "notifications" });
+    };
+    const openHeaderReport = (trigger: HTMLButtonElement) => {
+      lastPageActionRef.current = trigger;
+      setOverlay({ type: "report" });
+    };
+    if (page === "growth") {
+      return <div className="growth-dynamic-shell">
+        <UnifiedTopNavigation
+          page="growth"
+          onBack={() => navigatePage("home")}
+          onNotifications={openHeaderNotifications}
+          onReport={openHeaderReport}
+          variant="dynamic"
+        />
+        <MobileScroll className="growth-dynamic-scroll">{renderGrowth()}</MobileScroll>
+        <UnifiedBottomNavigation activePage="growth" onNavigate={navigatePage} variant="dynamic" />
+      </div>;
+    }
     if (page === "health") {
       const healthTabs: { value: HealthTab; label: string }[] = [
         { value: "vaccine", label: "疫苗" },
@@ -3311,15 +3457,14 @@ export default function Prototype() {
         { value: "checkup", label: "儿保" },
       ];
       return <div className="health-dynamic-shell">
+        <UnifiedTopNavigation
+          page="health"
+          onBack={() => navigatePage("home")}
+          onNotifications={openHeaderNotifications}
+          onReport={openHeaderReport}
+          variant="dynamic"
+        />
         <div className="health-dynamic-chrome">
-          <header className="health-dynamic-topbar">
-            <button type="button" onClick={() => navigatePage("home")} aria-label="返回首页" data-scroll-drag="ignore"><ArrowLeftIcon /></button>
-            <h1>健康记录</h1>
-            <div>
-              <button className="notification-button" type="button" onClick={(event) => { lastPageActionRef.current = event.currentTarget; setOverlay({ type: "notifications" }); }} aria-label="查看通知" data-scroll-drag="ignore"><BellIcon /></button>
-              <button type="button" onClick={(event) => { lastPageActionRef.current = event.currentTarget; setOverlay({ type: "report" }); }} aria-label="生成并分享宝宝报告" data-scroll-drag="ignore"><ExternalLinkIcon /></button>
-            </div>
-          </header>
           <SegmentedTabs
             className="journal-tabs health-dynamic-tabs"
             values={healthTabs}
@@ -3334,30 +3479,32 @@ export default function Prototype() {
 
         <MobileScroll key={healthTab} className="health-dynamic-scroll">{renderHealth()}</MobileScroll>
 
-        <nav className="bottom-navigation health-dynamic-navigation" aria-label="主导航">
-          {finalNavigation.map((item) => <button
-            key={item.id}
-            className={item.id === "health" ? "active" : ""}
-            type="button"
-            onClick={(event) => {
-              navigatePage(item.id);
-              if (event.detail > 0) {
-                const trigger = event.currentTarget;
-                requestAnimationFrame(() => trigger.blur());
-              }
-            }}
-            aria-label={`前往 ${item.label}`}
-            aria-current={item.id === "health" ? "page" : undefined}
-            data-testid={`final-nav-${item.id}`}
-            data-scroll-drag="ignore"
-          >
-            <span className="nav-icon-window"><img src={`/assets/baby/nav-${item.id}.png`} alt="" aria-hidden="true" draggable={false} /></span>
-            <span>{item.label}</span>
-          </button>)}
-        </nav>
+        <UnifiedBottomNavigation activePage="health" onNavigate={navigatePage} variant="dynamic" />
       </div>;
     }
-    return <FullScreenImagePage page={page} hotspots={imageHotspots()} onNavigate={navigatePage} onActionTrigger={(trigger) => { lastPageActionRef.current = trigger; }} summary={homeSummary}>
+    const openHeaderMemoryAdd = (trigger: HTMLButtonElement) => {
+      lastPageActionRef.current = trigger;
+      openNewMemory("moment");
+    };
+    const staticAdd: StaticAddControl | undefined = page === "home"
+      ? { id: "home-add-todo", label: "管理今日待办", centerX: 84.06, centerY: 80.34, onClick: openTodoLibrary }
+      : page === "education"
+        ? { id: "education-add-music", label: "新增音乐", centerX: 66.35, centerY: 19.18, onClick: () => openEditor("music") }
+        : page === "study"
+          ? { id: "study-add", label: "新增学习卡", centerX: 68.17, centerY: 18.79, onClick: () => openNewLearning("english") }
+          : undefined;
+    return <FullScreenImagePage
+      page={page}
+      hotspots={imageHotspots()}
+      onNavigate={navigatePage}
+      onActionTrigger={(trigger) => { lastPageActionRef.current = trigger; }}
+      onNotifications={openHeaderNotifications}
+      onReport={openHeaderReport}
+      onMemoryAdd={page === "memory" ? openHeaderMemoryAdd : undefined}
+      staticAdd={staticAdd}
+      homeDate={page === "home" ? homeDateHeading(homeNow) : undefined}
+      summary={homeSummary}
+    >
       {page === "home" ? renderHomeLiveOverlay() : null}
     </FullScreenImagePage>;
   };

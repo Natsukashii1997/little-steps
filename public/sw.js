@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "little-steps-pwa";
-const CACHE_VERSION = "v5-health-reference-ui";
+const CACHE_VERSION = "v9-development-hero-layout";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 
 const CORE_ASSETS = [
@@ -10,13 +10,16 @@ const CORE_ASSETS = [
   "/assets/app-icons/icon-192.png",
   "/assets/app-icons/icon-512.png",
   "/assets/app-icons/icon-maskable-512.png",
-  "/assets/baby/final-screens/zh-CN/01-home-dynamic.png",
-  "/assets/baby/final-screens/zh-CN/02-memory-book.png",
+  "/assets/baby/final-screens/zh-CN/01-home-dynamic-add-clean.png",
+  "/assets/baby/final-screens/zh-CN/02-memory-book-home-paper-v1.png",
   "/assets/baby/final-screens/zh-CN/03-growth-curve.png",
   "/assets/baby/final-screens/zh-CN/04-health-record.png",
-  "/assets/baby/final-screens/zh-CN/05-early-education.png",
-  "/assets/baby/final-screens/zh-CN/06-study-record.png",
+  "/assets/baby/final-screens/zh-CN/05-early-education-add-clean-home-paper-v1.png",
+  "/assets/baby/final-screens/zh-CN/06-study-record-add-clean-home-paper-v1.png",
+  "/assets/baby/home-name-regular-script-v2.png",
+  "/assets/baby/home-tagline-growing-v2.png",
   "/assets/baby/paper-texture.png",
+  "/assets/baby/paper-texture-home-v1.png",
   "/assets/baby/icon-age.png",
   "/assets/baby/icon-health.png",
   "/assets/baby/nav-home.png",
@@ -43,7 +46,9 @@ const CORE_ASSETS = [
   "/assets/baby/health-checkup-four-month-v2.png",
   "/assets/baby/health-vaccine-hero-reference-v2.png",
   "/assets/baby/health-development-hero-bear-reference-v2.png",
+  "/assets/baby/health-development-hero-bear-reference-v3.png",
   "/assets/baby/health-development-hero-baby-reference-v2.png",
+  "/assets/baby/health-development-hero-baby-reference-v3.png",
   "/assets/baby/health-checkup-hero-bear-reference-v2.png",
   "/assets/baby/health-checkup-hero-stethoscope-reference-v2.png",
   "/assets/baby/health-development-tummy-time-reference-v2.png",
