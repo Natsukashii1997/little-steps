@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "little-steps-pwa";
-const CACHE_VERSION = "v4-zh-cn-health-journal";
+const CACHE_VERSION = "v5-health-reference-ui";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 
 const CORE_ASSETS = [
@@ -41,6 +41,14 @@ const CORE_ASSETS = [
   "/assets/baby/health-checkup-newborn-v2.png",
   "/assets/baby/health-checkup-one-month-v2.png",
   "/assets/baby/health-checkup-four-month-v2.png",
+  "/assets/baby/health-vaccine-hero-reference-v2.png",
+  "/assets/baby/health-development-hero-bear-reference-v2.png",
+  "/assets/baby/health-development-hero-baby-reference-v2.png",
+  "/assets/baby/health-checkup-hero-bear-reference-v2.png",
+  "/assets/baby/health-checkup-hero-stethoscope-reference-v2.png",
+  "/assets/baby/health-development-tummy-time-reference-v2.png",
+  "/assets/baby/health-development-rollover-reference-v2.png",
+  "/assets/baby/health-development-sitting-reference-v2.png",
 ];
 
 async function precacheAppShell() {

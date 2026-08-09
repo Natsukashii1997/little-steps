@@ -246,7 +246,7 @@ type Vaccine = {
   choiceGroup?: string;
 };
 type Ability = { id: string; date: string; name: string; description: string; imageId?: string };
-type Checkup = { id: string; date: string; name: string; tips: string };
+type Checkup = { id: string; date: string; name: string; tips: string; completedDate?: string };
 type MusicTrack = {
   id: string;
   name: string;
@@ -265,6 +265,8 @@ type LearningItem = {
   artworkKey?: StudyArtworkKey;
 };
 type AppData = {
+  healthDataVersion: number;
+  demoVaccineCompletionKeys: string[];
   demoMode: boolean;
   demoRecordIds: string[];
   baby: Baby;
@@ -407,7 +409,15 @@ const normalizeCheckup = (item: JsonRecord): Checkup | undefined => {
   const id = requiredString(item.id);
   const date = validDateOnlyString(item.date);
   const name = requiredString(item.name);
-  return id && date && name ? { id, date, name, tips: optionalString(item.tips) ?? "" } : undefined;
+  return id && date && name
+    ? {
+        id,
+        date,
+        name,
+        tips: optionalString(item.tips) ?? "",
+        completedDate: validDateOnlyString(item.completedDate),
+      }
+    : undefined;
 };
 const normalizeMusicTrack = (item: JsonRecord): MusicTrack | undefined => {
   const id = requiredString(item.id);
@@ -472,6 +482,8 @@ const DAY = 86_400_000;
 const FIXED_BIRTH_DATE = "2026-08-04";
 const FIXED_BIRTH_WEIGHT = 2.4;
 const FIXED_BIRTH_HEIGHT = 48;
+const CURRENT_HEALTH_DATA_VERSION = 2;
+const DEFAULT_DEMO_VACCINE_COMPLETION_KEYS = ["birth-bcg-1", "birth-hepb-1"] as const;
 
 type VaccineScheduleDefinition = {
   key: string;
@@ -613,10 +625,10 @@ function mergeVaccineSchedule(existing: Vaccine[], legacyDemoIds = new Set<strin
         && vaccineDoseNumber(item.dose) === vaccineDoseNumber(base.dose));
     const previous = exactPrevious ?? legacyPrevious;
     if (previous) usedIds.add(previous.id);
-    const completedDate = exactPrevious?.completedDate
-      && exactPrevious.completedDate >= FIXED_BIRTH_DATE
-      && exactPrevious.completedDate <= today()
-      ? exactPrevious.completedDate
+    const completedDate = previous?.completedDate
+      && previous.completedDate >= FIXED_BIRTH_DATE
+      && previous.completedDate <= today()
+      ? previous.completedDate
       : undefined;
     return {
       ...base,
@@ -643,14 +655,18 @@ function createMemoryBookSeed(highlightAbilityId?: string): Memory[] {
 
 function createHealthRecordSeed() {
   const highlightAbilityId = uid();
-  const vaccines = createVaccineScheduleSeed();
+  const vaccines = createVaccineScheduleSeed().map((item) => (
+    item.scheduleKey === "birth-bcg-1" || item.scheduleKey === "birth-hepb-1"
+      ? { ...item, completedDate: FIXED_BIRTH_DATE }
+      : item
+  ));
   const abilities: Ability[] = [
     { id: highlightAbilityId, date: "2026-08-05", name: "短暂抬头", description: "俯卧时能短暂抬起小脑袋。" },
     { id: uid(), date: "2026-08-06", name: "注视人脸", description: "能短暂注视爸爸妈妈的脸。" },
     { id: uid(), date: "2026-08-08", name: "四肢活动", description: "清醒时会有力地挥动手脚。" },
   ];
   const checkups: Checkup[] = [
-    { id: uid(), date: "2026-08-06", name: "新生儿访视", tips: "观察喂养、黄疸和脐部护理。" },
+    { id: uid(), date: "2026-08-08", name: "新生儿访视", tips: "观察喂养、睡眠和黄疸变化。", completedDate: "2026-08-08" },
     { id: uid(), date: "2026-09-04", name: "满月儿保", tips: "记录体重、身长与头围变化。" },
     { id: uid(), date: "2026-12-04", name: "4月龄儿保", tips: "多练习俯趴，并关注追视和抬头。" },
   ];
@@ -773,6 +789,8 @@ function createSeedData(): AppData {
   const studySeed = createStudySeed();
   const { highlightAbilityId } = healthSeed;
   const seed: AppData = {
+    healthDataVersion: CURRENT_HEALTH_DATA_VERSION,
+    demoVaccineCompletionKeys: [...DEFAULT_DEMO_VACCINE_COMPLETION_KEYS],
     demoMode: true,
     demoRecordIds: [],
     baby: { name: "硕之", birthDate: sampleBirthDate(), birthWeight: FIXED_BIRTH_WEIGHT, birthHeight: FIXED_BIRTH_HEIGHT },
@@ -830,6 +848,10 @@ function loadData(): AppData {
     const fallback = createSeedData();
     const rawBaby = isJsonRecord(raw.baby) ? raw.baby : {};
     const parsed: AppData = {
+      healthDataVersion: optionalNumber(raw.healthDataVersion) ?? 0,
+      demoVaccineCompletionKeys: Array.isArray(raw.demoVaccineCompletionKeys)
+        ? raw.demoVaccineCompletionKeys.filter((key): key is string => typeof key === "string")
+        : [],
       demoMode: typeof raw.demoMode === "boolean" ? raw.demoMode : false,
       demoRecordIds: Array.isArray(raw.demoRecordIds) ? raw.demoRecordIds.filter((id): id is string => typeof id === "string") : [],
       baby: {
@@ -876,8 +898,33 @@ function loadData(): AppData {
     const persistedVaccines = parsed.vaccines ?? [];
     const legacyDemoVaccineIds = new Set(persistedVaccines.filter((item) => demoIds.has(item.id)).map((item) => item.id));
     let vaccines = mergeVaccineSchedule(persistedVaccines, legacyDemoVaccineIds);
+    const validScheduleKeys = new Set(VACCINE_SCHEDULE.map((item) => item.key));
+    const demoVaccineCompletionKeys = new Set(parsed.demoVaccineCompletionKeys.filter((key) => validScheduleKeys.has(key)));
+    if (parsed.healthDataVersion < CURRENT_HEALTH_DATA_VERSION && parsed.demoMode) {
+      DEFAULT_DEMO_VACCINE_COMPLETION_KEYS.forEach((scheduleKey) => {
+        const merged = vaccines.find((item) => item.scheduleKey === scheduleKey);
+        if (merged?.completedDate) return;
+        vaccines = vaccines.map((item) => item.scheduleKey === scheduleKey
+          ? { ...item, completedDate: FIXED_BIRTH_DATE }
+          : item);
+        demoVaccineCompletionKeys.add(scheduleKey);
+      });
+    }
     let abilities = parsed.abilities ?? [];
-    let checkups = parsed.checkups ?? [];
+    let checkups: Checkup[] = (parsed.checkups ?? []).map((item) => {
+      const validCompletedDate = item.completedDate
+        && item.completedDate >= FIXED_BIRTH_DATE
+        && item.completedDate <= today()
+        ? item.completedDate
+        : undefined;
+      const legacyCompletedDate = parsed.healthDataVersion < CURRENT_HEALTH_DATA_VERSION
+        && !validCompletedDate
+        && item.date >= FIXED_BIRTH_DATE
+        && item.date <= today()
+        ? item.date
+        : undefined;
+      return { ...item, completedDate: validCompletedDate ?? legacyCompletedDate };
+    });
     let healthMemories = migratedMemories;
     let healthDemoIds = migratedDemoIds.filter((id) => !legacyDemoVaccineIds.has(id) && !id.startsWith("vaccine-schedule-"));
     const hasCurrentHealthSeed = abilities.some((item) => item.name === "短暂抬头")
@@ -997,6 +1044,8 @@ function loadData(): AppData {
     };
     return {
       ...parsed,
+      healthDataVersion: CURRENT_HEALTH_DATA_VERSION,
+      demoVaccineCompletionKeys: [...demoVaccineCompletionKeys],
       baby,
       demoMode: parsed.demoMode ?? false,
       demoRecordIds: finalDemoIds,
@@ -1392,7 +1441,13 @@ function SegmentedTabs<T extends string>({
           aria-controls={typeof panelId === "function" ? panelId(item.value) : panelId}
           tabIndex={active === item.value ? 0 : -1}
           className={active === item.value ? "active" : ""}
-          onClick={() => onChange(item.value)}
+          onClick={(event) => {
+            onChange(item.value);
+            if (event.detail > 0) {
+              const trigger = event.currentTarget;
+              requestAnimationFrame(() => trigger.blur());
+            }
+          }}
           onKeyDown={(event) => moveFocus(event, index)}
           data-scroll-drag="ignore"
         >
@@ -1538,8 +1593,14 @@ export default function Prototype() {
     .filter((item) => item.completedDate && item.choiceGroup)
     .map((item) => item.choiceGroup as string)), [data.vaccines]);
   const nextVaccine = useMemo(() => {
+    const selectedByFamily = new Map<string | undefined, string>();
+    selectedVaccineChoiceGroups.forEach((choiceGroup) => selectedByFamily.set(vaccineChoiceFamily(choiceGroup), choiceGroup));
     const pending = data.vaccines
-      .filter((item) => !item.completedDate && (!item.choiceGroup || selectedVaccineChoiceGroups.has(item.choiceGroup)))
+      .filter((item) => {
+        if (item.completedDate || !item.choiceGroup) return !item.completedDate;
+        const selected = selectedByFamily.get(vaccineChoiceFamily(item.choiceGroup));
+        return !selected || selected === item.choiceGroup;
+      })
       .sort((a, b) => a.dueDate.localeCompare(b.dueDate) || (a.scheduleOrder ?? 9_999) - (b.scheduleOrder ?? 9_999));
     return pending.find((item) => item.dueDate < today())
       ?? pending.find((item) => item.dueDate >= today());
@@ -1620,6 +1681,10 @@ export default function Prototype() {
         if (typeof value === "boolean") base[key] = value;
       });
       if (kind === "ability" && typeof item.id === "string") base.syncMemory = data.memories.some((memory) => memory.sourceAbilityId === item.id);
+      if (kind === "checkup") {
+        base.completed = Boolean(item.completedDate);
+        base.completedDate = typeof item.completedDate === "string" ? item.completedDate : today();
+      }
     }
     if (!item) {
       if (["feeding", "diaper"].includes(kind)) base.time = dateTimeLocal();
@@ -1641,6 +1706,10 @@ export default function Prototype() {
       if (kind === "supplement") base.completed = true;
       if (kind === "memory") base.type = memoryFilter === "all" ? "moment" : memoryFilter;
       if (kind === "ability") base.syncMemory = true;
+      if (kind === "checkup") {
+        base.completed = false;
+        base.completedDate = today();
+      }
       if (kind === "learning") {
         base.kind = studyTab;
         base.artworkKey = "apple";
@@ -1746,6 +1815,13 @@ export default function Prototype() {
     if (kind === "memory" && draftValue("type") === "photo" && !editingId && !upload) return void fail("请先选择一张宝宝照片");
     if (kind === "memory" && upload && !upload.type.startsWith("image/")) return void fail("请选择 JPG、PNG 或 HEIC 图片");
     if (kind === "memory" && upload && upload.size > 12 * 1024 * 1024) return void fail("照片请控制在 12 MB 以内");
+    if (kind === "memory" && draftValue("sourceAbilityId")) {
+      const sourceAbilityId = draftValue("sourceAbilityId");
+      if (!data.abilities.some((item) => item.id === sourceAbilityId)) return void fail("关联的发育里程碑已不存在，请返回健康记录重新添加");
+      if (draftValue("date") < FIXED_BIRTH_DATE) return void fail("发育记录不能早于出生日期");
+      if (draftValue("date") > today()) return void fail("发育记录不能晚于今天");
+      if (data.abilities.some((item) => item.id !== sourceAbilityId && item.date === draftValue("date") && item.name.trim() === draftValue("title").trim())) return void fail("这一天已经记录过同名里程碑");
+    }
     if (kind === "growth" && (!required("date") || (!draftValue("height").trim() && !draftValue("weight").trim()))) return void fail("请填写日期，并至少记录身长或体重中的一项");
     if (kind === "growth" && draftValue("date") < FIXED_BIRTH_DATE) return void fail("测量日期不能早于出生日期");
     if (kind === "growth" && draftValue("date") > today()) return void fail("测量日期不能晚于今天");
@@ -1768,6 +1844,7 @@ export default function Prototype() {
     if (kind === "ability" && upload && upload.size > 12 * 1024 * 1024) return void fail("发育示意图请控制在 12 MB 以内");
     if (kind === "checkup" && !required("date", "name", "tips")) return void fail("请补全儿保信息");
     if (kind === "checkup" && draftValue("date") < FIXED_BIRTH_DATE) return void fail("儿保日期不能早于出生日期");
+    if (kind === "checkup" && Boolean(draft.completed) && (!draftValue("completedDate") || draftValue("completedDate") < FIXED_BIRTH_DATE || draftValue("completedDate") > today())) return void fail("完成日期需要在出生日期至今天之间");
     if (kind === "checkup" && data.checkups.some((item) => item.id !== editingId && item.date === draftValue("date") && item.name.trim() === draftValue("name").trim())) return void fail("这一天已经记录过同名儿保项目");
     if (kind === "music" && !required("name", "artist")) return void fail("请填写音乐名称与来源");
     if (kind === "music" && !upload && !draftValue("assetId")) return void fail("请选择一段音频");
@@ -1803,6 +1880,7 @@ export default function Prototype() {
         ...data,
         demoMode: shouldClearDemo ? false : data.demoMode,
         demoRecordIds: shouldClearDemo ? [] : data.demoRecordIds,
+        demoVaccineCompletionKeys: shouldClearDemo ? [] : data.demoVaccineCompletionKeys,
         baby: {
           name: "硕之",
           birthDate: FIXED_BIRTH_DATE,
@@ -1819,7 +1897,12 @@ export default function Prototype() {
         next.todos = data.todos.filter((item) => !demoIds.has(item.id));
         next.memories = data.memories.filter((item) => !demoIds.has(item.id));
         next.growthRecords = ensureFixedBirthGrowthRecord(data.growthRecords.filter((item) => !demoIds.has(item.id)));
-        next.vaccines = data.vaccines.filter((item) => !demoIds.has(item.id));
+        const demoVaccineKeys = new Set(data.demoVaccineCompletionKeys);
+        next.vaccines = data.vaccines
+          .filter((item) => !demoIds.has(item.id))
+          .map((item) => item.scheduleKey && demoVaccineKeys.has(item.scheduleKey)
+            ? { ...item, completedDate: undefined }
+            : item);
         next.abilities = data.abilities.filter((item) => !demoIds.has(item.id));
         next.checkups = data.checkups.filter((item) => !demoIds.has(item.id));
         next.musicTracks = data.musicTracks.filter((item) => !demoIds.has(item.id));
@@ -1898,7 +1981,13 @@ export default function Prototype() {
       });
     }
     if (kind === "checkup") {
-      const item: Checkup = { id, date: draftValue("date"), name: draftValue("name"), tips: draftValue("tips") };
+      const item: Checkup = {
+        id,
+        date: draftValue("date"),
+        name: draftValue("name"),
+        tips: draftValue("tips"),
+        completedDate: Boolean(draft.completed) ? draftValue("completedDate") : undefined,
+      };
       setData((current) => ({ ...current, checkups: upsertById(current.checkups, item) }));
     }
     if (kind === "music") {
@@ -2069,10 +2158,16 @@ export default function Prototype() {
         return false;
       }
     }
-    setData((current) => ({
-      ...current,
-      vaccines: current.vaccines.map((item) => item.id === id ? { ...item, completedDate: completedDate || undefined } : item),
-    }));
+    setData((current) => {
+      const currentItem = current.vaccines.find((candidate) => candidate.id === id);
+      return {
+        ...current,
+        demoVaccineCompletionKeys: currentItem?.scheduleKey
+          ? current.demoVaccineCompletionKeys.filter((key) => key !== currentItem.scheduleKey)
+          : current.demoVaccineCompletionKeys,
+        vaccines: current.vaccines.map((candidate) => candidate.id === id ? { ...candidate, completedDate: completedDate || undefined } : candidate),
+      };
+    });
     return true;
   };
 
@@ -2586,9 +2681,9 @@ export default function Prototype() {
 
   const renderHealth = () => {
     const abilityArtwork = [
-      "/assets/baby/health-development-rollover-v1.png",
-      "/assets/baby/health-development-sitting-v1.png",
-      "/assets/baby/health-development-crawling-v1.png",
+      "/assets/baby/health-development-tummy-time-reference-v2.png",
+      "/assets/baby/health-development-rollover-reference-v2.png",
+      "/assets/baby/health-development-sitting-reference-v2.png",
     ];
     const sortedVaccines = [...data.vaccines].sort((a, b) => (
       (a.scheduleOrder ?? 9_999) - (b.scheduleOrder ?? 9_999)
@@ -2613,9 +2708,9 @@ export default function Prototype() {
       const uploaded = item.imageId ? assetUrls[item.imageId] : undefined;
       if (uploaded) return { src: uploaded, isUploaded: true };
       const normalizedName = item.name.toLowerCase();
-      if (normalizedName.includes("roll") || normalizedName.includes("翻") || normalizedName.includes("抬头")) return { src: abilityArtwork[0], isUploaded: false };
-      if (normalizedName.includes("sit") || normalizedName.includes("坐") || normalizedName.includes("注视")) return { src: abilityArtwork[1], isUploaded: false };
-      if (normalizedName.includes("crawl") || normalizedName.includes("walk") || normalizedName.includes("爬") || normalizedName.includes("走") || normalizedName.includes("四肢")) return { src: abilityArtwork[2], isUploaded: false };
+      if (normalizedName.includes("抬头") || normalizedName.includes("tummy") || normalizedName.includes("注视")) return { src: abilityArtwork[0], isUploaded: false };
+      if (normalizedName.includes("roll") || normalizedName.includes("翻") || normalizedName.includes("四肢")) return { src: abilityArtwork[1], isUploaded: false };
+      if (normalizedName.includes("sit") || normalizedName.includes("坐") || normalizedName.includes("crawl") || normalizedName.includes("walk") || normalizedName.includes("爬") || normalizedName.includes("走")) return { src: abilityArtwork[2], isUploaded: false };
       return { src: abilityArtwork[stableArtworkIndex(item.id, abilityArtwork.length)], isUploaded: false };
     };
     const checkupImage = (item: Checkup) => {
@@ -2626,10 +2721,13 @@ export default function Prototype() {
     };
     const vaccineArtwork = (item: Vaccine) => {
       const name = item.name.toLowerCase();
-      if (name.includes("五联") || name.includes("百白破") || name.includes("脊灰")) {
+      if (name.includes("轮状")) {
+        return "/assets/baby/health-title-shield-v1.png";
+      }
+      if (name.includes("五联") || name.includes("百白破")) {
         return "/assets/baby/health-vaccine-five-in-one-v1.png";
       }
-      if (name.includes("麻腮风") || name.includes("肺炎") || name.includes("流脑") || name.includes("水痘")) {
+      if (name.includes("脊灰") || name.includes("麻腮风") || name.includes("肺炎") || name.includes("流脑") || name.includes("水痘")) {
         return "/assets/baby/health-vaccine-mmr-v1.png";
       }
       return "/assets/baby/health-vaccine-hepb-v1.png";
@@ -2639,20 +2737,32 @@ export default function Prototype() {
         {healthTab === "vaccine" ? <section id="health-panel-vaccine" className="vaccine-schedule-panel" role="tabpanel" aria-labelledby="health-tab-vaccine" data-testid="health-vaccine-panel">
           <header className="vaccine-schedule-intro">
             <div className="vaccine-intro-copy">
-              <span>硕之的接种时间表</span>
-              <h2>宝宝疫苗接种指南</h2>
+              <h2>硕之的接种时间表</h2>
+              <span>宝宝疫苗接种指南</span>
               <p>已记录 <strong>{completedVaccineCount}</strong> 条接种记录 · {sortedVaccines.length} 条时间参考</p>
             </div>
-            <span className="vaccine-intro-art" aria-hidden="true"><img src="/assets/baby/health-footer-illustration-v2.png" alt="" /></span>
+            <span className="vaccine-intro-art" aria-hidden="true"><img src="/assets/baby/health-vaccine-hero-reference-v2.png" alt="" /></span>
             <button className="vaccine-add-button" type="button" onClick={() => openEditor("vaccine")} aria-label="新增其他疫苗记录" data-scroll-drag="ignore"><PlusIcon /> Add</button>
           </header>
 
           <div className="vaccine-age-list">
             {vaccineGroups.map(([ageLabel, items], groupIndex) => {
               const groupCompleted = items.filter((item) => item.completedDate).length;
-              return <section className={`vaccine-age-card age-tone-${groupIndex % 3}`} key={ageLabel} aria-labelledby={`vaccine-age-${groupIndex}`}>
+              const ageClass = ageLabel === "24小时内"
+                ? "age-birth"
+                : ageLabel === "1月龄"
+                  ? "age-one-month"
+                  : ageLabel === "2月龄"
+                    ? "age-two-months"
+                    : `age-tone-${groupIndex % 3}`;
+              const ageIcon = ageLabel === "24小时内"
+                ? <img src="/assets/baby/memory-ref-sprig-transparent-v1.png" alt="" aria-hidden="true" />
+                : ageLabel === "2月龄"
+                  ? <img src="/assets/baby/icon-sleep.png" alt="" aria-hidden="true" />
+                  : <img src="/assets/baby/memory-ref-star-transparent-v1.png" alt="" aria-hidden="true" />;
+              return <section className={`vaccine-age-card ${ageClass}`} key={ageLabel} aria-labelledby={`vaccine-age-${groupIndex}`}>
                 <header className="vaccine-age-heading">
-                  <span className="vaccine-age-label" id={`vaccine-age-${groupIndex}`}><StarFilledIcon aria-hidden="true" />{ageLabel}</span>
+                  <span className="vaccine-age-label" id={`vaccine-age-${groupIndex}`}>{ageIcon}{ageLabel}</span>
                   <span>{groupCompleted} 条已记录</span>
                 </header>
                 <div className="vaccine-dose-list">
@@ -2714,8 +2824,8 @@ export default function Prototype() {
               <span>已记录 <strong>{sortedAbilities.length}</strong> 个里程碑</span>
             </div>
             <span className="health-secondary-intro-art health-development-intro-art" aria-hidden="true">
-              <img className="health-secondary-intro-bear" src="/assets/baby/health-intro-companions-v1.png" alt="" />
-              <img className="health-secondary-intro-symbol" src="/assets/baby/health-development-flag-v1.png" alt="" />
+              <img className="health-secondary-intro-bear" src="/assets/baby/health-development-hero-bear-reference-v2.png" alt="" />
+              <img className="health-development-intro-baby" src="/assets/baby/health-development-hero-baby-reference-v2.png" alt="" />
             </span>
             <button type="button" onClick={() => openEditor("ability")} aria-label="新增发育里程碑" data-scroll-drag="ignore"><PlusIcon /> Add</button>
           </header>
@@ -2747,20 +2857,20 @@ export default function Prototype() {
               <span>已保存 <strong>{sortedCheckups.length}</strong> 次儿保记录</span>
             </div>
             <span className="health-secondary-intro-art health-checkup-intro-art" aria-hidden="true">
-              <img className="health-secondary-intro-bear" src="/assets/baby/health-intro-companions-v1.png" alt="" />
-              <img className="health-secondary-intro-symbol" src="/assets/baby/health-checkup-stethoscope-v1.png" alt="" />
+              <img className="health-secondary-intro-bear" src="/assets/baby/health-checkup-hero-bear-reference-v2.png" alt="" />
+              <img className="health-secondary-intro-symbol" src="/assets/baby/health-checkup-hero-stethoscope-reference-v2.png" alt="" />
             </span>
             <button type="button" onClick={() => openEditor("checkup")} aria-label="新增儿保记录" data-scroll-drag="ignore"><PlusIcon /> Add</button>
           </header>
           <div className="health-secondary-list checkup-record-list" aria-label="儿保记录">
             {sortedCheckups.map((item) => {
-              const planned = item.date > today();
-              return <button className="health-secondary-record health-checkup-record" type="button" key={item.id} onClick={() => openEditor("checkup", item as unknown as Record<string, unknown>)} aria-label={`编辑儿保记录 ${healthDisplayDate(item.date)} ${item.name}，${planned ? "计划日期" : "已记录"}，建议：${item.tips}`}>
+              const completed = Boolean(item.completedDate);
+              return <button className="health-secondary-record health-checkup-record" type="button" key={item.id} onClick={() => openEditor("checkup", item as unknown as Record<string, unknown>)} aria-label={`编辑儿保记录 ${healthDisplayDate(item.date)} ${item.name}，${completed ? "已记录" : "计划日期"}，建议：${item.tips}`}>
                 <span className="health-secondary-record-art health-secondary-calendar"><img src={checkupImage(item)} alt={`${item.name}示意图`} /></span>
                 <span className="health-secondary-record-copy">
                   <time dateTime={item.date}>{healthDisplayDate(item.date)}</time>
                   <strong>{item.name}</strong>
-                  <em className={`health-checkup-status${planned ? " is-planned" : " is-recorded"}`}>{planned ? <span aria-hidden="true" /> : <CheckIcon aria-hidden="true" />}{planned ? "计划日期" : "已记录"}</em>
+                  <em className={`health-checkup-status${completed ? " is-recorded" : " is-planned"}`}>{completed ? <CheckIcon aria-hidden="true" /> : <span aria-hidden="true" />}{completed ? "已记录" : "计划日期"}</em>
                   <p className="health-checkup-tips"><b>Tips：</b>{item.tips}</p>
                 </span>
                 <span className="health-secondary-chevron" aria-hidden="true"><ChevronRightIcon /></span>
@@ -3229,7 +3339,13 @@ export default function Prototype() {
             key={item.id}
             className={item.id === "health" ? "active" : ""}
             type="button"
-            onClick={() => navigatePage(item.id)}
+            onClick={(event) => {
+              navigatePage(item.id);
+              if (event.detail > 0) {
+                const trigger = event.currentTarget;
+                requestAnimationFrame(() => trigger.blur());
+              }
+            }}
             aria-label={`前往 ${item.label}`}
             aria-current={item.id === "health" ? "page" : undefined}
             data-testid={`final-nav-${item.id}`}
@@ -3422,7 +3538,7 @@ export default function Prototype() {
       const editingMemory = editor.id ? data.memories.find((item) => item.id === editor.id) : undefined;
       const persistedPreview = editingMemory?.assetId ? assetUrls[editingMemory.assetId] : editingMemory?.type === "photo" ? "/assets/baby/memory-luna-cuddle-v1.png" : undefined;
       const preview = uploadPreviewUrl ?? persistedPreview;
-      return <>{draftValue("sourceAbilityId") ? <div className="linked-note"><strong>成长旅程 · 能力记录</strong><p>这是同一条里程碑，在这里修改会同步到健康记录。</p></div> : select("内容类型", "type", [{ value: "moment", label: "瞬间 · 第一次" }, { value: "photo", label: "照片" }, { value: "note", label: "随记" }])}{field("标题", "title")}{field("日期", "date", "date")}{textarea("内容", "description")}{file(draftValue("type") === "photo" ? "上传照片 *" : "照片（可选）", "image/*")}{draftValue("type") === "photo" && preview ? <figure className="memory-upload-preview"><img src={preview} alt="照片预览" /><figcaption>照片会按原始比例保存，并仅在卡片中居中裁切。</figcaption></figure> : null}</>;
+      return <>{draftValue("sourceAbilityId") ? <div className="linked-note"><strong>成长旅程 · 能力记录</strong><p>这是同一条里程碑，在这里修改会同步到健康记录。</p></div> : select("内容类型", "type", [{ value: "moment", label: "瞬间 · 第一次" }, { value: "photo", label: "照片" }, { value: "note", label: "随记" }])}{field("标题", "title")}{field("日期", "date", "date", draftValue("sourceAbilityId") ? { min: FIXED_BIRTH_DATE, max: today() } : {})}{textarea("内容", "description")}{file(draftValue("type") === "photo" ? "上传照片 *" : "照片（可选）", "image/*")}{draftValue("type") === "photo" && preview ? <figure className="memory-upload-preview"><img src={preview} alt="照片预览" /><figcaption>照片会按原始比例保存，并仅在卡片中居中裁切。</figcaption></figure> : null}</>;
     }
     if (editor.kind === "growth") return <>{field("测量日期 *", "date", "date", { max: today() })}<p className="form-hint">身长和体重可以只填一项；同一天只保留一条完整记录。</p><div className="form-columns">{field("身长 cm（可选）", "height", "number", { step: "0.1", min: "20", max: "200" })}{field("体重 kg（可选）", "weight", "number", { step: "0.01", min: "0.5", max: "50" })}</div>{textarea("成长备注（可选）", "note", "例如：坐得更稳了、第一次量身高")}</>;
     if (editor.kind === "vaccine") return <>
@@ -3439,7 +3555,13 @@ export default function Prototype() {
       const preview = uploadPreviewUrl ?? (editingAbility?.imageId ? assetUrls[editingAbility.imageId] : undefined);
       return <>{field("记录日期", "date", "date", { min: FIXED_BIRTH_DATE, max: today() })}{field("大运动能力", "name")}{textarea("表现说明", "description")}{file("示意图（可选）", "image/*")}{preview ? <figure className="memory-upload-preview health-ability-upload-preview"><img src={preview} alt="发育里程碑图片预览" /><figcaption>图片将以原色保存，并在里程碑卡片中居中显示。</figcaption></figure> : null}<p className="form-hint">支持 JPG、PNG、WebP，最大 12 MB；图片只保存在当前设备。</p><label className="switch-field"><input type="checkbox" checked={Boolean(draft.syncMemory)} onChange={(event) => changeDraft("syncMemory", event.target.checked)} data-scroll-drag="ignore"/><span>同步到成长回忆 · 瞬间（同一条记录）</span></label>{editor.id && data.memories.some((memory) => memory.sourceAbilityId === editor.id) && !draft.syncMemory ? <p className="unlink-warning">保存后，这条内容会从成长回忆移除，但健康记录会保留。</p> : null}</>;
     }
-    if (editor.kind === "checkup") return <>{field("儿保日期", "date", "date", { min: FIXED_BIRTH_DATE })}{field("儿保项目名", "name")}{textarea("建议", "tips")}</>;
+    if (editor.kind === "checkup") return <>
+      {field("计划 / 儿保日期", "date", "date", { min: FIXED_BIRTH_DATE })}
+      {field("儿保项目名", "name")}
+      {textarea("建议", "tips")}
+      <label className="switch-field"><input type="checkbox" checked={Boolean(draft.completed)} onChange={(event) => changeDraft("completed", event.target.checked)} data-scroll-drag="ignore"/><span>已经完成本次儿保</span></label>
+      {draft.completed ? field("实际完成日期", "completedDate", "date", { min: FIXED_BIRTH_DATE, max: today() }) : null}
+    </>;
     if (editor.kind === "music") return <>{field("音乐名称", "name")}{field("歌手 / 来源", "artist")}{textarea("一句温柔说明（可选）", "description", "例如：轻柔的声音，陪宝宝安心入睡。")}{file(editor.id && draftValue("assetId") ? "替换音乐（可选）" : "上传音乐 *", "audio/*")}<p className="form-hint">支持 MP3、M4A、WAV 等常用音频，最大 40 MB；文件只保存在当前设备。</p></>;
     if (editor.kind === "story") return <>{field("故事名称", "name")}{field("外部链接", "link", "url", { placeholder: "https://..." })}{file("故事封面（可选）", "image/*")}</>;
     return <>

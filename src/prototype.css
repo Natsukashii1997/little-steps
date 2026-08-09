@@ -7663,8 +7663,603 @@ select:focus-visible {
   .health-checkup-panel .health-secondary-encouragement { min-height: 46px; padding: 6px 10px; font-size: 12.5px; }
 }
 
-/* The real Health page uses the app itself, not the simulator's bezel/cursor overlay. */
-.phone-device:has(.health-dynamic-shell) > .phone-bezel,
-.device-screen:has(.health-dynamic-shell) > .mobile-cursor {
+/* The real Health page removes only the simulator bezel. Keep the desktop cursor visible. */
+.phone-device:has(.health-dynamic-shell) > .phone-bezel {
   display: none !important;
+}
+
+/* Health Record v3 — measured from the three approved final mockups. */
+.health-dynamic-shell {
+  --health-chrome-height: 108px;
+}
+
+.mobile-app-viewport[data-platform="android"] .health-dynamic-shell {
+  --health-chrome-height: 108px;
+}
+
+.health-dynamic-chrome {
+  height: var(--health-chrome-height);
+  padding: 4px 17px 4px;
+}
+
+.health-dynamic-topbar {
+  height: 59px;
+  grid-template-columns: 72px minmax(0, 1fr) 88px;
+}
+
+.health-dynamic-topbar h1 {
+  font-size: clamp(29px, 7.9cqi, 33px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.075em;
+}
+
+.health-dynamic-topbar svg {
+  width: 27px;
+  height: 27px;
+  stroke-width: 1.75px;
+}
+
+.health-dynamic-tabs {
+  height: 43px !important;
+  min-height: 43px !important;
+  padding: 3px !important;
+  border-width: 1.55px !important;
+  border-radius: 22px 19px 23px 20px !important;
+}
+
+.health-dynamic-tabs button {
+  min-height: 35px !important;
+  border-radius: 18px 15px 19px 16px !important;
+  font-size: clamp(17px, 4.65cqi, 19px) !important;
+  font-weight: 400 !important;
+}
+
+.health-dynamic-tabs #health-tab-vaccine > span::after {
+  display: none !important;
+}
+
+.health-dynamic-scroll .mobile-scroll-content,
+.mobile-app-viewport:not([data-platform="android"]) .health-dynamic-scroll .mobile-scroll-content {
+  padding: var(--health-chrome-height) 17px 75px;
+}
+
+.health-dynamic-content {
+  padding: 11px 0 19px;
+}
+
+.vaccine-schedule-intro {
+  min-height: 108px;
+  padding: 14px 131px 13px 14px;
+  border-width: 1.25px;
+  border-radius: 18px 16px 20px 17px;
+  box-shadow: none;
+}
+
+.vaccine-intro-copy h2 {
+  width: 216px;
+  margin: 0;
+  font-size: clamp(23px, 6.15cqi, 26px);
+  font-weight: 400;
+  line-height: 1.06;
+}
+
+.vaccine-intro-copy > span {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.vaccine-intro-copy p {
+  top: 67px;
+  width: 235px;
+  font-size: 12.5px;
+  line-height: 1;
+}
+
+.vaccine-intro-copy p strong {
+  font-size: 14px;
+}
+
+.vaccine-intro-art {
+  top: 8px;
+  right: 65px;
+  width: 94px;
+  height: 96px;
+  overflow: visible;
+}
+
+.vaccine-intro-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  mix-blend-mode: normal;
+}
+
+.vaccine-add-button,
+.health-secondary-intro > button {
+  right: 10px;
+  bottom: 13px;
+  min-width: 70px;
+  min-height: 40px;
+  border-width: 1.5px;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.vaccine-age-list {
+  gap: 12px;
+  margin-top: 13px;
+}
+
+.vaccine-age-heading {
+  min-height: 34px;
+}
+
+.vaccine-age-heading::after {
+  left: 111px;
+}
+
+.vaccine-age-label {
+  min-height: 34px;
+  padding: 4px 11px 3px;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.vaccine-age-label > img {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.vaccine-age-card.age-birth .vaccine-age-label > img {
+  width: 14px;
+  height: 23px;
+}
+
+.vaccine-age-card.age-birth .vaccine-age-label {
+  background-color: rgba(174, 183, 129, 0.48);
+}
+
+.vaccine-age-card.age-one-month .vaccine-age-label {
+  background-color: rgba(247, 197, 78, 0.52);
+}
+
+.vaccine-age-card.age-two-months .vaccine-age-label {
+  background-color: rgba(188, 204, 220, 0.48);
+}
+
+.vaccine-age-card.age-birth .vaccine-dose-art {
+  background: rgba(174, 183, 129, 0.28);
+}
+
+.vaccine-age-card.age-one-month .vaccine-dose-art {
+  background: rgba(247, 197, 78, 0.25);
+}
+
+.vaccine-age-card.age-two-months .vaccine-dose-art {
+  background: rgba(136, 167, 207, 0.22);
+}
+
+.vaccine-dose-list {
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.vaccine-dose-row,
+.vaccine-dose-row.is-completed {
+  min-height: 82px;
+  grid-template-columns: 78px minmax(0, 1fr) 116px;
+  gap: 6px;
+  padding: 5px 8px;
+  border-width: 1.2px;
+  border-radius: 17px 14px 19px 15px;
+}
+
+.vaccine-dose-row.is-completed {
+  background-color: rgba(255, 251, 241, 0.64);
+}
+
+.vaccine-dose-art {
+  width: 68px;
+  height: 68px;
+  border-radius: 50% 46% 52% 44%;
+  background: rgba(174, 183, 129, 0.28);
+}
+
+.age-tone-1 .vaccine-dose-art { background: rgba(247, 197, 78, 0.25); }
+.age-tone-2 .vaccine-dose-art { background: rgba(136, 167, 207, 0.22); }
+
+.vaccine-dose-art img {
+  width: 61px;
+  height: 61px;
+}
+
+.vaccine-dose-title {
+  gap: 7px;
+}
+
+.vaccine-dose-title strong {
+  font-size: clamp(17px, 4.65cqi, 19px);
+  font-weight: 400;
+}
+
+.vaccine-dose-title em {
+  padding: 4px 9px 3px;
+  font-size: 13px;
+}
+
+.vaccine-choice-badge,
+.vaccine-alternative-note {
+  max-width: 128px;
+  font-size: 10px;
+}
+
+.vaccine-dose-status {
+  min-height: 62px;
+  padding-left: 7px;
+}
+
+.vaccine-dose-status > strong {
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.vaccine-check-button {
+  position: relative;
+  width: 44px;
+  height: 27px;
+  min-height: 27px;
+}
+
+.vaccine-check-button::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.vaccine-check-button > span,
+.vaccine-check-button svg {
+  width: 25px;
+  height: 25px;
+}
+
+.vaccine-planned-date {
+  margin-top: 4px;
+  font-size: 11.5px;
+}
+
+.vaccine-completed-date input {
+  height: 22px;
+  min-height: 22px;
+  padding: 0;
+  appearance: none;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.vaccine-completed-date input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.vaccine-medical-note {
+  min-height: 62px;
+  margin-top: 12px;
+  padding: 8px 11px;
+}
+
+.health-secondary-panel {
+  gap: 13px;
+}
+
+.health-secondary-intro {
+  min-height: 128px;
+  padding: 15px 133px 14px 14px;
+  border-width: 1.25px;
+  border-radius: 18px 16px 20px 17px;
+  box-shadow: none;
+}
+
+.health-secondary-intro-copy h2 {
+  width: 225px;
+  font-size: clamp(23px, 6.2cqi, 26px);
+  font-weight: 400;
+  line-height: 1.04;
+}
+
+.health-secondary-intro-copy p {
+  width: 225px;
+  margin-top: 9px;
+  font-size: 13px;
+}
+
+.health-secondary-intro-copy > span {
+  top: 78px;
+  width: 225px;
+  font-size: 12.5px;
+}
+
+.health-secondary-intro-copy > span strong {
+  font-size: 14px;
+}
+
+.health-secondary-intro-art {
+  top: 6px;
+  right: 55px;
+  width: 147px;
+  height: 111px;
+  overflow: visible;
+}
+
+.health-secondary-intro-art img {
+  mix-blend-mode: normal;
+}
+
+.health-secondary-intro-bear {
+  inset: auto;
+  left: 0;
+  bottom: 0;
+  width: 104px;
+  height: 104px;
+  object-fit: contain !important;
+  object-position: center;
+}
+
+.health-development-intro-baby {
+  position: absolute;
+  top: 10px;
+  right: -2px;
+  width: 78px;
+  height: 57px;
+  object-fit: contain;
+}
+
+.health-checkup-intro-art .health-secondary-intro-bear {
+  width: 103px;
+  height: 103px;
+}
+
+.health-checkup-intro-art .health-secondary-intro-symbol {
+  top: 22px;
+  right: -3px;
+  width: 70px;
+  height: 76px;
+}
+
+.health-secondary-list {
+  gap: 14px;
+}
+
+.health-development-list,
+.checkup-record-list {
+  position: relative;
+  padding-left: 28px;
+}
+
+.health-development-list::before,
+.checkup-record-list::before {
+  position: absolute;
+  z-index: 0;
+  top: 25px;
+  bottom: 25px;
+  left: 8px;
+  border-left: 1.35px dashed rgba(82, 98, 44, 0.52);
+  content: "";
+}
+
+.health-development-record,
+.health-checkup-record {
+  min-height: 146px;
+  grid-template-columns: 126px minmax(0, 1fr) 24px;
+  gap: 8px;
+  padding: 10px 9px 10px 9px;
+  overflow: visible;
+  border-width: 1.2px;
+}
+
+.health-development-record::before,
+.health-checkup-record::before {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: -26px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(82, 98, 44, 0.7);
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 4px rgba(174, 183, 129, 0.6);
+  content: "";
+  transform: translateY(-50%);
+}
+
+.health-secondary-record-art,
+.health-secondary-calendar {
+  width: 122px;
+  height: 110px;
+  overflow: visible;
+  border-radius: 0;
+  background: transparent !important;
+}
+
+.health-secondary-record-art img,
+.health-secondary-calendar img {
+  width: 120px;
+  height: 108px;
+  object-fit: contain;
+  mix-blend-mode: normal;
+}
+
+.health-secondary-record-art.is-uploaded {
+  overflow: hidden;
+  border-radius: 20px 16px 21px 17px;
+}
+
+.health-secondary-record-copy time {
+  padding: 4px 9px 3px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.health-secondary-record-copy strong {
+  margin-top: 8px;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.health-secondary-record-copy p {
+  margin-top: 7px;
+  font-size: 13px;
+  line-height: 1.22;
+}
+
+.health-development-record .health-secondary-record-copy em {
+  min-height: 23px;
+  margin-top: 9px;
+  padding: 3px 8px 2px;
+  font-size: 11.5px;
+}
+
+.health-checkup-status {
+  min-height: 23px;
+  margin-top: 8px !important;
+  padding: 3px 8px 2px;
+  font-size: 11.5px !important;
+}
+
+.health-checkup-tips {
+  margin-top: 8px !important;
+  padding-top: 0;
+  border-top: 0;
+  white-space: nowrap;
+}
+
+.health-secondary-chevron {
+  width: 24px;
+}
+
+.health-secondary-chevron svg {
+  width: 22px;
+  height: 22px;
+}
+
+.health-secondary-encouragement {
+  min-height: 48px;
+  padding: 8px 13px;
+  font-size: 13px;
+}
+
+.health-dynamic-navigation,
+.mobile-app-viewport:not([data-platform="android"]) .health-dynamic-navigation {
+  height: 66px;
+  padding-bottom: 0;
+}
+
+@container (max-width: 380px) {
+  .health-dynamic-chrome,
+  .health-dynamic-scroll .mobile-scroll-content {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .health-dynamic-topbar {
+    grid-template-columns: 68px minmax(0, 1fr) 84px;
+  }
+
+  .vaccine-schedule-intro {
+    padding-right: 122px;
+    padding-left: 12px;
+  }
+
+  .vaccine-intro-copy h2,
+  .health-secondary-intro-copy h2 {
+    font-size: 22px;
+  }
+
+  .vaccine-intro-art {
+    right: 61px;
+    width: 89px;
+  }
+
+  .vaccine-dose-row,
+  .vaccine-dose-row.is-completed {
+    grid-template-columns: 68px minmax(0, 1fr) 105px;
+    gap: 5px;
+  }
+
+  .vaccine-dose-art {
+    width: 62px;
+    height: 62px;
+  }
+
+  .vaccine-dose-art img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .health-secondary-intro {
+    min-height: 124px;
+    padding-right: 122px;
+    padding-left: 12px;
+  }
+
+  .health-secondary-intro-copy p,
+  .health-secondary-intro-copy > span {
+    width: 210px;
+  }
+
+  .health-secondary-intro-art {
+    right: 51px;
+    width: 137px;
+    height: 106px;
+  }
+
+  .health-development-list,
+  .checkup-record-list {
+    padding-left: 24px;
+  }
+
+  .health-development-list::before,
+  .checkup-record-list::before {
+    left: 7px;
+  }
+
+  .health-development-record,
+  .health-checkup-record {
+    min-height: 140px;
+    grid-template-columns: 112px minmax(0, 1fr) 22px;
+    gap: 6px;
+    padding-right: 7px;
+    padding-left: 7px;
+  }
+
+  .health-development-record::before,
+  .health-checkup-record::before {
+    left: -23px;
+  }
+
+  .health-secondary-record-art,
+  .health-secondary-calendar,
+  .health-secondary-record-art img,
+  .health-secondary-calendar img {
+    width: 108px;
+    height: 100px;
+  }
+
+  .health-secondary-record-copy strong {
+    font-size: 20px;
+  }
 }
