@@ -117,4 +117,11 @@
 - 项目没有独立 Lint 命令；未为本次修改引入新工具。
 - 构建仅保留 Vite 大体积 chunk 提示，不影响当前功能。
 
+## App 图标 · 2026-08-09
+
+- 唯一视觉源为用户上传的蓝色小熊帽宝宝方形插画，原图完整保存为 `public/assets/app-icons/app-icon-baby-source-v1.png`，未重新生成、裁切、改色或重绘。
+- iPhone 主屏、PWA 192、PWA 512 与 Android maskable 512 图标均由该原图机械等比缩放；Manifest、HTML 图标引用与离线预缓存统一使用 versioned 路径，避免旧图标 URL 缓存。
+- Service Worker 缓存版本提升为 `v10-baby-app-icon`。安装过旧版本的 iPhone 需要先删除旧主屏图标，再用 Safari 重新“添加到主屏幕”，系统才会显示新图标。
+- 内置浏览器已确认应用正常加载，HTML 实际引用 versioned 180 / 192 图标；生产构建中的 Manifest、Service Worker 与四张图标均和源文件一致。`check:runtime`、Build、Runtime 8 / 8 与 Sites 4 / 4 均通过。
+
 final result: passed

@@ -39,6 +39,7 @@ For this prototype, typography fidelity is a first-class acceptance criterion: p
 ### Mobile delivery source of truth
 
 - Ship this project as an installable portrait PWA. `public/manifest.webmanifest`, `public/sw.js`, and `public/assets/app-icons/` are the canonical install/offline assets; keep them present in production builds.
+- The authoritative App icon source is `public/assets/app-icons/app-icon-baby-source-v1.png`, copied unchanged from the user-supplied blue bear-bonnet baby artwork. The 180, 192, 512, and maskable 512 PNGs are mechanical square resizes of that exact source; do not redraw, recolor, crop, or substitute the icon without a new explicit user request.
 - On real phones and in installed standalone mode, remove only the desktop preview shell while preserving the protected mobile runtime and the six authoritative page visuals. Desktop preview must continue to keep its device picker and phone frame.
 - The shared production URL is the install source for iPhone Safari and Android Chrome. Records and uploaded media remain local to each device; do not imply cross-device sync unless a backend is explicitly added.
 
