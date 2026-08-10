@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "little-steps-pwa";
-const CACHE_VERSION = "v10-baby-app-icon";
+const CACHE_VERSION = "v11-native-mobile-input";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 
 const CORE_ASSETS = [

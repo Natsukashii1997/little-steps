@@ -112,7 +112,7 @@
 
 - `npm run check:runtime`：通过，28 个受保护运行时文件完整。
 - `npm run build`：通过，TypeScript、Vite 与 Sites 产物生成成功。
-- `npm run test:runtime`：8 / 8 通过。
+- `npm run test:runtime`：10 / 10 通过，其中包含 2 项真机输入 / 上传专项回归。
 - `npm run test:sites`：4 / 4 通过。
 - 项目没有独立 Lint 命令；未为本次修改引入新工具。
 - 构建仅保留 Vite 大体积 chunk 提示，不影响当前功能。
@@ -123,5 +123,14 @@
 - iPhone 主屏、PWA 192、PWA 512 与 Android maskable 512 图标均由该原图机械等比缩放；Manifest、HTML 图标引用与离线预缓存统一使用 versioned 路径，避免旧图标 URL 缓存。
 - Service Worker 缓存版本提升为 `v10-baby-app-icon`。安装过旧版本的 iPhone 需要先删除旧主屏图标，再用 Safari 重新“添加到主屏幕”，系统才会显示新图标。
 - 内置浏览器已确认应用正常加载，HTML 实际引用 versioned 180 / 192 图标；生产构建中的 Manifest、Service Worker 与四张图标均和源文件一致。`check:runtime`、Build、Runtime 8 / 8 与 Sites 4 / 4 均通过。
+
+## 真机输入与上传 · 2026-08-10
+
+- 真实 iPhone / Android 浏览器与安装后的 standalone App 不再调用桌面预览用的图片键盘：编辑器改用原生 `input` / `textarea`，系统输入法是唯一可见键盘；桌面设备模拟仍保留原有 KeyboardDock 展示。
+- 真机 BottomSheet 恢复纵向触控滚动，输入框聚焦后会滚动到可编辑区域，保存按钮不会再被模拟键盘遮挡。
+- 图片与音频上传使用真实系统文件选择器；图片支持 JPG / JPEG / PNG / WebP / GIF / HEIC / HEIF，音频支持 MP3 / M4A / AAC / WAV / OGG / FLAC。iPhone 返回空 MIME 时会按白名单后缀安全推断，而不是误报不支持。
+- 图片、封面与音频写入 IndexedDB 后必须立即回读并核对大小；结构化引用同步写入 localStorage 后才显示保存成功。失败会保留表单和已选文件，避免“提示成功但刷新丢失”。
+- 新增 Playwright 真机回归：iPhone UA 下成长记录使用原生输入并在刷新后保留；空 MIME 的 iPhone JPG 能选择、预览、写入 IndexedDB，并在刷新后回显到发育里程碑。
+- Service Worker 缓存版本提升为 `v11-native-mobile-input`，确保已安装手机在线打开后获取新 JS / CSS，而不是继续使用旧键盘与上传逻辑。
 
 final result: passed

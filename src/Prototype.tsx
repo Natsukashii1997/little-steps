@@ -2,7 +2,7 @@ import "@fontsource/gaegu/400.css";
 import "@fontsource/gaegu/700.css";
 import "@fontsource/zcool-kuaile";
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type FocusEvent, type InputHTMLAttributes, type KeyboardEvent, type MouseEvent, type ReactNode, type TextareaHTMLAttributes } from "react";
 import {
   ArrowLeftIcon,
   BellIcon,
@@ -646,7 +646,49 @@ const assetDb = openDB(ASSET_DB, 1, {
   },
 });
 
-const uid = () => crypto.randomUUID();
+const uid = () => typeof crypto.randomUUID === "function"
+  ? crypto.randomUUID()
+  : [...crypto.getRandomValues(new Uint8Array(16))]
+      .map((value) => value.toString(16).padStart(2, "0"))
+      .join("");
+
+const IMAGE_FILE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "heic", "heif", "gif"]);
+const AUDIO_FILE_EXTENSIONS = new Set(["mp3", "m4a", "aac", "wav", "ogg", "flac"]);
+
+const fileExtension = (file: File) => file.name.split(".").pop()?.toLowerCase() ?? "";
+const isImageFile = (file: File) => file.type.startsWith("image/") || IMAGE_FILE_EXTENSIONS.has(fileExtension(file));
+const isAudioFile = (file: File) => file.type.startsWith("audio/")
+  || file.type === "video/mp4"
+  || AUDIO_FILE_EXTENSIONS.has(fileExtension(file));
+const inferredAssetType = (file: File) => file.type || ({
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  heic: "image/heic",
+  heif: "image/heif",
+  gif: "image/gif",
+  mp3: "audio/mpeg",
+  m4a: "audio/mp4",
+  aac: "audio/aac",
+  wav: "audio/wav",
+  ogg: "audio/ogg",
+  flac: "audio/flac",
+} as Record<string, string>)[fileExtension(file)] || "application/octet-stream";
+const formatFileSize = (bytes: number) => bytes < 1024 * 1024
+  ? `${Math.max(1, Math.round(bytes / 1024))} KB`
+  : `${(bytes / (1024 * 1024)).toFixed(bytes < 10 * 1024 * 1024 ? 1 : 0)} MB`;
+
+function isRealMobileDevice() {
+  if (typeof window === "undefined" || typeof navigator === "undefined") return false;
+  const nav = navigator as Navigator & { userAgentData?: { mobile?: boolean } };
+  const agent = navigator.userAgent;
+  const iosOrAndroid = /Android|iPhone|iPod/i.test(agent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const standaloneTouch = window.matchMedia("(display-mode: standalone)").matches
+    && window.matchMedia("(pointer: coarse)").matches;
+  return Boolean(nav.userAgentData?.mobile || iosOrAndroid || standaloneTouch);
+}
 const upsertById = <T extends { id: string }>(items: T[], item: T) => {
   const existingIndex = items.findIndex((current) => current.id === item.id);
   if (existingIndex === -1) return [...items, item];
@@ -1182,7 +1224,13 @@ async function saveAsset(file?: File) {
   if (!file) return undefined;
   const id = uid();
   const db = await assetDb;
-  await db.put(ASSET_STORE, file, id);
+  const storedFile = new Blob([await file.arrayBuffer()], { type: inferredAssetType(file) });
+  await db.put(ASSET_STORE, storedFile, id);
+  const savedFile = await db.get(ASSET_STORE, id);
+  if (!(savedFile instanceof Blob) || savedFile.size !== storedFile.size) {
+    await db.delete(ASSET_STORE, id);
+    throw new Error("asset-readback-failed");
+  }
   return id;
 }
 
@@ -1607,6 +1655,10 @@ export default function Prototype() {
   const [draft, setDraft] = useState<Draft>({});
   const [upload, setUpload] = useState<File>();
   const [uploadPreviewUrl, setUploadPreviewUrl] = useState<string>();
+  const [uploadPreviewFailed, setUploadPreviewFailed] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const [savingEditor, setSavingEditor] = useState(false);
+  const [nativeInputs, setNativeInputs] = useState(isRealMobileDevice);
   const [memoryFilter, setMemoryFilter] = useState<"all" | MemoryType>("all");
   const [healthTab, setHealthTab] = useState<HealthTab>("vaccine");
   const [educationTab, setEducationTab] = useState<EducationTab>("music");
@@ -1628,6 +1680,12 @@ export default function Prototype() {
 
   useEffect(() => {
     document.title = "Little Steps · 婴儿工作台";
+  }, []);
+
+  useEffect(() => {
+    if (!isRealMobileDevice()) return;
+    setNativeInputs(true);
+    keyboard.hide();
   }, []);
 
   useEffect(() => {
@@ -1691,7 +1749,8 @@ export default function Prototype() {
   }, [data.musicTracks, pausedId]);
 
   useEffect(() => {
-    if (!upload || !upload.type.startsWith("image/")) {
+    setUploadPreviewFailed(false);
+    if (!upload || !isImageFile(upload)) {
       setUploadPreviewUrl(undefined);
       return;
     }
@@ -1785,6 +1844,37 @@ export default function Prototype() {
 
   const notify = (message: string) => setToast(message);
 
+  const handleNativeInputFocus = (event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const field = event.currentTarget;
+    window.setTimeout(() => field.scrollIntoView({ block: "center", behavior: "smooth" }), 260);
+  };
+
+  const chooseUpload = (file: File | undefined, accept: "image" | "audio") => {
+    if (!file) return;
+    const validType = accept === "image" ? isImageFile(file) : isAudioFile(file);
+    const maxBytes = (accept === "image" ? 12 : 40) * 1024 * 1024;
+    if (!validType) {
+      const message = accept === "image"
+        ? "请选择 JPG、PNG、WebP、HEIC 或 HEIF 图片"
+        : "请选择 MP3、M4A、AAC、WAV 或 OGG 音频";
+      setUpload(undefined);
+      setUploadError(message);
+      notify(message);
+      return;
+    }
+    if (file.size > maxBytes) {
+      const message = `${accept === "image" ? "图片" : "音频"}请控制在 ${accept === "image" ? 12 : 40} MB 以内`;
+      setUpload(undefined);
+      setUploadError(message);
+      notify(message);
+      return;
+    }
+    setUpload(file);
+    setUploadError("");
+    setUploadPreviewFailed(false);
+    notify(`已选择 ${file.name}`);
+  };
+
   const openEditor = (kind: EditorKind, item?: Record<string, unknown>) => {
     const base: Draft = {};
     if (item) {
@@ -1843,6 +1933,9 @@ export default function Prototype() {
     }
     setDraft(base);
     setUpload(undefined);
+    setUploadError("");
+    setUploadPreviewFailed(false);
+    setSavingEditor(false);
     setEditorReturnOverlay(overlay);
     setOverlay(null);
     setEditor({ kind, id: typeof item?.id === "string" ? item.id : undefined });
@@ -1853,6 +1946,9 @@ export default function Prototype() {
     keyboard.hide();
     setEditor(null);
     setUpload(undefined);
+    setUploadError("");
+    setUploadPreviewFailed(false);
+    setSavingEditor(false);
     setEditorReturnOverlay(null);
     if (returnTo) setOverlay(returnTo);
   };
@@ -1907,11 +2003,19 @@ export default function Prototype() {
     return undefined;
   };
 
+  const persistEditorData = (update: AppData | ((current: AppData) => AppData)) => {
+    const next = typeof update === "function" ? update(data) : update;
+    localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(next));
+    setData(next);
+    return next;
+  };
+
   const saveEditor = async () => {
-    if (!editor) return;
+    if (!editor || savingEditor) return;
     const { kind, id: editingId } = editor;
     const id = editingId ?? uid();
     const fail = (message: string) => {
+      setSavingEditor(false);
       notify(message);
       return false;
     };
@@ -1919,6 +2023,8 @@ export default function Prototype() {
     if (kind === "profile" && !required("name", "birthDate")) return void fail("请填写宝宝姓名和出生日期");
     if (kind === "profile" && ((draftValue("birthWeight").trim() && Number(draftValue("birthWeight")) <= 0) || (draftValue("birthHeight").trim() && Number(draftValue("birthHeight")) <= 0))) return void fail("已填写的出生身高和体重需要大于 0");
     if (kind === "profile" && draftValue("birthDate") > today()) return void fail("出生日期不能晚于今天");
+    if (kind === "profile" && upload && !isImageFile(upload)) return void fail("宝宝照片请选择图片文件");
+    if (kind === "profile" && upload && upload.size > 12 * 1024 * 1024) return void fail("宝宝照片请控制在 12 MB 以内");
     if (kind === "feeding" && !required("time", "amount", "milkType")) return void fail("请补全喂养信息");
     if (kind === "feeding" && Number(draftValue("amount")) <= 0) return void fail("奶量需要大于 0");
     if (kind === "feeding" && +new Date(draftValue("time")) > Date.now()) return void fail("喂养时间不能晚于现在");
@@ -1931,7 +2037,7 @@ export default function Prototype() {
     if (kind === "todo" && !required("title")) return void fail("请填写待办内容");
     if (kind === "memory" && !required("type", "title", "date", "description")) return void fail("请补全这段记忆");
     if (kind === "memory" && draftValue("type") === "photo" && !editingId && !upload) return void fail("请先选择一张宝宝照片");
-    if (kind === "memory" && upload && !upload.type.startsWith("image/")) return void fail("请选择 JPG、PNG 或 HEIC 图片");
+    if (kind === "memory" && upload && !isImageFile(upload)) return void fail("请选择 JPG、PNG、WebP 或 HEIC 图片");
     if (kind === "memory" && upload && upload.size > 12 * 1024 * 1024) return void fail("照片请控制在 12 MB 以内");
     if (kind === "memory" && draftValue("sourceAbilityId")) {
       const sourceAbilityId = draftValue("sourceAbilityId");
@@ -1958,7 +2064,7 @@ export default function Prototype() {
     if (kind === "ability" && draftValue("date") < FIXED_BIRTH_DATE) return void fail("发育记录不能早于出生日期");
     if (kind === "ability" && draftValue("date") > today()) return void fail("发育记录不能晚于今天");
     if (kind === "ability" && data.abilities.some((item) => item.id !== editingId && item.date === draftValue("date") && item.name.trim() === draftValue("name").trim())) return void fail("这一天已经记录过同名里程碑");
-    if (kind === "ability" && upload && !upload.type.startsWith("image/")) return void fail("发育示意图请选择图片文件");
+    if (kind === "ability" && upload && !isImageFile(upload)) return void fail("发育示意图请选择图片文件");
     if (kind === "ability" && upload && upload.size > 12 * 1024 * 1024) return void fail("发育示意图请控制在 12 MB 以内");
     if (kind === "checkup" && !required("date", "name", "tips")) return void fail("请补全儿保信息");
     if (kind === "checkup" && draftValue("date") < FIXED_BIRTH_DATE) return void fail("儿保日期不能早于出生日期");
@@ -1966,24 +2072,26 @@ export default function Prototype() {
     if (kind === "checkup" && data.checkups.some((item) => item.id !== editingId && item.date === draftValue("date") && item.name.trim() === draftValue("name").trim())) return void fail("这一天已经记录过同名儿保项目");
     if (kind === "music" && !required("name", "artist")) return void fail("请填写音乐名称与来源");
     if (kind === "music" && !upload && !draftValue("assetId")) return void fail("请选择一段音频");
-    if (kind === "music" && upload && !upload.type.startsWith("audio/")) return void fail("请选择 MP3、M4A、WAV 等音频文件");
+    if (kind === "music" && upload && !isAudioFile(upload)) return void fail("请选择 MP3、M4A、AAC、WAV 等音频文件");
     if (kind === "music" && upload && upload.size > 40 * 1024 * 1024) return void fail("音频请控制在 40 MB 以内");
     if (kind === "story" && !required("name", "link")) return void fail("请填写故事名称和链接");
     if (kind === "story" && !/^https?:\/\//i.test(draftValue("link"))) return void fail("故事链接需要以 http:// 或 https:// 开头");
-    if (kind === "story" && upload && !upload.type.startsWith("image/")) return void fail("故事封面请选择图片文件");
+    if (kind === "story" && upload && !isImageFile(upload)) return void fail("故事封面请选择图片文件");
     if (kind === "story" && upload && upload.size > 12 * 1024 * 1024) return void fail("故事封面请控制在 12 MB 以内");
     if (kind === "learning" && !required("kind", "term", "translation")) return void fail("请补全学习卡片");
-    if (kind === "learning" && upload && !upload.type.startsWith("image/")) return void fail("学习卡片请选择图片文件");
+    if (kind === "learning" && upload && !isImageFile(upload)) return void fail("学习卡片请选择图片文件");
     if (kind === "learning" && upload && upload.size > 12 * 1024 * 1024) return void fail("学习卡片图片请控制在 12 MB 以内");
 
     const previousAssetId = recordAssetId(kind, editingId);
     let uploadedId: string | undefined;
+    setSavingEditor(true);
     try {
       uploadedId = await saveAsset(upload);
     } catch {
       return void fail("文件保存失败，请重试或换一个较小的文件");
     }
 
+    try {
     if (kind === "profile") {
       const shouldClearDemo = Boolean(draft.clearDemo);
       const demoIds = new Set(data.demoRecordIds);
@@ -2027,26 +2135,26 @@ export default function Prototype() {
         next.stories = data.stories.filter((item) => !demoIds.has(item.id));
         next.learningItems = data.learningItems.filter((item) => !demoIds.has(item.id));
       }
-      setData(next);
+      persistEditorData(next);
       demoAssetIds.forEach((assetId) => {
         if (assetReferenceCount(next, assetId) === 0) void deleteAsset(assetId).catch(() => undefined);
       });
     }
     if (kind === "feeding") {
       const item: Feeding = { id, time: new Date(draftValue("time")).toISOString(), amount: Number(draftValue("amount")), milkType: draftValue("milkType"), note: draftValue("note") };
-      setData((current) => ({ ...current, feedings: [...current.feedings.filter((x) => x.id !== id), item] }));
+      persistEditorData((current) => ({ ...current, feedings: [...current.feedings.filter((x) => x.id !== id), item] }));
     }
     if (kind === "sleep") {
       const item: Sleep = { id, start: new Date(draftValue("start")).toISOString(), end: new Date(draftValue("end")).toISOString(), note: draftValue("note") };
-      setData((current) => ({ ...current, sleeps: [...current.sleeps.filter((x) => x.id !== id), item] }));
+      persistEditorData((current) => ({ ...current, sleeps: [...current.sleeps.filter((x) => x.id !== id), item] }));
     }
     if (kind === "diaper") {
       const item: Diaper = { id, time: new Date(draftValue("time")).toISOString(), status: draftValue("status"), note: draftValue("note") };
-      setData((current) => ({ ...current, diapers: [...current.diapers.filter((x) => x.id !== id), item] }));
+      persistEditorData((current) => ({ ...current, diapers: [...current.diapers.filter((x) => x.id !== id), item] }));
     }
     if (kind === "supplement") {
       const item: Supplement = { id, name: draftValue("name"), date: draftValue("date"), completed: Boolean(draft.completed) };
-      setData((current) => ({
+      persistEditorData((current) => ({
         ...current,
         supplements: [
           ...current.supplements.filter((x) => x.id !== id && !(isVitaminDSupplement(item) && isVitaminDSupplement(x) && x.date === item.date)),
@@ -2056,12 +2164,12 @@ export default function Prototype() {
     }
     if (kind === "todo") {
       const item: Todo = { id, title: draftValue("title"), completed: Boolean(draft.completed) };
-      setData((current) => ({ ...current, todos: [...current.todos.filter((x) => x.id !== id), item] }));
+      persistEditorData((current) => ({ ...current, todos: [...current.todos.filter((x) => x.id !== id), item] }));
     }
     if (kind === "memory") {
       const sourceAbilityId = draftValue("sourceAbilityId") || undefined;
       const item: Memory = { id, type: sourceAbilityId ? "moment" : draftValue("type") as MemoryType, title: draftValue("title"), date: draftValue("date"), description: draftValue("description"), assetId: uploadedId ?? (draftValue("assetId") || undefined), sourceAbilityId };
-      setData((current) => ({
+      persistEditorData((current) => ({
         ...current,
         memories: upsertById(current.memories, item),
         abilities: sourceAbilityId ? current.abilities.map((ability) => ability.id === sourceAbilityId ? { ...ability, date: item.date, name: item.title, description: item.description, imageId: item.assetId } : ability) : current.abilities,
@@ -2069,7 +2177,7 @@ export default function Prototype() {
     }
     if (kind === "growth") {
       const item: GrowthRecord = { id, date: draftValue("date"), height: draftValue("height").trim() ? Number(draftValue("height")) : undefined, weight: draftValue("weight").trim() ? Number(draftValue("weight")) : undefined, note: draftValue("note").trim() || undefined };
-      setData((current) => ({ ...current, growthRecords: [...current.growthRecords.filter((x) => x.id !== id), item] }));
+      persistEditorData((current) => ({ ...current, growthRecords: [...current.growthRecords.filter((x) => x.id !== id), item] }));
     }
     if (kind === "vaccine") {
       const previous = data.vaccines.find((item) => item.id === id);
@@ -2085,11 +2193,11 @@ export default function Prototype() {
         protects: draftValue("protects").trim() || previous?.protects || "按当地接种门诊安排",
         note: draftValue("note").trim() || undefined,
       };
-      setData((current) => ({ ...current, vaccines: upsertById(current.vaccines, item) }));
+      persistEditorData((current) => ({ ...current, vaccines: upsertById(current.vaccines, item) }));
     }
     if (kind === "ability") {
       const item: Ability = { id, date: draftValue("date"), name: draftValue("name"), description: draftValue("description"), imageId: uploadedId ?? (draftValue("imageId") || undefined) };
-      setData((current) => {
+      persistEditorData((current) => {
         const linked = current.memories.find((memory) => memory.sourceAbilityId === id);
         const linkedMemory: Memory = { id: linked?.id ?? uid(), type: "moment", title: item.name, date: item.date, description: item.description, assetId: item.imageId, sourceAbilityId: id };
         const memories = Boolean(draft.syncMemory)
@@ -2106,7 +2214,7 @@ export default function Prototype() {
         tips: draftValue("tips"),
         completedDate: Boolean(draft.completed) ? draftValue("completedDate") : undefined,
       };
-      setData((current) => ({ ...current, checkups: upsertById(current.checkups, item) }));
+      persistEditorData((current) => ({ ...current, checkups: upsertById(current.checkups, item) }));
     }
     if (kind === "music") {
       if (upload && (playingId === id || pausedId === id)) {
@@ -2132,11 +2240,11 @@ export default function Prototype() {
         durationSeconds,
         assetId: uploadedId ?? draftValue("assetId"),
       };
-      setData((current) => ({ ...current, musicTracks: upsertById(current.musicTracks, item) }));
+      persistEditorData((current) => ({ ...current, musicTracks: upsertById(current.musicTracks, item) }));
     }
     if (kind === "story") {
       const item: Story = { id, name: draftValue("name"), link: draftValue("link"), coverId: uploadedId ?? (draftValue("coverId") || undefined) };
-      setData((current) => ({ ...current, stories: upsertById(current.stories, item) }));
+      persistEditorData((current) => ({ ...current, stories: upsertById(current.stories, item) }));
     }
     if (kind === "learning") {
       const nextKind = draftValue("kind") as StudyTab;
@@ -2151,17 +2259,24 @@ export default function Prototype() {
         imageId: uploadedId ?? (draftValue("imageId") || undefined),
         artworkKey,
       };
-      setData((current) => ({ ...current, learningItems: upsertById(current.learningItems, item) }));
+      persistEditorData((current) => ({ ...current, learningItems: upsertById(current.learningItems, item) }));
       setStudyTab(nextKind);
     }
     if (uploadedId && previousAssetId && uploadedId !== previousAssetId) {
       const linkedReplacementCount = kind === "ability" || (kind === "memory" && draftValue("sourceAbilityId")) ? 2 : 1;
       if (assetReferenceCount(data, previousAssetId) <= linkedReplacementCount) void deleteAsset(previousAssetId).catch(() => undefined);
     }
+    } catch {
+      if (uploadedId) await deleteAsset(uploadedId).catch(() => undefined);
+      return void fail("记录未能保存，请检查浏览器存储空间后重试");
+    }
     const returnTo = editorReturnOverlay;
     keyboard.hide();
     setEditor(null);
     setUpload(undefined);
+    setUploadError("");
+    setUploadPreviewFailed(false);
+    setSavingEditor(false);
     setEditorReturnOverlay(null);
     if (returnTo) setOverlay(returnTo);
     notify(editingId ? "已经更新" : "已经记下来了");
@@ -2904,7 +3019,17 @@ export default function Prototype() {
                         <strong>{completed ? "实际接种" : "计划接种"}</strong>
                         {completed ? <label className="vaccine-completed-date">
                           <span className="visually-hidden">接种时间</span>
-                          <KeyboardInput
+                          {nativeInputs ? <input
+                            type="date"
+                            min={FIXED_BIRTH_DATE}
+                            max={today()}
+                            value={item.completedDate ?? ""}
+                            onChange={(event) => setVaccineCompletedDate(item.id, event.target.value)}
+                            onFocus={handleNativeInputFocus}
+                            aria-label={`${item.name} ${item.dose} 的实际接种日期`}
+                            data-native-input="true"
+                            data-scroll-drag="ignore"
+                          /> : <KeyboardInput
                             type="date"
                             min={FIXED_BIRTH_DATE}
                             max={today()}
@@ -2912,7 +3037,7 @@ export default function Prototype() {
                             onChange={(event) => setVaccineCompletedDate(item.id, event.target.value)}
                             aria-label={`${item.name} ${item.dose} 的实际接种日期`}
                             data-scroll-drag="ignore"
-                          />
+                          />}
                         </label> : <time className="vaccine-planned-date" dateTime={item.dueDate}>{healthDisplayDate(item.dueDate)}</time>}
                         {!item.scheduleKey ? <button className="vaccine-edit-button" type="button" onClick={() => openEditor("vaccine", item as unknown as Record<string, unknown>)} aria-label={`编辑 ${item.name} ${item.dose}`} data-scroll-drag="ignore"><Pencil1Icon /></button> : null}
                       </div>
@@ -3671,11 +3796,56 @@ export default function Prototype() {
 
   const renderEditorFields = () => {
     if (!editor) return null;
-    const field = (label: string, key: string, type = "text", props: Record<string, string> = {}) => <label className="form-field"><span>{label}</span><KeyboardInput type={type} value={draftValue(key)} onChange={(event) => changeDraft(key, event.target.value)} {...props} /></label>;
-    const textarea = (label: string, key: string, placeholder = "") => <label className="form-field"><span>{label}</span><KeyboardTextarea value={draftValue(key)} placeholder={placeholder} onChange={(event) => changeDraft(key, event.target.value)} /></label>;
+    const inputControl = (key: string, type: string, props: InputHTMLAttributes<HTMLInputElement>) => {
+      const inputProps: InputHTMLAttributes<HTMLInputElement> = {
+        ...props,
+        type,
+        value: draftValue(key),
+        onChange: (event) => changeDraft(key, event.target.value),
+      };
+      return nativeInputs
+        ? <input {...inputProps} onFocus={handleNativeInputFocus} data-native-input="true" />
+        : <KeyboardInput {...inputProps} />;
+    };
+    const textareaControl = (key: string, props: TextareaHTMLAttributes<HTMLTextAreaElement>) => {
+      const textareaProps: TextareaHTMLAttributes<HTMLTextAreaElement> = {
+        ...props,
+        value: draftValue(key),
+        onChange: (event) => changeDraft(key, event.target.value),
+      };
+      return nativeInputs
+        ? <textarea {...textareaProps} onFocus={handleNativeInputFocus} data-native-input="true" />
+        : <KeyboardTextarea {...textareaProps} />;
+    };
+    const field = (label: string, key: string, type = "text", props: InputHTMLAttributes<HTMLInputElement> = {}) => <label className="form-field"><span>{label}</span>{inputControl(key, type, props)}</label>;
+    const textarea = (label: string, key: string, placeholder = "") => <label className="form-field"><span>{label}</span>{textareaControl(key, { placeholder })}</label>;
     const select = (label: string, key: string, options: { value: string; label: string }[]) => <label className="form-field"><span>{label}</span><select value={draftValue(key)} onChange={(event) => changeDraft(key, event.target.value)}>{options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>;
-    const file = (label: string, accept: string) => <label className="form-field upload-field"><span>{label}</span><input type="file" accept={accept} onChange={(event) => setUpload(event.target.files?.[0])} data-scroll-drag="ignore" /><small>{upload ? upload.name : "点击选择本机文件"}</small></label>;
-    if (editor.kind === "profile") return <>{data.demoMode ? <div className="demo-callout"><strong>当前是硕之的示例数据</strong><p>默认会在保存资料时清除内置示例；你自己新增的记录会保留。</p><button className={`secondary-button ${draft.clearDemo ? "selected" : ""}`} type="button" onClick={() => changeDraft("clearDemo", !Boolean(draft.clearDemo))} data-scroll-drag="ignore">{draft.clearDemo ? <><CheckIcon /> 保存时清除内置示例</> : "保留示例记录"}</button></div> : null}<div className="fixed-profile-summary"><strong>硕之</strong><span>出生日期：2026年8月4日</span><span>出生体重：2.4 kg · 出生身高：48 cm</span></div>{file("宝宝照片", "image/*")}</>;
+    const file = (label: string, accept: "image/*" | "audio/*", preview?: string) => {
+      const uploadKind = accept === "audio/*" ? "audio" : "image";
+      return <label className="form-field upload-field" data-scroll-drag="ignore">
+        <span>{label}</span>
+        <span className="native-file-picker">
+          <input
+            type="file"
+            accept={accept}
+            aria-label={label}
+            onClick={(event) => { event.currentTarget.value = ""; }}
+            onChange={(event) => {
+              const selected = event.currentTarget.files?.[0];
+              chooseUpload(selected, uploadKind);
+              event.currentTarget.value = "";
+            }}
+            data-scroll-drag="ignore"
+          />
+          <span className="native-file-picker-label"><PlusIcon /> {uploadKind === "image" ? "从相册或文件选择" : "从文件选择音频"}</span>
+        </span>
+        <small role="status">{upload ? `已选择：${upload.name} · ${formatFileSize(upload.size)}` : "文件只保存在当前设备"}</small>
+        {uploadError ? <em className="upload-error" role="alert">{uploadError}</em> : null}
+        {upload && uploadKind === "image" && uploadPreviewFailed ? <em className="upload-preview-note">文件已选中，当前浏览器暂不能预览该格式，仍可保存。</em> : null}
+        {preview && !uploadPreviewFailed ? <img className="native-upload-preview" src={preview} alt={`${label}预览`} onError={() => setUploadPreviewFailed(true)} /> : null}
+      </label>;
+    };
+    if (editor.kind === "profile") return <>{data.demoMode ? <div className="demo-callout"><strong>当前是硕之的示例数据</strong><p>默认会在保存资料时清除内置示例；你自己新增的记录会保留。</p><button className={`secondary-button ${draft.clearDemo ? "selected" : ""}`} type="button" onClick={() => changeDraft("clearDemo", !Boolean(draft.clearDemo))} data-scroll-drag="ignore">{draft.clearDemo ? <><CheckIcon /> 保存时清除内置示例</> : "保留示例记录"}</button></div> : null}<div className="fixed-profile-summary"><strong>硕之</strong><span>出生日期：2026年8月4日</span><span>出生体重：2.4 kg · 出生身高：48 cm</span></div>{file("宝宝照片", "image/*", uploadPreviewUrl ?? (data.baby.avatarId ? assetUrls[data.baby.avatarId] : undefined))}</>;
     if (editor.kind === "feeding") return <>{field("喂养时间", "time", "datetime-local")}{field("奶量 ml", "amount", "number", { min: "0" })}{select("喂养类型", "milkType", [{ value: "母乳", label: "母乳" }, { value: "配方奶", label: "配方奶" }, { value: "混合喂养", label: "混合喂养" }])}{textarea("备注", "note")}</>;
     if (editor.kind === "sleep") return <>{field("开始时间", "start", "datetime-local")}{field("结束时间", "end", "datetime-local")}{textarea("备注", "note", "例如：午睡、夜间容易醒")}</>;
     if (editor.kind === "diaper") return <>{field("便便时间", "time", "datetime-local")}{select("便便状态", "status", [{ value: "正常软便", label: "正常软便" }, { value: "偏稀", label: "偏稀" }, { value: "偏硬", label: "偏硬" }, { value: "其他", label: "其他" }])}{textarea("备注", "note")}</>;
@@ -3685,7 +3855,7 @@ export default function Prototype() {
       const editingMemory = editor.id ? data.memories.find((item) => item.id === editor.id) : undefined;
       const persistedPreview = editingMemory?.assetId ? assetUrls[editingMemory.assetId] : editingMemory?.type === "photo" ? "/assets/baby/memory-luna-cuddle-v1.png" : undefined;
       const preview = uploadPreviewUrl ?? persistedPreview;
-      return <>{draftValue("sourceAbilityId") ? <div className="linked-note"><strong>成长旅程 · 能力记录</strong><p>这是同一条里程碑，在这里修改会同步到健康记录。</p></div> : select("内容类型", "type", [{ value: "moment", label: "瞬间 · 第一次" }, { value: "photo", label: "照片" }, { value: "note", label: "随记" }])}{field("标题", "title")}{field("日期", "date", "date", draftValue("sourceAbilityId") ? { min: FIXED_BIRTH_DATE, max: today() } : {})}{textarea("内容", "description")}{file(draftValue("type") === "photo" ? "上传照片 *" : "照片（可选）", "image/*")}{draftValue("type") === "photo" && preview ? <figure className="memory-upload-preview"><img src={preview} alt="照片预览" /><figcaption>照片会按原始比例保存，并仅在卡片中居中裁切。</figcaption></figure> : null}</>;
+      return <>{draftValue("sourceAbilityId") ? <div className="linked-note"><strong>成长旅程 · 能力记录</strong><p>这是同一条里程碑，在这里修改会同步到健康记录。</p></div> : select("内容类型", "type", [{ value: "moment", label: "瞬间 · 第一次" }, { value: "photo", label: "照片" }, { value: "note", label: "随记" }])}{field("标题", "title")}{field("日期", "date", "date", draftValue("sourceAbilityId") ? { min: FIXED_BIRTH_DATE, max: today() } : {})}{textarea("内容", "description")}{file(draftValue("type") === "photo" ? "上传照片 *" : "照片（可选）", "image/*")}{draftValue("type") === "photo" && preview && !uploadPreviewFailed ? <figure className="memory-upload-preview"><img src={preview} alt="照片预览" onError={() => setUploadPreviewFailed(true)} /><figcaption>照片会按原始比例保存，并仅在卡片中居中裁切。</figcaption></figure> : null}</>;
     }
     if (editor.kind === "growth") return <>{field("测量日期 *", "date", "date", { max: today() })}<p className="form-hint">身长和体重可以只填一项；同一天只保留一条完整记录。</p><div className="form-columns">{field("身长 cm（可选）", "height", "number", { step: "0.1", min: "20", max: "200" })}{field("体重 kg（可选）", "weight", "number", { step: "0.01", min: "0.5", max: "50" })}</div>{textarea("成长备注（可选）", "note", "例如：坐得更稳了、第一次量身高")}</>;
     if (editor.kind === "vaccine") return <>
@@ -3700,7 +3870,7 @@ export default function Prototype() {
     if (editor.kind === "ability") {
       const editingAbility = editor.id ? data.abilities.find((item) => item.id === editor.id) : undefined;
       const preview = uploadPreviewUrl ?? (editingAbility?.imageId ? assetUrls[editingAbility.imageId] : undefined);
-      return <>{field("记录日期", "date", "date", { min: FIXED_BIRTH_DATE, max: today() })}{field("大运动能力", "name")}{textarea("表现说明", "description")}{file("示意图（可选）", "image/*")}{preview ? <figure className="memory-upload-preview health-ability-upload-preview"><img src={preview} alt="发育里程碑图片预览" /><figcaption>图片将以原色保存，并在里程碑卡片中居中显示。</figcaption></figure> : null}<p className="form-hint">支持 JPG、PNG、WebP，最大 12 MB；图片只保存在当前设备。</p><label className="switch-field"><input type="checkbox" checked={Boolean(draft.syncMemory)} onChange={(event) => changeDraft("syncMemory", event.target.checked)} data-scroll-drag="ignore"/><span>同步到成长回忆 · 瞬间（同一条记录）</span></label>{editor.id && data.memories.some((memory) => memory.sourceAbilityId === editor.id) && !draft.syncMemory ? <p className="unlink-warning">保存后，这条内容会从成长回忆移除，但健康记录会保留。</p> : null}</>;
+      return <>{field("记录日期", "date", "date", { min: FIXED_BIRTH_DATE, max: today() })}{field("大运动能力", "name")}{textarea("表现说明", "description")}{file("示意图（可选）", "image/*")}{preview && !uploadPreviewFailed ? <figure className="memory-upload-preview health-ability-upload-preview"><img src={preview} alt="发育里程碑图片预览" onError={() => setUploadPreviewFailed(true)} /><figcaption>图片将以原色保存，并在里程碑卡片中居中显示。</figcaption></figure> : null}<p className="form-hint">支持 JPG、PNG、WebP、HEIC，最大 12 MB；图片只保存在当前设备。</p><label className="switch-field"><input type="checkbox" checked={Boolean(draft.syncMemory)} onChange={(event) => changeDraft("syncMemory", event.target.checked)} data-scroll-drag="ignore"/><span>同步到成长回忆 · 瞬间（同一条记录）</span></label>{editor.id && data.memories.some((memory) => memory.sourceAbilityId === editor.id) && !draft.syncMemory ? <p className="unlink-warning">保存后，这条内容会从成长回忆移除，但健康记录会保留。</p> : null}</>;
     }
     if (editor.kind === "checkup") return <>
       {field("计划 / 儿保日期", "date", "date", { min: FIXED_BIRTH_DATE })}
@@ -3760,7 +3930,7 @@ export default function Prototype() {
         : 0.72;
 
   return (
-    <div className="baby-app-shell">
+    <div className="baby-app-shell" data-native-inputs={nativeInputs ? "true" : "false"}>
       {renderPage()}
 
       <BottomSheet open={Boolean(overlay)} onOpenChange={(open) => { if (!open) { keyboard.hide(); setOverlay(null); } }} title={overlayTitle} description={overlayDescription} snap={overlaySnap}>
@@ -3796,7 +3966,7 @@ export default function Prototype() {
       <BottomSheet open={Boolean(editor)} onOpenChange={(open) => { if (!open) closeEditor(); }} title={editor ? editor.kind === "profile" ? "修改宝宝资料" : `${editor.id ? "修改" : "新增"}${editorTitle(editor.kind)}` : "编辑"} description="带 * 的核心信息请完整填写。" snap={0.82}>
         <form className="editor-form" onSubmit={(event) => { event.preventDefault(); void saveEditor(); }}>
           {renderEditorFields()}
-          <button className="primary-button save-button" type="submit" data-scroll-drag="ignore"><CheckIcon /> 保存记录</button>
+          <button className="primary-button save-button" type="submit" disabled={savingEditor} aria-busy={savingEditor} data-scroll-drag="ignore"><CheckIcon /> {savingEditor ? "正在保存…" : "保存记录"}</button>
           {editor?.id && editor.kind !== "profile" && !(editor.kind === "vaccine" && data.vaccines.some((item) => item.id === editor.id && item.scheduleKey)) ? <button className="danger-button editor-delete-button" type="button" onClick={() => { const activeEditor = editor; if (!activeEditor?.id || activeEditor.kind === "profile") return; setEditor(null); setUpload(undefined); removeItem(activeEditor.kind, activeEditor.id); }} data-scroll-drag="ignore"><TrashIcon /> 删除这条{editorTitle(editor.kind)}</button> : null}
         </form>
       </BottomSheet>
