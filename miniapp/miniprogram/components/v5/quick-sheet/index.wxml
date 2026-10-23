@@ -57,7 +57,7 @@
       <textarea
         class="text-input"
         value="{{text}}"
-        placeholder="比如：抓着我的手指不放，好久都不松开。"
+        placeholder="比如：抓着我的手指不放。"
         placeholder-class="placeholder"
         maxlength="200"
         auto-height
