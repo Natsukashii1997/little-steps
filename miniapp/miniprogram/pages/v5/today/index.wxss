@@ -1,0 +1,87 @@
+.date {
+  display: block;
+}
+
+.hero {
+  position: relative;
+  margin-top: 40rpx;
+}
+
+.name-row {
+  position: relative;
+  z-index: 1;
+}
+
+/* 名字：2 个字用 72；3 个字及以上 56；最多两行（规范第 3 节） */
+.name {
+  display: -webkit-box;
+  max-width: 100%;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: var(--fs-name);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.name-long {
+  font-size: 56px;
+}
+
+.age {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: 16rpx;
+}
+
+/* 插画让到名字下方、靠右（标准屏里约占内容宽 64%，左缘与那句话的右缘相接） */
+.hero-ill {
+  position: absolute;
+  z-index: 0;
+  right: -8rpx;
+  top: 115rpx;
+  width: 62%;
+}
+
+/* 那句话最多两行，宽度约一半，字压在插画上层 */
+.lead {
+  position: relative;
+  z-index: 1;
+  max-width: 52%;
+  margin-top: 62rpx;
+}
+
+.lead-main {
+  display: block;
+  font-size: var(--fs-item);
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.lead-sub {
+  display: block;
+  margin-top: 8rpx;
+}
+
+/* 「记一笔」圆按钮：直径 56pt，距右 24pt，在底栏上方；只在今天页 */
+.fab {
+  position: fixed;
+  z-index: 40;
+  right: var(--page-x);
+  bottom: calc(var(--nav-h) + var(--safe-bottom) + 31rpx);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fab-img {
+  width: 108rpx;
+  height: 108rpx;
+}
+
+.fab-label {
+  margin-top: 4rpx;
+  font-size: var(--fs-item);
+  line-height: 1.5;
+}

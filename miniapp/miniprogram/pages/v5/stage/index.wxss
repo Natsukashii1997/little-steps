@@ -1,0 +1,8 @@
+.title-zhegeyue {
+  width: 237rpx; /* 368×168 按高 108rpx 换算 */
+}
+
+.head-ill {
+  width: 245rpx; /* 日历插画约 127pt 宽 */
+  margin-top: -30rpx;
+}

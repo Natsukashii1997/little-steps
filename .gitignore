@@ -10,3 +10,6 @@ tmp/
 
 # 本机私密配置，不入库
 miniapp/miniprogram/config.local.js
+
+# 切片验证截图只留本地
+docs/handoff/slice-*/**/*.png

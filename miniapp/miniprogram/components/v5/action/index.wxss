@@ -1,0 +1,46 @@
+.action {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--row-min); /* 触控区不小于 44pt */
+  padding: 0 4rpx;
+  color: var(--ink);
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+  font-size: var(--fs-item);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.stroke {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 主动作：高 16pt，压在字的下半部，两端伸出约 8pt */
+.stroke-green {
+  left: -15rpx;
+  width: calc(100% + 30rpx);
+  height: 31rpx;
+  top: calc(50% - 4rpx);
+}
+
+/* 选中：高 6pt，离字 4pt，两端略伸出 */
+.stroke-blue {
+  left: -6rpx;
+  width: calc(100% + 12rpx);
+  height: 12rpx;
+  top: calc(50% + 27rpx);
+}
+
+.is-disabled {
+  color: var(--ink-2);
+}
+
+.is-disabled .stroke {
+  opacity: 0.45;
+}

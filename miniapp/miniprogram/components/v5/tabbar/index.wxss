@@ -1,0 +1,43 @@
+.tabbar {
+  position: fixed;
+  z-index: 50;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  height: calc(var(--nav-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: var(--paper);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--nav-h);
+  color: var(--ink-2);
+}
+
+.tab.is-active {
+  color: var(--ink);
+}
+
+.tab-label {
+  font-size: var(--fs-item);
+  line-height: 1.5;
+}
+
+.tab-dot {
+  width: 15rpx;  /* 8pt */
+  height: 15rpx;
+  margin-top: 4rpx; /* 字底到点 6pt，行距已含一部分 */
+  border-radius: 50%;
+  background: var(--blue);
+  opacity: 0;
+}
+
+.tab.is-active .tab-dot {
+  opacity: 1;
+}

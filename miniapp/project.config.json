@@ -9,6 +9,78 @@
       {
         "value": "scripts",
         "type": "folder"
+      },
+      {
+        "value": "miniprogram/pages/home",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/pages/memory",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/pages/growth",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/pages/health",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/pages/report",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/components/app-header",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/components/app-tabbar",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/components/add-pill",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/components/segmented-tabs",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/components/undo-bar",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/assets/care",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/assets/growth",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/assets/health",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/assets/home",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/assets/icons",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/assets/memory",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/assets/nav",
+        "type": "folder"
+      },
+      {
+        "value": "miniprogram/assets/ui",
+        "type": "folder"
       }
     ],
     "include": []

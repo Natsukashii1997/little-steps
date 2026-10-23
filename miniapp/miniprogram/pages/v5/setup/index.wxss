@@ -1,0 +1,84 @@
+.setup-head {
+  position: relative;
+  min-height: 300rpx;
+}
+
+.setup-head .title {
+  position: relative;
+  z-index: 1;
+  margin-top: 8rpx;
+}
+
+/* 备用插画 ill-home-rattle，放在标题右下，面积不超过屏幕 1/5 */
+.setup-ill {
+  position: absolute;
+  right: -8rpx;
+  top: 70rpx;
+  width: 360rpx;
+  z-index: 0;
+}
+
+.field {
+  display: flex;
+  align-items: flex-end;
+  gap: 31rpx;
+  min-height: var(--row-min);
+  margin-top: 31rpx;
+}
+
+.field-label {
+  flex: 0 0 auto;
+  padding-bottom: 8rpx;
+  font-size: var(--fs-item);
+  line-height: 1.5;
+}
+
+.line-picker-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.line-input {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  min-height: 70rpx;
+  padding: 0 8rpx 8rpx;
+  border-bottom: 3rpx solid var(--ink); /* 1.5pt 墨线，没有框 */
+  color: var(--ink);
+  font-size: var(--fs-item);
+  line-height: 1.5;
+  background: transparent;
+}
+
+.line-picker {
+  width: 100%;
+}
+
+.placeholder {
+  color: var(--ink-2);
+}
+
+.note {
+  display: block;
+  margin-top: 31rpx;
+}
+
+.error-row {
+  display: flex;
+  align-items: center;
+  gap: 23rpx;
+  margin-top: 31rpx;
+}
+
+.mark-error {
+  flex: 0 0 auto;
+  width: 44rpx;
+  height: 46rpx;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--section-gap);
+}

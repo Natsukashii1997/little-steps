@@ -1,0 +1,5 @@
+<view class="topbar {{back ? 'has-back' : ''}}" style="padding-top: {{contentTop}}px;">
+  <view wx:if="{{back}}" class="back" hover-class="none" bindtap="goBack" aria-role="button" aria-label="返回{{back}}">
+    <text class="small">‹ {{back}}</text>
+  </view>
+</view>

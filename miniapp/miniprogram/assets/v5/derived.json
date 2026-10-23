@@ -1,0 +1,317 @@
+{
+  "note": "由 scripts/v5-assets.py 从权威包派生；来源哈希见 authority/manifest.json",
+  "items": [
+    {
+      "source": "gpt-assets/transparent/ill-home-sleep.png",
+      "source_sha256": "9a7d94e4237a3957ac3ff0bbbdf20b9ce6fccfa5784f8bba2f39c1b1b5835d77",
+      "mode": "width",
+      "value": 660,
+      "output": "ill-home-sleep.png",
+      "size": [
+        660,
+        459
+      ],
+      "output_sha256": "b7f1714b6336b63ead71f08ecbc6ac38ddbecba10ed17c88b2801316d979db1f"
+    },
+    {
+      "source": "gpt-assets/transparent/ill-home-leaf.png",
+      "source_sha256": "8f12ec41419e76818f5007e6fffaa00f7f7dd23c7f0be25a04f6a69b995654ee",
+      "mode": "width",
+      "value": 660,
+      "output": "ill-home-leaf.png",
+      "size": [
+        660,
+        584
+      ],
+      "output_sha256": "5bc83da5abca07c8b88df1a3fdf68c19c5ae9e4b23f102c1f27a40d82fe31195"
+    },
+    {
+      "source": "gpt-assets/transparent/ill-home-rattle.png",
+      "source_sha256": "b29d674b19d1c631be1f9c405247fae7f481f1bef6f09b617145c2cccb790501",
+      "mode": "width",
+      "value": 540,
+      "output": "ill-home-rattle.png",
+      "size": [
+        540,
+        427
+      ],
+      "output_sha256": "c4258d5bb77e8cc16e562d6e1019a3bb0a318fcd7b2bbf24bf4b38c401c0c640"
+    },
+    {
+      "source": "gpt-assets/transparent/ill-stage-calendar.png",
+      "source_sha256": "0a5b51dd8db53248ef1e3641cc81f16e116051cdbb2dd2617a191da196534b36",
+      "mode": "width",
+      "value": 380,
+      "output": "ill-stage-calendar.png",
+      "size": [
+        380,
+        317
+      ],
+      "output_sha256": "9116aa9a836439b28c5617d06aff4b3dfde584d374bf8e09e277a652018066c7"
+    },
+    {
+      "source": "gpt-assets/transparent/ill-growth-sprout.png",
+      "source_sha256": "437a9d44465dc28d91d6a4b849d514509f62a15918d662cd4ab3bf779573a129",
+      "mode": "width",
+      "value": 255,
+      "output": "ill-growth-sprout.png",
+      "size": [
+        255,
+        256
+      ],
+      "output_sha256": "dfbf5546ba1bf3c40b6b3fa6452207fdfc5772390450a889525c14e4c7627c51"
+    },
+    {
+      "source": "gpt-assets/transparent/ill-album-camera.png",
+      "source_sha256": "c8d290e6a3204aeebb72d7a6bddb0cae9556334062645d10e02ca24bae2ae7ea",
+      "mode": "width",
+      "value": 325,
+      "output": "ill-album-camera.png",
+      "size": [
+        325,
+        274
+      ],
+      "output_sha256": "9734866a9ee5936e42ee478750e2f14c30ad4d967cb9120d196e41523570d6c9"
+    },
+    {
+      "source": "gpt-assets/transparent/title-zhegeyue.png",
+      "source_sha256": "4f1114d463344b77d3e8c4a6084e0a06d1e192f5ea3c3329df5101dc3e7df463",
+      "mode": "height",
+      "value": 168,
+      "output": "title-zhegeyue.png",
+      "size": [
+        368,
+        168
+      ],
+      "output_sha256": "3956eac29d64d2f0dee14fc20abb28843c1fc52bf6f8e484ad558746cc5c9912"
+    },
+    {
+      "source": "gpt-assets/transparent/title-zhangdale.png",
+      "source_sha256": "2500aaf1d4ffe81a38a8a92e8c3725cbc3be0df4a97ec53ad7eece23fe3f0f18",
+      "mode": "height",
+      "value": 168,
+      "output": "title-zhangdale.png",
+      "size": [
+        346,
+        168
+      ],
+      "output_sha256": "7d2d4b02262755a92e82715e67ce29da9d77810b41d8b1f2f5b7543a85db4d82"
+    },
+    {
+      "source": "gpt-assets/transparent/title-xiangce.png",
+      "source_sha256": "feccd63f8fbb5571143733a9a469b403af0c9b2c7a040323145d27ba577bcb64",
+      "mode": "height",
+      "value": 168,
+      "output": "title-xiangce.png",
+      "size": [
+        317,
+        168
+      ],
+      "output_sha256": "4f9d8f7f40fb1b6cb2a52767871c04b32c123982c533214384b8b86aa912ae9d"
+    },
+    {
+      "source": "gpt-assets/transparent/title-jiyibi.png",
+      "source_sha256": "f41136fd075436c7b169bb7adc5d4e4b8f91f8dc3fff6804c0e8b5ff75d874a7",
+      "mode": "height",
+      "value": 168,
+      "output": "title-jiyibi.png",
+      "size": [
+        392,
+        168
+      ],
+      "output_sha256": "286a77ab2ee7caf71563640f411fefde2e5a2385e1788ab1f318418d78e88fe4"
+    },
+    {
+      "source": "gpt-assets/transparent/title-shanggeyue.png",
+      "source_sha256": "0e9cdfd3dc47f913fb39c13af368aee38f1323fde5889276c4531558fdb9a3b4",
+      "mode": "height",
+      "value": 168,
+      "output": "title-shanggeyue.png",
+      "size": [
+        383,
+        168
+      ],
+      "output_sha256": "937d313f37254f1660681faa7d8959b9652446c2c00f9b7a9801cd9775f37314"
+    },
+    {
+      "source": "authority/assets/fab-add.png",
+      "source_sha256": "9677aa1dac68b89ef248a5dc932bdb20c87fd884ec0885a1dc1319ff473e3147",
+      "mode": "copy",
+      "value": null,
+      "output": "fab-add.png",
+      "size": [
+        135,
+        134
+      ],
+      "output_sha256": "9677aa1dac68b89ef248a5dc932bdb20c87fd884ec0885a1dc1319ff473e3147"
+    },
+    {
+      "source": "authority/assets/mark-todo.png",
+      "source_sha256": "c17e79693da008967d047ca6ba80cf88ed505357d96c044d9f10d297ad74ffff",
+      "mode": "copy",
+      "value": null,
+      "output": "mark-todo.png",
+      "size": [
+        48,
+        47
+      ],
+      "output_sha256": "c17e79693da008967d047ca6ba80cf88ed505357d96c044d9f10d297ad74ffff"
+    },
+    {
+      "source": "authority/assets/mark-done.png",
+      "source_sha256": "ebd85b8db79135cbfc95f46ef4a07020ecd0c1047065d8e8d8545a0d55104faa",
+      "mode": "copy",
+      "value": null,
+      "output": "mark-done.png",
+      "size": [
+        45,
+        43
+      ],
+      "output_sha256": "ebd85b8db79135cbfc95f46ef4a07020ecd0c1047065d8e8d8545a0d55104faa"
+    },
+    {
+      "source": "authority/assets/mark-not-yet.png",
+      "source_sha256": "f0e6db71edb3a5c1276062fe7320c889589ff55396c7e06af1a2a71ef6c29b03",
+      "mode": "copy",
+      "value": null,
+      "output": "mark-not-yet.png",
+      "size": [
+        54,
+        54
+      ],
+      "output_sha256": "f0e6db71edb3a5c1276062fe7320c889589ff55396c7e06af1a2a71ef6c29b03"
+    },
+    {
+      "source": "authority/assets/mark-none.png",
+      "source_sha256": "7118dbb925d9230db013459a16355e9e19f86bbf0c5348dc1402e56635b21ec2",
+      "mode": "copy",
+      "value": null,
+      "output": "mark-none.png",
+      "size": [
+        40,
+        20
+      ],
+      "output_sha256": "7118dbb925d9230db013459a16355e9e19f86bbf0c5348dc1402e56635b21ec2"
+    },
+    {
+      "source": "authority/assets/mark-doctor.png",
+      "source_sha256": "96aa3e2338ec80534d2a0d19ebe78c4cec8e00b4f69fa8902a4cfd29703cc771",
+      "mode": "copy",
+      "value": null,
+      "output": "mark-doctor.png",
+      "size": [
+        21,
+        58
+      ],
+      "output_sha256": "96aa3e2338ec80534d2a0d19ebe78c4cec8e00b4f69fa8902a4cfd29703cc771"
+    },
+    {
+      "source": "authority/assets/mark-error.png",
+      "source_sha256": "f785d4f64935b34bb62e69ff932518499139a822f847b82cf28a3e86b213864c",
+      "mode": "copy",
+      "value": null,
+      "output": "mark-error.png",
+      "size": [
+        58,
+        60
+      ],
+      "output_sha256": "f785d4f64935b34bb62e69ff932518499139a822f847b82cf28a3e86b213864c"
+    },
+    {
+      "source": "gpt-assets/transparent/marks-highlight.png",
+      "source_sha256": "01b054c32b32c872d23a3e83bc0b4ad3803d83306928b8b8c63d1ad1f32e998e",
+      "box": [
+        552,
+        55,
+        984,
+        147
+      ],
+      "output": "stroke-blue-s.png",
+      "size": [
+        225,
+        48
+      ],
+      "output_sha256": "8f8b8b8e0d2a3d32a1a7ca33e6c64b879c5794338f2fd55dd6df0a4a1b468f6a"
+    },
+    {
+      "source": "gpt-assets/transparent/marks-highlight.png",
+      "source_sha256": "01b054c32b32c872d23a3e83bc0b4ad3803d83306928b8b8c63d1ad1f32e998e",
+      "box": [
+        48,
+        54,
+        483,
+        151
+      ],
+      "output": "stroke-blue-m.png",
+      "size": [
+        215,
+        48
+      ],
+      "output_sha256": "201dc4600c63ad4d4b12ffb270a8c2c0140debe473cf308ef076d1c886f965aa"
+    },
+    {
+      "source": "gpt-assets/transparent/marks-highlight.png",
+      "source_sha256": "01b054c32b32c872d23a3e83bc0b4ad3803d83306928b8b8c63d1ad1f32e998e",
+      "box": [
+        1054,
+        56,
+        1489,
+        147
+      ],
+      "output": "stroke-blue-l.png",
+      "size": [
+        229,
+        48
+      ],
+      "output_sha256": "728ebe78c69d008bbced31397aefb42e838b830d0975ccef8212dadecfc9c4c8"
+    },
+    {
+      "source": "gpt-assets/transparent/marks-highlight.png",
+      "source_sha256": "01b054c32b32c872d23a3e83bc0b4ad3803d83306928b8b8c63d1ad1f32e998e",
+      "box": [
+        49,
+        322,
+        483,
+        420
+      ],
+      "output": "stroke-green-s.png",
+      "size": [
+        213,
+        48
+      ],
+      "output_sha256": "a5d3fb71fe5b1732b95294a7d1bafeddc27bcb1eab96afc08fcfb8000e20f2d7"
+    },
+    {
+      "source": "gpt-assets/transparent/marks-highlight.png",
+      "source_sha256": "01b054c32b32c872d23a3e83bc0b4ad3803d83306928b8b8c63d1ad1f32e998e",
+      "box": [
+        551,
+        323,
+        985,
+        422
+      ],
+      "output": "stroke-green-m.png",
+      "size": [
+        210,
+        48
+      ],
+      "output_sha256": "297468751a69c37770d6ab183c179de40ec22098eb58efc2088e5812275c4cf2"
+    },
+    {
+      "source": "gpt-assets/transparent/marks-highlight.png",
+      "source_sha256": "01b054c32b32c872d23a3e83bc0b4ad3803d83306928b8b8c63d1ad1f32e998e",
+      "box": [
+        1054,
+        325,
+        1489,
+        424
+      ],
+      "output": "stroke-green-l.png",
+      "size": [
+        211,
+        48
+      ],
+      "output_sha256": "7a1dcda13b052938c367531bfb562f5da6b5ed99ed091945582c6f24ce670460"
+    }
+  ]
+}

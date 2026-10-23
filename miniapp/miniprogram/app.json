@@ -1,16 +1,21 @@
 {
   "pages": [
-    "pages/home/index",
-    "pages/report/index",
-    "pages/memory/index",
-    "pages/growth/index",
-    "pages/health/index"
+    "pages/v5/today/index",
+    "pages/v5/stage/index",
+    "pages/v5/growth/index",
+    "pages/v5/album/index",
+    "pages/v5/setup/index"
   ],
   "window": {
     "navigationStyle": "custom",
     "backgroundTextStyle": "dark",
-    "backgroundColor": "#f6eee3",
+    "backgroundColor": "#FCFCFC",
     "enablePullDownRefresh": false
+  },
+  "usingComponents": {
+    "v5-topbar": "/components/v5/topbar/index",
+    "v5-tabbar": "/components/v5/tabbar/index",
+    "v5-action": "/components/v5/action/index"
   },
   "componentFramework": "glass-easel",
   "lazyCodeLoading": "requiredComponents",

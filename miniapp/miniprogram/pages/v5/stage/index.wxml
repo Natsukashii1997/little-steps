@@ -1,0 +1,12 @@
+<view class="page" wx:if="{{ready}}">
+  <v5-topbar />
+  <view class="content">
+    <text class="small ink2">{{windowLabel}}</text>
+    <view class="head">
+      <image class="title-art title-zhegeyue" src="/assets/v5/title-zhegeyue.png" mode="heightFix" aria-label="这个月" />
+      <image class="head-ill" src="/assets/v5/ill-stage-calendar.png" mode="widthFix" aria-hidden="true" />
+    </view>
+    <!-- 第 3 批：可以陪宝宝玩的、要留意的 -->
+  </view>
+  <v5-tabbar active="stage" />
+</view>

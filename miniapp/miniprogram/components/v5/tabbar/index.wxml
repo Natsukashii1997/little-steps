@@ -1,0 +1,17 @@
+<view class="tabbar" aria-role="tablist">
+  <view
+    wx:for="{{items}}"
+    wx:key="id"
+    class="tab {{active === item.id ? 'is-active' : ''}}"
+    hover-class="none"
+    data-id="{{item.id}}"
+    data-path="{{item.path}}"
+    aria-role="tab"
+    aria-selected="{{active === item.id}}"
+    aria-label="{{item.label}}"
+    bindtap="navigate"
+  >
+    <text class="tab-label">{{item.label}}</text>
+    <view class="tab-dot" />
+  </view>
+</view>

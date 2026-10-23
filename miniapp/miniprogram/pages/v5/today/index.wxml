@@ -1,0 +1,27 @@
+<view class="page" wx:if="{{ready}}">
+  <v5-topbar />
+  <view class="content">
+    <text class="small ink2 date">{{dateHeading}}</text>
+
+    <view class="hero">
+      <view class="name-row">
+        <text class="name {{nameClass}}" hover-class="none" aria-role="button" aria-label="改名字和出生日期" bindtap="editBaby">{{name}}</text>
+      </view>
+      <text class="age title">{{ageLabel}}</text>
+      <image class="hero-ill" src="{{illustration}}" mode="widthFix" aria-hidden="true" />
+      <view class="lead">
+        <text class="lead-main">{{lead}}</text>
+        <text class="lead-sub small ink2">{{leadSub}}</text>
+      </view>
+    </view>
+
+    <!-- 这个月记的：第 2 批 -->
+  </view>
+
+  <view class="fab" hover-class="none" aria-role="button" aria-label="记一笔" bindtap="openQuick">
+    <image class="fab-img" src="/assets/v5/fab-add.png" mode="aspectFit" aria-hidden="true" />
+    <text class="fab-label">记一笔</text>
+  </view>
+
+  <v5-tabbar active="today" />
+</view>

@@ -1,0 +1,17 @@
+.topbar {
+  padding-bottom: 31rpx; /* 胶囊行到第一行内容约 16pt，加上小字行距接近标准屏的 28pt */
+  background: var(--paper);
+}
+
+.topbar.has-back {
+  padding-bottom: 8rpx;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--row-min);
+  margin-left: calc(var(--page-x) - 8rpx);
+  padding: 0 8rpx;
+  color: var(--ink);
+}

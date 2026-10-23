@@ -1,0 +1,33 @@
+<view class="page">
+  <v5-topbar back="{{editing ? '今天' : ''}}" back-path="/pages/v5/today/index" />
+  <view class="content">
+    <text class="small ink2">{{editing ? '改一改' : '第一次打开'}}</text>
+    <view class="head setup-head">
+      <text class="title">先认识一下宝宝</text>
+      <image class="setup-ill" src="/assets/v5/ill-home-rattle.png" mode="widthFix" aria-hidden="true" />
+    </view>
+
+    <view class="field">
+      <text class="field-label">宝宝叫什么</text>
+      <input class="line-input" placeholder="比如：小满" placeholder-class="placeholder" value="{{name}}" maxlength="12" bindinput="onName" />
+    </view>
+
+    <view class="field">
+      <text class="field-label">哪天出生的</text>
+      <picker class="line-picker-wrap" mode="date" value="{{birthDate || today}}" start="2000-01-01" end="{{today}}" bindchange="onDate">
+        <view class="line-input line-picker {{birthDate ? '' : 'placeholder'}}">{{birthDate ? birthLabel : '选一天 →'}}</view>
+      </picker>
+    </view>
+
+    <text class="small ink2 note">之后点今天页的名字可以改。</text>
+
+    <view wx:if="{{error}}" class="error-row">
+      <image class="mark-error" src="/assets/v5/mark-error.png" mode="aspectFit" aria-hidden="true" />
+      <text class="item">{{error}}</text>
+    </view>
+
+    <view class="actions">
+      <v5-action kind="primary" label="{{editing ? '改好了' : '开始'}}" disabled="{{!name || !birthDate}}" bind:press="save" />
+    </view>
+  </view>
+</view>

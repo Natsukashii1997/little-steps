@@ -1,0 +1,15 @@
+<view class="page" wx:if="{{ready}}">
+  <v5-topbar />
+  <view class="content">
+    <text class="small ink2">0 张照片，0 段视频</text>
+    <view class="head">
+      <image class="title-art title-xiangce" src="/assets/v5/title-xiangce.png" mode="heightFix" aria-label="相册" />
+      <image class="head-ill" src="/assets/v5/ill-album-camera.png" mode="widthFix" aria-hidden="true" />
+    </view>
+    <view class="empty">
+      <text class="item">这个月还没有照片。</text>
+      <text class="small ink2">相册在下一个切片做。</text>
+    </view>
+  </view>
+  <v5-tabbar active="album" />
+</view>

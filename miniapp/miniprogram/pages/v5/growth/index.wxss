@@ -1,0 +1,8 @@
+.title-zhangdale {
+  width: 222rpx; /* 346×168 按高 108rpx 换算 */
+}
+
+.head-ill {
+  width: 165rpx; /* 盆栽插画约 85pt 宽 */
+  margin-top: -40rpx;
+}

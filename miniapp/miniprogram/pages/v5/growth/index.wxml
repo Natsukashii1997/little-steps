@@ -1,0 +1,12 @@
+<view class="page" wx:if="{{ready}}">
+  <v5-topbar />
+  <view class="content">
+    <text class="small ink2">{{asOf}}</text>
+    <view class="head">
+      <image class="title-art title-zhangdale" src="/assets/v5/title-zhangdale.png" mode="heightFix" aria-label="长大了" />
+      <image class="head-ill" src="/assets/v5/ill-growth-sprout.png" mode="widthFix" aria-hidden="true" />
+    </view>
+    <!-- 第 3 批：家里看到的 -->
+  </view>
+  <v5-tabbar active="growth" />
+</view>
