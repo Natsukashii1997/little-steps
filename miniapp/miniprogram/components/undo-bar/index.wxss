@@ -1,0 +1,40 @@
+.undo-bar {
+  position: fixed;
+  right: 28rpx;
+  bottom: calc(146rpx + env(safe-area-inset-bottom));
+  left: 28rpx;
+  z-index: 90;
+  display: flex;
+  min-height: 88rpx;
+  padding: 14rpx 16rpx 14rpx 24rpx;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  border: 3rpx solid #22201d;
+  border-radius: 24rpx;
+  background: #fffaf0;
+  box-shadow: 0 12rpx 30rpx rgba(83, 65, 43, 0.2);
+  color: #22201d;
+}
+
+.undo-message {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 27rpx;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.undo-action {
+  min-width: 112rpx;
+  min-height: 68rpx;
+  padding: 0 22rpx;
+  border: 2rpx solid #22201d;
+  border-radius: 999rpx;
+  background: #f6c45c;
+  color: #22201d;
+  font-size: 27rpx;
+  font-weight: 700;
+  line-height: 68rpx;
+}

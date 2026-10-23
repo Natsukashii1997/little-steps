@@ -1,0 +1,73 @@
+<view class="page page-shell health-page">
+  <app-header page-title="健康记录" show-back="{{true}}" />
+  <view class="tabs-wrap" style="top: {{headerHeight}}px;">
+    <segmented-tabs items="{{healthTabs}}" active="{{tab}}" aria-label-text="健康记录分类" bind:change="switchTab" />
+  </view>
+  <scroll-view class="page-scroll" style="padding-top: {{headerHeight}}px;" scroll-y="true" enhanced="true" show-scrollbar="false">
+    <view class="tabs-spacer"></view>
+    <view class="health-hero">
+      <view class="hero-copy"><text class="hero-title">{{hero.title}}</text><text class="hero-subtitle">{{hero.subtitle}}</text><text class="hero-count">{{hero.count}}</text></view>
+      <image class="hero-art" src="{{hero.artSrc}}" mode="aspectFit" />
+      <image wx:if="{{hero.secondaryArtSrc}}" class="hero-secondary-art hero-secondary-{{tab}}" src="{{hero.secondaryArtSrc}}" mode="aspectFit" />
+      <add-pill primary="{{true}}" label="Add" bind:add="openAdd" />
+    </view>
+
+    <block wx:if="{{tab==='vaccine'}}">
+      <view class="vaccine-group {{item.isCurrent ? 'current-age-group' : ''}}" wx:for="{{vaccineGroups}}" wx:key="label">
+        <view class="group-heading"><text>{{item.label}}</text><text wx:if="{{item.isCurrent}}" class="current-age-label">当前月龄</text><view class="group-line"></view></view>
+        <view class="vaccine-card" role="button" hover-class="vaccine-pressed" wx:for="{{item.items}}" wx:for-item="vaccine" wx:key="id" bindtap="openVaccine" data-id="{{vaccine.id}}">
+          <image class="vaccine-icon" src="{{vaccine.iconSrc}}" mode="aspectFit" />
+          <view class="vaccine-info"><view class="vaccine-title-row"><text class="vaccine-name">{{vaccine.name}}</text><text class="vaccine-status {{vaccine.completedDate ? 'done' : ''}}">{{vaccine.completedDate ? '已记录' : '未记录接种'}}</text></view><text class="dose-badge">{{vaccine.dose}}</text><text class="vaccine-date">{{vaccine.completedDate ? '实际接种' : '计划日期'}} · {{vaccine.completedDate || vaccine.dueDateText}}</text><text class="vaccine-note">{{vaccine.noteText}}</text></view>
+          <image class="vaccine-chevron" src="../../assets/icons/chevron-right.svg" mode="aspectFit" />
+        </view>
+      </view>
+      <view class="warm-note">接种计划仅作个人记录参考，具体安排以接种门诊为准。</view>
+    </block>
+
+    <block wx:elif="{{tab==='ability'}}">
+      <view class="timeline">
+        <view class="timeline-row" wx:for="{{abilities}}" wx:key="id" bindtap="openAbility" data-id="{{item.id}}">
+          <view class="timeline-line"><view class="timeline-dot"></view></view>
+          <view class="ability-card"><image class="ability-image" src="{{item.artSrc}}" mode="{{item.artMode}}"/><view class="ability-copy"><text class="date-chip">{{item.dateText}}</text><text class="ability-name">{{item.name}}</text><text class="ability-desc">{{item.description}}</text></view><image class="arrow" src="../../assets/icons/chevron-right.svg" mode="aspectFit" /></view>
+        </view>
+      </view>
+      <view class="warm-note">慢慢长大，每一步都有自己的节奏。</view>
+    </block>
+
+    <block wx:else>
+      <view class="timeline">
+        <view class="timeline-row" wx:for="{{checkups}}" wx:key="id" bindtap="openCheckup" data-id="{{item.id}}">
+          <view class="timeline-line"><view class="timeline-dot"></view></view>
+          <view class="checkup-card"><image class="calendar-mark" src="{{item.artSrc}}" mode="{{item.artMode}}"/><view class="checkup-copy"><text class="date-chip blue">{{item.dateText}}</text><text class="ability-name">{{item.name}}</text><view class="check-status {{item.completedDate ? 'done':''}}"><checkbox class="status-checkbox compact" checked="{{item.completedDate}}" disabled="{{true}}" /><text>{{item.completedDate ? '已记录' : '计划日期'}}</text></view><text class="ability-desc">Tips：{{item.tips}}</text></view><image class="arrow" src="../../assets/icons/chevron-right.svg" mode="aspectFit" /></view>
+        </view>
+      </view>
+      <view class="warm-note">把医生的建议带回家，也把成长的安心留下来。</view>
+    </block>
+    <view class="bottom-space"></view>
+  </scroll-view>
+  <undo-bar
+    visible="{{undoVisible}}"
+    message="{{undoMessage}}"
+    token="{{undoToken}}"
+    bind:undo="undoLastDelete"
+    bind:expired="onUndoExpired"
+  />
+  <app-tabbar active-page="health" bind:navigate="onNavigate" />
+
+  <view class="modal-mask" wx:if="{{editor.open}}" catchtap="closeEditor"><view class="editor-sheet {{editor.kind === 'vaccine' ? 'vaccine-editor' : ''}}" catchtap="noop">
+    <view class="sheet-handle"></view><view class="sheet-title-row"><text class="sheet-title">{{editor.title}}</text><button class="sheet-close" bindtap="closeEditor">关闭</button></view>
+    <block wx:if="{{editor.kind==='vaccine'}}">
+      <view class="vaccine-editor-name" wx:if="{{editor.name}}">{{editor.name}} <text>{{editor.dose}}</text></view>
+      <view class="birth-lock" wx:if="{{editor.system}}">{{editor.ageLabel}} · {{editor.dose}} · 计划 {{editor.dueDate}}。标准接种表仅记录完成状态和实际日期。</view>
+      <block wx:else>
+        <view class="field"><text>年龄阶段</text><input value="{{editor.ageLabel}}" placeholder="例如：2月龄" bindinput="changeAgeLabel" /></view><view class="field"><text>疫苗名称</text><input value="{{editor.name}}" placeholder="疫苗名称" bindinput="changeName" /></view><view class="field"><text>接种次数</text><input value="{{editor.dose}}" placeholder="第 1/1 针" bindinput="changeDose" /></view>
+        <view class="field"><text>计划接种日期</text><picker mode="date" value="{{editor.dueDate}}" start="{{birthDate}}" bindchange="changeDueDate"><view class="picker-value"><text>{{editor.dueDate}}</text><image class="picker-chevron" src="../../assets/icons/chevron-right.svg" mode="aspectFit" /></view></picker></view>
+      </block>
+      <view class="complete-toggle" bindtap="toggleCompleted"><checkbox class="status-checkbox" checked="{{editor.completed}}" /><text>已完成实际接种</text></view>
+      <view class="field" wx:if="{{editor.completed}}"><text>实际接种日期</text><picker mode="date" value="{{editor.completedDate}}" start="{{birthDate}}" end="{{today}}" bindchange="changeCompletedDate"><view class="picker-value"><text>{{editor.completedDate}}</text><image class="picker-chevron" src="../../assets/icons/chevron-right.svg" mode="aspectFit" /></view></picker></view>
+    </block>
+    <block wx:elif="{{editor.kind==='ability'}}"><view class="field"><text>记录日期</text><picker mode="date" value="{{editor.date}}" start="{{birthDate}}" end="{{today}}" bindchange="changeDate"><view class="picker-value"><text>{{editor.date}}</text><image class="picker-chevron" src="../../assets/icons/chevron-right.svg" mode="aspectFit" /></view></picker></view><view class="field"><text>发育里程碑</text><input value="{{editor.name}}" placeholder="例如：练习抬头" bindinput="changeName" /></view><view class="field"><text>表现说明</text><textarea value="{{editor.description}}" placeholder="记录宝宝这次小小的进步" bindinput="changeDescription" /></view><button class="media-button" disabled="{{uploading || editorSaving}}" loading="{{uploading}}" bindtap="chooseImage">{{uploading ? '正在准备图片' : (editor.imageId ? '更换示意图' : '上传示意图（可选）')}}</button><image wx:if="{{editor.imageId}}" class="upload-preview" src="{{editor.imageId}}" mode="aspectFill" /></block>
+    <block wx:else><view class="field"><text>计划 / 儿保日期</text><picker mode="date" value="{{editor.date}}" start="{{birthDate}}" bindchange="changeDate"><view class="picker-value"><text>{{editor.date}}</text><image class="picker-chevron" src="../../assets/icons/chevron-right.svg" mode="aspectFit" /></view></picker></view><view class="field"><text>儿保项目名</text><input value="{{editor.name}}" placeholder="例如：满月儿保" bindinput="changeName" /></view><view class="field"><text>医生建议</text><textarea value="{{editor.tips}}" placeholder="例如：记录体重、身长与头围变化。" bindinput="changeTips" /></view><view class="complete-toggle" bindtap="toggleCompleted"><checkbox class="status-checkbox" checked="{{editor.completed}}" /><text>已经完成本次儿保</text></view><view class="field" wx:if="{{editor.completed}}"><text>实际完成日期</text><picker mode="date" value="{{editor.completedDate}}" start="{{birthDate}}" end="{{today}}" bindchange="changeCompletedDate"><view class="picker-value"><text>{{editor.completedDate}}</text><image class="picker-chevron" src="../../assets/icons/chevron-right.svg" mode="aspectFit" /></view></picker></view></block>
+    <button class="save-button" disabled="{{editorSaving || uploading}}" loading="{{editorSaving}}" bindtap="saveEditor">{{editorSaving ? '正在保存' : '保存记录'}}</button><button class="delete-button" wx:if="{{editor.id && !editor.system}}" disabled="{{editorSaving || uploading}}" bindtap="deleteEditor">删除这条记录</button>
+  </view></view>
+</view>

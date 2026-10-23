@@ -1,0 +1,5 @@
+{
+  "miniprogram/lib/validation.js": "4aebabf81ef63681d1fbc625c51952a9485b23b12c84e2f104479c56d96f39f0",
+  "tests/core.test.js": "5b14fbe4bfdc800b79fdfcdfc329c249e59669d161e56f25df6e889e41349c63",
+  "tests/growth-health.test.js": "9ff31ce724b936fde6e3120154eba7856187743150cb944e149e8ab0b8aa7181"
+}

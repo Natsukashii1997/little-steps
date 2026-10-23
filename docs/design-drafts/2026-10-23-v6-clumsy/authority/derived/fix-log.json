@@ -1,0 +1,44 @@
+{
+ "sources_sha256": {
+  "screen-1-home.png": "ac3d800a59ccab374b8ff734c282c24f347730e2fae99aae4702b472cf1fa531",
+  "screen-2-stage.png": "08fcda3ac986cc8c57c5673c5d52403e7728642df81cd7831f9310f0c7e0f727",
+  "screen-5-quick.png": "df44c46f93b8e9c76e32d36dab8b853041cb4a06fcc59a0b7f50a6b03e7651bb",
+  "sheet-components.png": "68b37d2b686b90fd9cfb7af324cc2d2d690e2bb23f8e8056544867dba6ee6c7a"
+ },
+ "operations": [
+  {
+   "file": "screen-1-home",
+   "finding": "G2",
+   "op": "用同图 (147,881)-(193,927) 的空心圈覆盖到 y-82 处，去掉淡蓝填色"
+  },
+  {
+   "file": "screen-1-home",
+   "finding": "G2",
+   "op": "取 screen-2 (676,454)-(701,479) 的淡蓝点，正片叠底到 (648, 810, 673, 835)"
+  },
+  {
+   "file": "screen-1-home",
+   "finding": "G5",
+   "op": "用同图 (496,768)-(529,781) 的空白纸面覆盖 y-40 处的短横"
+  },
+  {
+   "file": "sheet-components",
+   "finding": "G4",
+   "op": "用同图 (1162,301)-(1187,356) 空白纸面盖掉竖条；取 screen-5 (415,980)-(539,1002) 的淡蓝下划一笔，横向缩放到 157px，正片叠底到 (1225, 354, 1382, 376)"
+  },
+  {
+   "file": "sheet-components",
+   "finding": "视频时长标签（常浩 10-23 决定用深色）",
+   "op": "在 (66,882)-(196,932) 内按白底范围逐行取标签形状（4447 像素），底色 = 周围照片平均色 × 0.40 + #111111 × 0.60 = #5D5A57，笔画按墨量换成白色，外缘 1px 半混合"
+  },
+  {
+   "file": "sheet-components",
+   "finding": "T1b 预审 P1",
+   "op": "输入框占位字 (720,552)-(1096,595) 按墨量换成 ink-2 #707070，涉及 3861 像素"
+  }
+ ],
+ "outputs_sha256": {
+  "screen-1-home.fixed.png": "95dbb7c990084fcd57c8c9790c404dbcca0fbf820be7ded2dc35fee3a1cdab9a",
+  "sheet-components.fixed.png": "8a617386750e7762f66be5d6ba509f19563d4169167184dba5a23cb14b917d7c"
+ }
+}

@@ -1,0 +1,207 @@
+{
+ "items": [
+  {
+   "no": "1",
+   "component": "弹层头部：拖动条、手写标题、取消、说明；背后是遮罩（黑 50%）",
+   "source": "screen-5-quick.png",
+   "source_sha256": "df44c46f93b8e9c76e32d36dab8b853041cb4a06fcc59a0b7f50a6b03e7651bb",
+   "crop": [
+    96,
+    370,
+    928,
+    700
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "2",
+   "component": "类型选择：选中的类型字下一笔淡蓝（软尺已按 G3 换成淡蓝）",
+   "source": "screen-5-quick.png",
+   "source_sha256": "df44c46f93b8e9c76e32d36dab8b853041cb4a06fcc59a0b7f50a6b03e7651bb",
+   "crop": [
+    130,
+    725,
+    900,
+    890
+   ],
+   "op": "裁切；软尺范围 (318, 745, 404, 806) 内 1968 个黄色像素换成淡蓝色相"
+  },
+  {
+   "no": "3",
+   "component": "二选一：选中项字下一笔淡蓝，未选项是次要灰",
+   "source": "screen-5-quick.png",
+   "source_sha256": "df44c46f93b8e9c76e32d36dab8b853041cb4a06fcc59a0b7f50a6b03e7651bb",
+   "crop": [
+    130,
+    925,
+    900,
+    1010
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "4",
+   "component": "键盘弹出：输入线、光标；「记下」在键盘正上方",
+   "source": "screen-8-quick-typing.png",
+   "source_sha256": "1afa86baa46fe15ddccfd7cf01d218c4b0dfbcba493720519113be1c5ea60ab5",
+   "crop": [
+    96,
+    820,
+    928,
+    1110
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "5",
+   "component": "测量：日期可改、地点二选一、三项数字输入（没量可以不填）",
+   "source": "screen-9-quick-measure.png",
+   "source_sha256": "ae7f4939cc9adc5e0707f597c659b8c2a47bc047817aac27a2617256f5ecc872",
+   "crop": [
+    130,
+    830,
+    900,
+    1300
+   ],
+   "op": "裁切；占位字 (458, 1236, 630, 1271) 按墨量换成 ink-2（1439 像素）"
+  },
+  {
+   "no": "6",
+   "component": "要安排的事·操作：约在哪天、改、这次跳过、已经办完了；主动作「约好了」",
+   "source": "screen-11-arrange.png",
+   "source_sha256": "e5357d5b671549ab61e06365cb6f0c01592f1041fa9ae90e82771234ef59f031",
+   "crop": [
+    130,
+    970,
+    900,
+    1470
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "7",
+   "component": "办完写结果：哪天办的、医生原话（输入线）、有没有提示要留意、当天量的",
+   "source": "screen-12-done.png",
+   "source_sha256": "35ae4bafe4f0acc115a372b35acd74c6d4dc937ca94ad59258e30c53d7590059",
+   "crop": [
+    130,
+    605,
+    900,
+    1225
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "8",
+   "component": "照片大图：日期与备注、设为精选（主动作）、下载原片、更多、原片信息",
+   "source": "screen-13-photo.png",
+   "source_sha256": "ec3aa41268838d129aaed86981d31b755959cce0b081cd9469b924d79d569f9f",
+   "crop": [
+    130,
+    1140,
+    900,
+    1475
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "9",
+   "component": "批量导入：进度条、已存好计数、正在存、没存上（可全部再试）",
+   "source": "screen-14-import.png",
+   "source_sha256": "9bbd4ff36a599d8dcd1d049704fe20bead75f2290f8844345bfb976d28188620",
+   "crop": [
+    130,
+    880,
+    900,
+    1460
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "10",
+   "component": "出错：黑色圈叹号＋说明，不用红色；次要「先放着」、主动作「再试一次」",
+   "source": "screen-15-save-failed.png",
+   "source_sha256": "199adb4ea1739dd802dbe99fa603508ce77df3fbfb8f0c042685c3fb01b77a8d",
+   "crop": [
+    130,
+    1355,
+    910,
+    1495
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "11",
+   "component": "测量数字：大号数字＋小号单位，下面一行小字",
+   "source": "screen-3-growth.png",
+   "source_sha256": "7da5292e68fad145e3a78ac752d48c557cebda9874619c4106d94d82fb554846",
+   "crop": [
+    130,
+    345,
+    900,
+    480
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "12",
+   "component": "家里在留意：条目前淡蓝小点（表示正在留意，属于进行中状态）",
+   "source": "screen-3-growth.png",
+   "source_sha256": "7da5292e68fad145e3a78ac752d48c557cebda9874619c4106d94d82fb554846",
+   "crop": [
+    140,
+    1235,
+    800,
+    1375
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "13",
+   "component": "「已约」前淡蓝小点；主动作「定个日期 →」下一笔浅绿",
+   "source": "screen-2-stage.png",
+   "source_sha256": "08fcda3ac986cc8c57c5673c5d52403e7728642df81cd7831f9310f0c7e0f727",
+   "crop": [
+    640,
+    440,
+    905,
+    625
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "14",
+   "component": "「记一笔」圆按钮：浅绿底、黑线圈、手写字",
+   "source": "screen-1-home.png",
+   "source_sha256": "ac3d800a59ccab374b8ff734c282c24f347730e2fae99aae4702b472cf1fa531",
+   "crop": [
+    740,
+    1190,
+    900,
+    1390
+   ],
+   "op": "裁切"
+  },
+  {
+   "no": "15",
+   "component": "二级页返回：左上小字「< 上一页名称」",
+   "source": "screen-6-review-top.png",
+   "source_sha256": "748bdcd333cc9b5d2bef8edbd14359e52339784d85d5d0a7135ba065afb44a23",
+   "crop": [
+    130,
+    62,
+    420,
+    122
+   ],
+   "op": "裁切"
+  }
+ ],
+ "output": {
+  "file": "sheet-components-supplement.png",
+  "size": [
+   1860,
+   3436
+  ],
+  "sha256": "db16a8a57ed4cbcad0d9b42b433458631a1406beb8a050c69f8b6a9c2af4a7ff"
+ }
+}

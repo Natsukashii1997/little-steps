@@ -1,0 +1,88 @@
+<view class="page-shell">
+  <app-header page-title="成长摘要" show-back="{{true}}" show-share="{{false}}" />
+
+  <scroll-view class="page-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="page-content report-content" style="padding-top: {{headerHeight + 12}}px;">
+      <view class="report-hero paper-card">
+        <view class="hero-spark spark-one">✦</view>
+        <view class="hero-spark spark-two">✧</view>
+        <view class="hero-copy">
+          <text class="hero-eyebrow">SHARE A LITTLE MOMENT</text>
+          <text class="hero-title">把成长，轻轻装进一张图</text>
+          <text class="hero-description">选择日期与想分享的内容，只生成本次勾选的摘要。</text>
+          <view class="privacy-pill"><text class="privacy-shield">♡</text><text>不会包含完整个人数据或备份</text></view>
+        </view>
+        <view class="hero-note">
+          <view class="hero-note-line short" />
+          <view class="hero-note-line" />
+          <view class="hero-note-line medium" />
+          <text>成长小报</text>
+        </view>
+      </view>
+
+      <view class="section-heading">
+        <view class="section-heading-main"><text class="section-number">01</text><text class="section-heading-title">选择日期</text></view>
+        <text class="section-hint">默认最近 7 天</text>
+      </view>
+      <view class="date-card paper-card">
+        <picker class="date-picker" mode="date" value="{{reportStartDate}}" start="{{birthDate}}" end="{{reportEndDate}}" bindchange="handleStartDate">
+          <view class="date-field">
+            <text class="date-label">开始日期</text>
+            <view class="date-value"><text>{{reportStartDate}}</text><text class="date-arrow">⌄</text></view>
+          </view>
+        </picker>
+        <view class="date-dash">—</view>
+        <picker class="date-picker" mode="date" value="{{reportEndDate}}" start="{{reportStartDate}}" end="{{today}}" bindchange="handleEndDate">
+          <view class="date-field">
+            <text class="date-label">结束日期</text>
+            <view class="date-value"><text>{{reportEndDate}}</text><text class="date-arrow">⌄</text></view>
+          </view>
+        </picker>
+      </view>
+
+      <view class="section-heading modules-heading">
+        <view class="section-heading-main"><text class="section-number">02</text><text class="section-heading-title">选择想分享的内容</text></view>
+        <text class="section-hint">可多选</text>
+      </view>
+      <view class="module-card paper-card">
+        <checkbox-group bindchange="handleModuleChange">
+          <label wx:for="{{moduleOptions}}" wx:key="key" class="module-option {{item.selected ? 'is-selected' : ''}}">
+            <checkbox class="module-checkbox" value="{{item.key}}" checked="{{item.selected}}" color="#aab57a" />
+            <view class="module-copy">
+              <text class="module-title">{{item.title}}</text>
+              <text class="module-description">{{item.description}}</text>
+            </view>
+            <text class="module-state">{{item.selected ? '已选' : '选择'}}</text>
+          </label>
+        </checkbox-group>
+      </view>
+
+      <view wx:if="{{reportError}}" class="report-error" role="alert">
+        <text class="error-mark">!</text>
+        <text>{{reportError}}</text>
+      </view>
+
+      <button class="ink-button report-generate" disabled="{{generating}}" loading="{{generating}}" bindtap="generateReport">
+        {{generating ? '正在生成…' : '生成成长摘要长图'}}
+      </button>
+      <text class="generate-caption">生成后会先打开预览，由你决定是否保存或分享。</text>
+
+      <view wx:if="{{generatedImagePath}}" class="result-card paper-card">
+        <view class="result-heading">
+          <view class="result-check">好</view>
+          <view class="result-copy"><text class="result-title">长图已准备好</text><text>临时图片仅在本次打开期间有效，请现在保存或分享。</text></view>
+        </view>
+        <view class="result-actions">
+          <button class="result-action" bindtap="previewGeneratedReport">再次预览</button>
+          <button class="result-action is-primary" disabled="{{saving}}" bindtap="saveGeneratedReport">{{saving ? '保存中…' : '保存到相册'}}</button>
+          <button class="result-action" disabled="{{sharing}}" bindtap="shareGeneratedReport">{{sharing ? '打开中…' : '直接分享'}}</button>
+        </view>
+      </view>
+
+      <view class="report-footnote"><view class="footnote-line" /><text>只分享你勾选的摘要，不代替个人数据备份</text><view class="footnote-line" /></view>
+    </view>
+  </scroll-view>
+
+  <canvas id="reportCanvas" type="2d" class="report-canvas" style="height: {{reportCanvasHeight}}px;" />
+  <app-tabbar active-page="home" />
+</view>

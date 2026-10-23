@@ -1,0 +1,10 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "app-header": "../../components/app-header/index",
+    "app-tabbar": "../../components/app-tabbar/index",
+    "add-pill": "../../components/add-pill/index",
+    "segmented-tabs": "../../components/segmented-tabs/index",
+    "undo-bar": "../../components/undo-bar/index"
+  }
+}

@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "project_name": "婴儿工作台微信小程序",
+  "created_at": "2026-08-25T18:33:22+08:00",
+  "updated_at": "2026-10-13T12:05:49+08:00",
+  "candidate_version": "ui-personal-growth-a-v1.1-20261013",
+  "overall_status": "code_candidate_waiting_wechat_acceptance",
+  "current_gate": "acceptance",
+  "status_summary": "2026-10-13：微信四页个人版 Home/Health 打磨、Growth A v1.1 已实现并通过本地20组测试和限定模拟器T2；真机、云端、体验版与真人验收未完成。历史family门禁仅保留为背景，本轮不扩展多人范围。 后续已按新增授权修复 Home/Growth 编辑清空身高，原项目回归与隔离游客交互通过；真机/真实云边界不变。",
+  "product_scope": {
+    "main_pages": [
+      "Home",
+      "Memory",
+      "Growth",
+      "Health"
+    ],
+    "navigation_columns": 4,
+    "schema_version": 4,
+    "retired_features": [
+      "Education",
+      "Study"
+    ],
+    "legacy_data_policy": "旧快照中的退役字段不可见且不主动清空"
+  },
+  "external_verification": {
+    "status": "external_pending",
+    "owner": "常浩 / 小程序管理员",
+    "open_items": [
+      "使用真实 AppID 导入并在微信开发者工具完成无红色错误的编译",
+      "创建真实 CloudBase 环境、7 个集合，发布数据库/存储规则并部署 familyApi",
+      "使用两个微信账号和两台设备验证加入家庭、双向同步、弱网重试、降权和停用成员拦截",
+      "在 iPhone 和 Android 验证 4 个主页面、四等分底栏、原生键盘、日期选择、安全区和长内容",
+      "验证真实相册、录音、Canvas 长图保存/分享权限与失败恢复",
+      "用虚构数据完成一次真实云备份和恢复，并确认云存储中的照片/音频文件仍可访问"
+    ]
+  },
+  "visual_authority": {
+    "mode": "existing",
+    "source": "用户已确认的暖色纸张手绘视觉体系和项目内现有独立素材",
+    "version_or_hash": "b3fb44f0917e4f573e46c2e43e7fa8c5521565caac8d4fb28a50c136e28fe5c8",
+    "directions_count": 0,
+    "selected_reference": "06-visual-authority.md"
+  },
+  "gates": {
+    "boundary": {
+      "status": "completed",
+      "artifact": "00-project-brief.md",
+      "artifact_sha256": "b63888b6b9d8dded23645784e33a2fc653deca7b4d21f1c75f2fa3b39137e11f",
+      "unresolved_p0": 0,
+      "checks": {
+        "target_user_defined": true,
+        "problem_defined": true,
+        "scope_defined": true,
+        "constraints_defined": true,
+        "non_goals_defined": true
+      },
+      "open_blockers": [],
+      "evidence": [
+        "Q1–Q205 决策记录",
+        "evidence/requirements-approval.md",
+        "00-project-brief.md"
+      ],
+      "approved_by": "常浩",
+      "approved_at": "2026-08-25T18:33:22+08:00"
+    },
+    "outcome": {
+      "status": "completed",
+      "artifact": "01-outcome-contract.md",
+      "artifact_sha256": "129414d13e66a97b22d53d78b8ffe9a76f33fba88e9347da33bc18b646c76ad9",
+      "unresolved_p0": 0,
+      "checks": {
+        "outcomes_defined": true,
+        "success_evidence_defined": true,
+        "priorities_defined": true,
+        "acceptance_scenarios_defined": true
+      },
+      "open_blockers": [],
+      "evidence": [
+        "01-outcome-contract.md",
+        "00-project-brief.md"
+      ],
+      "approved_by": null,
+      "approved_at": null
+    },
+    "product": {
+      "status": "completed",
+      "artifact": "02-product-contract.md",
+      "artifact_sha256": "bbbb62f1f5cce5c2333c20d57ec3ad32795dbfc5d1658d3f61c86fd21761bfc4",
+      "unresolved_p0": 0,
+      "checks": {
+        "entities_defined": true,
+        "states_defined": true,
+        "permissions_defined": true,
+        "rules_defined": true,
+        "failure_paths_defined": true,
+        "source_of_truth_defined": true,
+        "cross_view_propagation_defined": true,
+        "notifications_defined": true
+      },
+      "open_blockers": [],
+      "evidence": [
+        "02-product-contract.md",
+        "tests/core.test.js",
+        "tests/growth-health.test.js",
+        "tests/family-api.test.js",
+        "tests/family-partition-api.test.js"
+      ],
+      "approved_by": null,
+      "approved_at": null
+    },
+    "interaction": {
+      "status": "completed",
+      "artifact": "03-interaction-contract.md",
+      "artifact_sha256": "71179ce27547330d857d28520948fca2f1148ff946a3894883a3e0761d0bab4b",
+      "unresolved_p0": 0,
+      "checks": {
+        "core_flow_defined": true,
+        "page_capability_matrix_defined": true,
+        "control_behavior_map_defined": true,
+        "content_order_defined": true,
+        "edge_states_defined": true,
+        "low_fidelity_reviewed": true
+      },
+      "open_blockers": [],
+      "evidence": [
+        "03-interaction-contract.md",
+        "用户确认的四页导航与 Education／Study 退役决策",
+        "tests/visual-contract.test.js"
+      ],
+      "approved_by": null,
+      "approved_at": null
+    },
+    "technical": {
+      "status": "completed",
+      "artifact": "04-technical-contract.md",
+      "artifact_sha256": "302d3e0bf2842258d96d11b0d43ff8873f233b79be82de09512250c83a47c8ab",
+      "unresolved_p0": 0,
+      "checks": {
+        "stack_preserved": true,
+        "data_contract_defined": true,
+        "identity_permissions_defined": true,
+        "persistence_defined": true,
+        "stable_ids_defined": true,
+        "migration_considered": true,
+        "test_plan_defined": true,
+        "slice_contract_defined": true
+      },
+      "open_blockers": [],
+      "evidence": [
+        "04-technical-contract.md",
+        "cloudbase/README.md",
+        "miniprogram/config.local.example.js",
+        "package.json"
+      ],
+      "approved_by": null,
+      "approved_at": null
+    },
+    "vertical_slice": {
+      "status": "automated_pass_external_pending",
+      "artifact": "05-vertical-slice-evidence.md",
+      "artifact_sha256": "c2db0f02e6fafc06ec6dacec756c849ac3926d5af50ff177ecdccd6b264b86be",
+      "unresolved_p0": 0,
+      "checks": {
+        "single_slice_selected": true,
+        "real_persistence_passed": false,
+        "permissions_passed": false,
+        "failure_path_passed": true,
+        "reload_passed": true,
+        "cross_surface_passed": true,
+        "notification_checked": true,
+        "regression_passed": true
+      },
+      "open_blockers": [
+        "真实 CloudBase 持久化尚未验证",
+        "真实 OPENID 权限和两个微信账号尚未验证"
+      ],
+      "evidence": [
+        "05-vertical-slice-evidence.md",
+        "npm run verify",
+        "Family API backup tests: 16/16 passed",
+        "Family partition API tests: 10/10 passed",
+        "Store public behavior tests: 15/15 passed",
+        "媒体保护测试：15 项通过"
+      ],
+      "approved_by": null,
+      "approved_at": null
+    },
+    "visual": {
+      "status": "static_pass_device_pending",
+      "artifact": "06-visual-authority.md",
+      "artifact_sha256": "4f2131581ff58ac312753ee2a10b0a1a05e13998017e71133740d61e6715dc6c",
+      "unresolved_p0": 0,
+      "checks": {
+        "visual_entry_ready": true,
+        "authority_mode_defined": true,
+        "canonical_screen_approved": true,
+        "component_states_defined": true,
+        "tokens_defined": true,
+        "no_business_change_confirmed": true,
+        "evidence_attached": true
+      },
+      "open_blockers": [
+        "微信开发者工具 320/375/393/430 宽度预览未验证",
+        "iPhone 与 Android 的安全区、键盘、长内容和系统权限未验证"
+      ],
+      "evidence": [
+        "06-visual-authority.md",
+        "design-qa.md: code-pass / device-check-pending",
+        "tests/visual-contract.test.js",
+        "scripts/check-miniapp.mjs"
+      ],
+      "approved_by": null,
+      "approved_at": null
+    },
+    "expansion": {
+      "status": "code_complete_external_pending",
+      "artifact": "07-functional-expansion.md",
+      "artifact_sha256": "f78db7ef9949a9a2885bcc679c9e318e6a60d0cffdf6f65c1cc6004c2bdc3736",
+      "unresolved_p0": 0,
+      "checks": {
+        "all_p0_capabilities_done": true,
+        "shared_components_used": true,
+        "cross_view_sync_passed": true,
+        "regression_passed": true,
+        "remaining_p0_zero": true
+      },
+      "open_blockers": [
+        "代码扩展完成；真实微信环境验收仍在 acceptance 门禁中"
+      ],
+      "evidence": [
+        "07-functional-expansion.md",
+        "npm run verify",
+        "Family sync merge tests: 9/9 passed",
+        "Family API backup tests: 16/16 passed",
+        "Family partition API tests: 10/10 passed",
+        "媒体保护测试：15 项通过"
+      ],
+      "approved_by": null,
+      "approved_at": null
+    },
+    "acceptance": {
+      "status": "in_progress_external_pending",
+      "artifact": "08-acceptance-evidence.md",
+      "artifact_sha256": "37157b06fe98c8e7bf65b709aad5ecf97c7c035bb43231cfe71b1ec7d6794138",
+      "unresolved_p0": 0,
+      "checks": {
+        "functional_tests_passed": true,
+        "permissions_checked": false,
+        "persistence_checked": false,
+        "responsive_checked": false,
+        "accessibility_checked": false,
+        "console_errors_zero": false,
+        "production_build_passed": false,
+        "external_boundaries_recorded": true
+      },
+      "open_blockers": [
+        "真实 AppID 和微信开发者工具编译/Console 未验证",
+        "真实 CloudBase 规则、云函数、权限和持久化未验证",
+        "两个账号、两台设备和弱网协作未验证",
+        "iPhone、Android、原生键盘、相册、录音、长图和辅助功能未验证"
+      ],
+      "evidence": [
+        "08-acceptance-evidence.md",
+        "npm run verify 全部通过",
+        "主包约 1.45 MB，低于 2 MB 限额",
+        "getProtectedMediaReferences 会保护当前数据和可恢复备份中的 cloud:// 引用；核对失败则延后物理删除",
+        "design-qa.md: device-check-pending"
+      ],
+      "approved_by": null,
+      "approved_at": null
+    },
+    "handoff": {
+      "status": "ready_for_external_acceptance",
+      "artifact": "09-handoff.md",
+      "artifact_sha256": "5c849c7a67502bc49ef27a8aef37676be1b07747317e3cd11cfbac08f2e452d1",
+      "unresolved_p0": 0,
+      "checks": {
+        "open_path_recorded": true,
+        "usage_steps_recorded": true,
+        "success_signal_recorded": true,
+        "self_check_recorded": true,
+        "common_issue_recorded": true,
+        "remaining_owners_named": true
+      },
+      "open_blockers": [
+        "需要常浩/小程序管理员提供 AppID、CloudBase 环境并完成真机验收"
+      ],
+      "evidence": [
+        "09-handoff.md",
+        "一键自检：npm run verify",
+        "微信开发者工具导入、云配置、双账号验收和上传体验版步骤"
+      ],
+      "approved_by": null,
+      "approved_at": null
+    }
+  },
+  "current_ui_workstream": {
+    "version": "ui-personal-growth-a-v1.1-20261013",
+    "status": "local_verified_device_acceptance_pending",
+    "scope": [
+      "Home polish",
+      "Health vaccines polish",
+      "Growth A v1.1"
+    ],
+    "candidate_manifest_sha256": "b3fb44f0917e4f573e46c2e43e7fa8c5521565caac8d4fb28a50c136e28fe5c8",
+    "approved_authority_manifest_sha256": "18b38f2047c17419d509e78b7eaa9ace525a7e29847aff7526b249ea2634a024",
+    "qa": "../../design-qa.md",
+    "t2": "evidence/ui-20261013-t2.md",
+    "real_data_changed": false,
+    "deployed": false,
+    "next": "用户真机验收当前 UI 与身高清空修复；发布另行决定",
+    "height_clear_fix": {
+      "status": "source_applied_local_regression_passed_device_pending",
+      "manifest": "evidence/height-clear-20261013-manifest.json",
+      "report": "/Users/nat/Documents/Codex/2026-10-13/wo/outputs/Little-Steps-身高清空修复-2026-10-13/修复与回归报告.html",
+      "real_data_changed": false,
+      "deployed": false,
+      "console_limit": "tourist simulator SystemError getGlobalStorage:fail; local save and reopen passed"
+    }
+  }
+}

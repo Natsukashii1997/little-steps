@@ -1,0 +1,5 @@
+<button class="add-pill {{primary ? 'is-primary' : ''}}" aria-label="{{ariaLabel}}" bindtap="handleTap">
+  <image class="add-icon" src="/assets/icons/plus.svg" mode="aspectFit" />
+  <text>{{label}}</text>
+</button>
+

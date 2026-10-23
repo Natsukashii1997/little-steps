@@ -1,0 +1,57 @@
+<view class="page page-shell growth-page">
+  <app-header page-title="成长曲线" show-back="{{true}}" />
+  <scroll-view class="page-scroll" style="padding-top: {{headerHeight + 12}}px;" scroll-y="{{!editor.open}}" enhanced="true" show-scrollbar="false">
+    <view class="hero-card profile-card">
+      <view class="profile-heading"><view><text class="profile-title">{{babyProfile.name}}的成长档案</text><text class="profile-age">{{ageLabel}}</text></view><image class="bear-mark" src="../../assets/growth/profile-bear.png" mode="aspectFit" /></view>
+      <view class="latest-heading"><text>最近测量</text><text class="record-source">{{latest.isBirth ? '出生记录' : '测量记录'}}</text></view>
+      <text class="latest-date">{{latest.dateText}}</text>
+      <view class="profile-grid">
+        <view class="profile-cell height-value"><text class="metric-label">身高</text><view><text class="measurement">{{latest.heightText}}</text><text class="unit" wx:if="{{latest.heightText !== '未记录'}}">cm</text></view></view>
+        <view class="profile-cell weight-value"><text class="metric-label">体重</text><view><text class="measurement">{{latest.weightText}}</text><text class="unit" wx:if="{{latest.weightText !== '未记录'}}">kg</text></view></view>
+      </view>
+      <view class="summary-footer"><text>{{latest.isBirth ? '尚无后续测量' : '记录每一次小小变化'}}</text><add-pill primary="{{true}}" label="Add" bind:add="openAdd" /></view>
+    </view>
+
+    <view class="section-card chart-card" wx:for="{{charts}}" wx:key="key" style="color:{{item.color}};" aria-label="{{item.ariaLabel}}">
+      <view class="section-heading"><view class="chart-title"><text class="section-title">{{item.title}}</text><text class="chart-unit">{{item.unit}}</text></view><text class="section-note">出生起记录</text></view>
+      <view class="chart-plot">
+        <view class="chart-tick {{tick.isBaseline ? 'is-baseline' : ''}}" wx:for="{{item.ticks}}" wx:for-item="tick" wx:key="label" style="{{tick.style}}"><text>{{tick.label}}</text><view class="chart-gridline" /></view>
+        <view class="plot-area">
+          <view class="chart-segment" wx:for="{{item.segments}}" wx:for-item="segment" wx:key="id" style="{{segment.style}}" />
+          <view class="chart-point" wx:for="{{item.points}}" wx:for-item="point" wx:key="id" style="{{point.style}}"><text wx:if="{{point.showLabel}}" class="point-label {{point.labelClass}}">{{point.label}}</text></view>
+          <text class="chart-date" wx:for="{{item.dates}}" wx:for-item="date" wx:key="date" style="{{date.style}}">{{date.label}}</text>
+        </view>
+      </view>
+      <text class="chart-hint">{{item.hint}}</text>
+    </view>
+
+    <view class="section-card records-card">
+      <view class="section-heading"><text class="section-title">成长记录</text><text class="section-note">{{records.length}} 条记录</text></view>
+      <view class="growth-row" wx:for="{{records}}" wx:key="id" bindtap="openEdit" data-id="{{item.id}}" hover-class="row-pressed" role="button" aria-label="{{item.isBirth ? '查看出生记录' : '编辑成长记录'}}，{{item.displayDate}}">
+        <view class="record-title-row"><text class="record-date">{{item.displayDate}}</text><text wx:if="{{item.isBirth}}" class="record-source">出生记录</text><image wx:else class="row-arrow" src="../../assets/icons/chevron-right.svg" mode="aspectFit" /></view>
+        <view class="record-measurements"><text>身高 {{item.heightText}}{{item.heightText !== '未记录' ? ' cm' : ''}}</text><text>体重 {{item.weightText}}{{item.weightText !== '未记录' ? ' kg' : ''}}</text></view>
+        <text wx:if="{{item.note && !item.isBirth}}" class="record-note">{{item.note}}</text>
+        <text wx:if="{{item.isBirth}}" class="record-note">出生 · 只读</text>
+      </view>
+    </view>
+    <view class="bottom-space"></view>
+  </scroll-view>
+  <app-tabbar active-page="growth" bind:navigate="onNavigate" />
+  <undo-bar visible="{{undoVisible}}" message="{{undoMessage}}" token="{{undoToken}}" bind:undo="undoLastDelete" bind:expired="onUndoExpired" />
+
+  <view class="modal-mask" wx:if="{{editor.open}}" catchtap="closeEditor">
+    <scroll-view class="editor-sheet" scroll-y enhanced show-scrollbar="{{false}}" catchtap="noop">
+      <view class="sheet-handle"></view>
+      <view class="sheet-title-row"><text class="sheet-title">{{editor.isBirth ? '出生记录' : (editor.id ? '编辑成长记录' : '新增成长记录')}}</text><button class="sheet-close" bindtap="closeEditor">关闭</button></view>
+      <view class="field"><text>测量日期</text><picker mode="date" value="{{editor.date}}" start="{{babyProfile.birthDate}}" end="{{today}}" disabled="{{editor.isBirth}}" bindchange="changeDate"><view class="picker-value"><text>{{editor.date}}</text><image class="picker-chevron" src="../../assets/icons/chevron-right.svg" mode="aspectFit" /></view></picker></view>
+      <view class="field-grid">
+        <view class="field"><text>身高 cm</text><input cursor-spacing="100" placeholder-class="field-placeholder" type="digit" value="{{editor.height}}" placeholder="例如 56.0" disabled="{{editor.isBirth}}" bindinput="changeHeight" /></view>
+        <view class="field"><text>体重 kg</text><input cursor-spacing="100" placeholder-class="field-placeholder" type="digit" value="{{editor.weight}}" placeholder="例如 4.6" disabled="{{editor.isBirth}}" bindinput="changeWeight" /></view>
+      </view>
+      <view class="field"><text>成长备注（可选）</text><textarea cursor-spacing="100" placeholder-class="field-placeholder" value="{{editor.note}}" placeholder="记录测量时的小事（选填）" maxlength="80" disabled="{{editor.isBirth}}" bindinput="changeNote" /></view>
+      <button class="save-button" wx:if="{{!editor.isBirth}}" disabled="{{saving}}" loading="{{saving}}" bindtap="saveRecord">{{saving ? '正在保存' : '保存记录'}}</button>
+      <button class="delete-button" wx:if="{{editor.id && !editor.isBirth}}" disabled="{{saving}}" bindtap="deleteRecord">删除这条成长数据</button>
+      <view class="birth-lock" wx:if="{{editor.isBirth}}">出生日期、体重和身高为固定档案数据，不可删除。</view>
+    </scroll-view>
+  </view>
+</view>

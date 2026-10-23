@@ -1,0 +1,4 @@
+{
+  "read": "auth != null && /^family-media\\//.test(resource.path) == true && resource.openid == auth.openid",
+  "write": "auth != null && /^family-media\\//.test(resource.path) == true && resource.openid == auth.openid"
+}

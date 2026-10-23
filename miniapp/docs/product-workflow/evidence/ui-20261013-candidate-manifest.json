@@ -1,0 +1,17 @@
+{
+  "miniprogram/components/add-pill/index.js": "ffd4b6ff0c416337b90ab4b36fda0b82b4e0404ec7be41e991db5381a2d7aaba",
+  "miniprogram/components/add-pill/index.wxml": "819f48a0bbe02a43e3e1a1fffba88d71c8d748f6653857ed09bd3a2bfe4d655e",
+  "miniprogram/components/add-pill/index.wxss": "0d8578b51ff7dca5baca8cc5c6295f9da947738136fbd60031d7928e03346cef",
+  "miniprogram/lib/growth-view.js": "5acbb3ea81865b8bb06062d9c8a31aaa93104790036d2b7be88763c63f7bc4d1",
+  "miniprogram/pages/growth/index.js": "e9a862209a1e6c9517b0d04fd394938e8d90898bfcf94e513b874a73e5ea3430",
+  "miniprogram/pages/growth/index.wxml": "e9f5f9da5e3bf8d7c4d5c6a7ce562c87de04d5223d9165d939ee693aba55d9f1",
+  "miniprogram/pages/growth/index.wxss": "807032c42958acc043f9346e534bd99e3d4c5a472f0662ab3ff41ecabde5c1b9",
+  "miniprogram/pages/health/index.js": "608f5bd6950d92329c32ac7436634846128e666b5b57a0c3700cf439cf1152f8",
+  "miniprogram/pages/health/index.wxml": "1685201610895090a788b431569dbb670f863c39749d1670261e1e57183c7bfa",
+  "miniprogram/pages/health/index.wxss": "74b2b678eb08a1d7d5f71ebeb39b0dd8956f0dbb0817b01a338b878a6db63b15",
+  "miniprogram/pages/home/index.js": "e3d6275d7c10431d7074b12a47e1f4f73b51b57ae7b4ca14055645ac647438e5",
+  "miniprogram/pages/home/index.wxml": "dc09e3fef21868b5f05d5d4049648634082ad25816463226ca256a5cc8f0fe57",
+  "miniprogram/pages/home/index.wxss": "4bf419d3b938fcfa0d80129d01e314daf36609207040cfce6f4f007f382b28bc",
+  "tests/growth-health.test.js": "939c159a92951ed7a6f73bb7f9b440e7dac5d15d9ba36fcdb4f9950a391046c6",
+  "tests/page-data-rules.test.js": "e4f725b59ff29412a84bf6c29a03d057139ffa13fc4c63df3a4dfae81d7992dc"
+}

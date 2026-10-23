@@ -1,0 +1,11 @@
+<view class="segmented-tabs count-{{items.length}}" role="tablist" aria-label="{{ariaLabelText}}">
+  <view
+    class="segmented-tab {{item.key === active ? 'is-selected' : ''}}"
+    wx:for="{{items}}"
+    wx:key="key"
+    role="tab"
+    aria-selected="{{item.key === active}}"
+    data-key="{{item.key}}"
+    bindtap="handleChange"
+  >{{item.label}}</view>
+</view>

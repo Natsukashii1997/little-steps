@@ -1,0 +1,398 @@
+{
+ "version": "v6-authority-v1",
+ "status": "approved",
+ "manifest_sha256": "dfb9ed84891d0f08a6e897b69bc27949ebc7969336bcafb19482119878b3bd26",
+ "hash_rule": "sha256(json.dumps(members, ensure_ascii=False, sort_keys=True, separators=(\",\", \":\")))",
+ "pending": [],
+ "approval": {
+  "approver": "常浩",
+  "date": "2026-10-23T23:05+08:00",
+  "record": "authority/批准记录.md",
+  "evidence": "「批准视觉权威包 v6-authority-v1，清单 sha256 dfb9ed84891d0f08a6e897b69bc27949ebc7969336bcafb19482119878b3bd26。」"
+ },
+ "members": [
+  {
+   "role": "canonical_screen",
+   "path": "authority/derived/screen-1-home.fixed.png",
+   "sha256": "95dbb7c990084fcd57c8c9790c404dbcca0fbf820be7ded2dc35fee3a1cdab9a",
+   "note": "本月首页；原图按 G2、G5 机械修正"
+  },
+  {
+   "role": "component_board",
+   "path": "authority/derived/sheet-components.fixed.png",
+   "sha256": "8a617386750e7762f66be5d6ba509f19563d4169167184dba5a23cb14b917d7c",
+   "note": "原组件板按 G4 机械修正，视频时长标签改成深色"
+  },
+  {
+   "role": "component_board",
+   "path": "authority/derived/sheet-components-supplement.png",
+   "sha256": "db16a8a57ed4cbcad0d9b42b433458631a1406beb8a050c69f8b6a9c2af4a7ff",
+   "note": "从 GPT 屏按组件裁切的补充板"
+  },
+  {
+   "role": "tokens",
+   "path": "authority/tokens.json",
+   "sha256": "2e830fdf4f42d67e06e1f8054faf9b74c141658b8c4f977d791725c55126c886"
+  },
+  {
+   "role": "spec",
+   "path": "authority/组件规范.md",
+   "sha256": "fdbc4ef677eaa8b3e4584155feaf8133afd945920ed3063014663d648aff7186"
+  },
+  {
+   "role": "asset_registry",
+   "path": "authority/assets.json",
+   "sha256": "bca48c6fce95559e820d9820757a27dacad33d08e5b48a831a09ed2545ff0ce7"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/ill-home-sleep.png",
+   "sha256": "9a7d94e4237a3957ac3ff0bbbdf20b9ce6fccfa5784f8bba2f39c1b1b5835d77",
+   "note": "ill-home-sleep"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/ill-home-leaf.png",
+   "sha256": "8f12ec41419e76818f5007e6fffaa00f7f7dd23c7f0be25a04f6a69b995654ee",
+   "note": "ill-home-leaf"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/ill-home-rattle.png",
+   "sha256": "b29d674b19d1c631be1f9c405247fae7f481f1bef6f09b617145c2cccb790501",
+   "note": "ill-home-rattle"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/ill-stage-calendar.png",
+   "sha256": "0a5b51dd8db53248ef1e3641cc81f16e116051cdbb2dd2617a191da196534b36",
+   "note": "ill-stage-calendar"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/ill-growth-sprout.png",
+   "sha256": "437a9d44465dc28d91d6a4b849d514509f62a15918d662cd4ab3bf779573a129",
+   "note": "ill-growth-sprout"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/ill-album-camera.png",
+   "sha256": "c8d290e6a3204aeebb72d7a6bddb0cae9556334062645d10e02ca24bae2ae7ea",
+   "note": "ill-album-camera"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/ill-review-notebook.png",
+   "sha256": "fbd8a788b578384ef5bec60b29a30d182410b17bd34b13a5b1827b3b83d4bd58",
+   "note": "ill-review-notebook"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/marks-highlight.png",
+   "sha256": "01b054c32b32c872d23a3e83bc0b4ad3803d83306928b8b8c63d1ad1f32e998e",
+   "note": "marks-highlight"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/title-zhegeyue.png",
+   "sha256": "4f1114d463344b77d3e8c4a6084e0a06d1e192f5ea3c3329df5101dc3e7df463",
+   "note": "title-zhegeyue"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/title-zhangdale.png",
+   "sha256": "2500aaf1d4ffe81a38a8a92e8c3725cbc3be0df4a97ec53ad7eece23fe3f0f18",
+   "note": "title-zhangdale"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/title-xiangce.png",
+   "sha256": "feccd63f8fbb5571143733a9a469b403af0c9b2c7a040323145d27ba577bcb64",
+   "note": "title-xiangce"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/title-jiyibi.png",
+   "sha256": "f41136fd075436c7b169bb7adc5d4e4b8f91f8dc3fff6804c0e8b5ff75d874a7",
+   "note": "title-jiyibi"
+  },
+  {
+   "role": "asset",
+   "path": "gpt-assets/transparent/title-shanggeyue.png",
+   "sha256": "0e9cdfd3dc47f913fb39c13af368aee38f1323fde5889276c4531558fdb9a3b4",
+   "note": "title-shanggeyue"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/mark-todo.png",
+   "sha256": "c17e79693da008967d047ca6ba80cf88ed505357d96c044d9f10d297ad74ffff",
+   "note": "mark-todo"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/mark-done.png",
+   "sha256": "ebd85b8db79135cbfc95f46ef4a07020ecd0c1047065d8e8d8545a0d55104faa",
+   "note": "mark-done"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/mark-not-yet.png",
+   "sha256": "f0e6db71edb3a5c1276062fe7320c889589ff55396c7e06af1a2a71ef6c29b03",
+   "note": "mark-not-yet"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/mark-none.png",
+   "sha256": "7118dbb925d9230db013459a16355e9e19f86bbf0c5348dc1402e56635b21ec2",
+   "note": "mark-none"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/mark-doctor.png",
+   "sha256": "96aa3e2338ec80534d2a0d19ebe78c4cec8e00b4f69fa8902a4cfd29703cc771",
+   "note": "mark-doctor"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/mark-error.png",
+   "sha256": "f785d4f64935b34bb62e69ff932518499139a822f847b82cf28a3e86b213864c",
+   "note": "mark-error"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/fab-add.png",
+   "sha256": "9677aa1dac68b89ef248a5dc932bdb20c87fd884ec0885a1dc1319ff473e3147",
+   "note": "fab-add"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/icon-observe.png",
+   "sha256": "d65445620258f4e8b06d79a0ddadfe9ac21e0b6b7bb240a78e5971fe414946e0",
+   "note": "icon-observe"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/icon-measure.png",
+   "sha256": "4a78bc5a1dfb835ca5bf95ba12249d54eb3ea809c40006ce6cdb0fd1a33d45f5",
+   "note": "icon-measure"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/icon-photo.png",
+   "sha256": "847ed17f3e60ecacf6d9e225f5dd8c5507ad8e36c1e192fa50a47ffb1bf241b8",
+   "note": "icon-photo"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/icon-care.png",
+   "sha256": "988b628f9c92ac89b205a1cf51b1a0c57629129d09e882ff9ba94b81022de813",
+   "note": "icon-care"
+  },
+  {
+   "role": "asset",
+   "path": "authority/assets/icon-doctor.png",
+   "sha256": "5c0d4e65f55fff570753de42b237eedb48a026ddbbd53179a21da6a58a890a6e",
+   "note": "icon-doctor"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/00-anchor.png",
+   "sha256": "41c41862a4aa3d253464b525d41b6477b05b8319b9d83c4b445ebf294d95f509",
+   "note": "定妆参考"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/icons-quick.png",
+   "sha256": "1f8a3d125fa0a4ba4faf9a7446a3dae8165967e1bf26d7bf2a2ee775d43183d8",
+   "note": "原图，软尺是黄色；派生见 derived/icons-quick.recolor.png"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-10-quick-doctor.png",
+   "sha256": "0b8d6a99fed3491cbe124c6cb88df5bc67b07f6073668bc9128aca6c2c679145",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-11-arrange.png",
+   "sha256": "e5357d5b671549ab61e06365cb6f0c01592f1041fa9ae90e82771234ef59f031",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-12-done.png",
+   "sha256": "35ae4bafe4f0acc115a372b35acd74c6d4dc937ca94ad59258e30c53d7590059",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-13-photo.png",
+   "sha256": "ec3aa41268838d129aaed86981d31b755959cce0b081cd9469b924d79d569f9f",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-14-import.png",
+   "sha256": "9bbd4ff36a599d8dcd1d049704fe20bead75f2290f8844345bfb976d28188620",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-15-save-failed.png",
+   "sha256": "199adb4ea1739dd802dbe99fa603508ce77df3fbfb8f0c042685c3fb01b77a8d",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-16-home-new-month.png",
+   "sha256": "91ec4702d7790d7c5c626a472d5d6916f098e14d08d79ff94b820bf469a978f3",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-2-stage.png",
+   "sha256": "08fcda3ac986cc8c57c5673c5d52403e7728642df81cd7831f9310f0c7e0f727",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-3-growth.png",
+   "sha256": "7da5292e68fad145e3a78ac752d48c557cebda9874619c4106d94d82fb554846",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-4-album.png",
+   "sha256": "9ae30d2773d9316395508d62e14d88cf05e07229b7fb701a5a3abcab02a31bb0",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-5-quick.png",
+   "sha256": "df44c46f93b8e9c76e32d36dab8b853041cb4a06fcc59a0b7f50a6b03e7651bb",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-6-review-top.png",
+   "sha256": "748bdcd333cc9b5d2bef8edbd14359e52339784d85d5d0a7135ba065afb44a23",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-7-review-bottom.png",
+   "sha256": "7d90b401b857ef300d37d62c48305d1cd3019e3bd6e96d82a4c2a288c5152ee3",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-8-quick-typing.png",
+   "sha256": "1afa86baa46fe15ddccfd7cf01d218c4b0dfbcba493720519113be1c5ea60ab5",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "reference",
+   "path": "gpt-assets/screen-9-quick-measure.png",
+   "sha256": "ae7f4939cc9adc5e0707f597c659b8c2a47bc047817aac27a2617256f5ecc872",
+   "note": "参考屏；与规范冲突处以规范为准"
+  },
+  {
+   "role": "derived_source",
+   "path": "authority/derived/icons-quick.recolor.png",
+   "sha256": "5bb7a2a10467fe7504d24fdd43459b154023f4cbeeb3b21f99c5f08dffabd26b",
+   "note": "第 16 张软尺按 G3 机械换成淡蓝，5 个图标从这里切出"
+  },
+  {
+   "role": "source_original",
+   "path": "gpt-assets/screen-1-home.png",
+   "sha256": "ac3d800a59ccab374b8ff734c282c24f347730e2fae99aae4702b472cf1fa531",
+   "note": "修正前的 GPT 原图"
+  },
+  {
+   "role": "source_original",
+   "path": "gpt-assets/sheet-components.png",
+   "sha256": "68b37d2b686b90fd9cfb7af324cc2d2d690e2bb23f8e8056544867dba6ee6c7a",
+   "note": "修正前的 GPT 原图"
+  },
+  {
+   "role": "provenance",
+   "path": "gpt-assets/生成记录.md",
+   "sha256": "38eebcc332fb40e2816c95805733752517a8706974f4c501229b414f9e67b257"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/derived/fix-log.json",
+   "sha256": "264fc4c5f7baa537b8732ebecc5828c50848e96dce8e48c00210247de711e32f"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/derived/compose-log.json",
+   "sha256": "c8f2c2afb55dd2961506b297a1e94e9b277f1646c558f571c1d7c76dbb6656c8"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/tools/annotate.py",
+   "sha256": "17342fc26cfac1aab3e2903c4d956115c76d4a5cdae147426473cac7dfb41c62"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/tools/assets.py",
+   "sha256": "3202cc64a98c1ffe8c725513a62d5746c249beac60342e25748916e61c26dcac"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/tools/compose.py",
+   "sha256": "784524144b84147ff063e4491728d67899d976efea35bd9f06712e311a7cadc0"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/tools/fix.py",
+   "sha256": "8795593099331658c37af1fd89623976516a37b584fdb49e9b73e0cc613095f4"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/tools/icons.py",
+   "sha256": "6852c925484d5c21613da206c5777e1e6e34ce8cfe5a22d724fe81243255702b"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/tools/manifest.py",
+   "sha256": "4ef3f9030c3d3c44d109040d32e348c821c746afaa38a370faaef76c4a1205db"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/tools/marks.py",
+   "sha256": "e067373dd43a413ddb48e841507c3c1614ebd1c21bef16052c22552dcc6f3179"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/evidence/fix-compare.png",
+   "sha256": "7bb5ede4d50bf3e49ac7a776c4b18915a66237c3670414297a411eadfbfa42aa"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/evidence/icons-alpha-check.png",
+   "sha256": "7303d37b95b1cb2002d4caedd4b7b96a28280d1155eb79e6f4f0e758ece7deb3"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/evidence/marks-alpha-check.png",
+   "sha256": "efdf59365a7185283f3b75d112045389aa729b84561367137eb2c68481bac431"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/evidence/measure-screen-1.png",
+   "sha256": "f88f42d741bf9169641e5311a5a21cdc64b47742f1541afbff77166d30b967de"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/evidence/placeholder-compare.png",
+   "sha256": "98a2bae856a5e3b1760c3c87b41ad9f37df297f36f2e34541265a57cff576db4"
+  },
+  {
+   "role": "provenance",
+   "path": "authority/evidence/video-tag-compare.png",
+   "sha256": "74db15c7391ad3598fe8e2498235aebb2be513e10cdf74447734614b7f0a7f7e"
+  }
+ ]
+}

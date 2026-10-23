@@ -78,6 +78,20 @@ For this prototype, typography fidelity is a first-class acceptance criterion: p
 
 See `src/mobile/COMPONENTS.md` for the full component and gesture contract.
 
+## Agent skills
+
+### Issue tracker
+
+This solo project tracks specs and implementation tickets as local Markdown under `.scratch/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the five canonical Matt Skills labels for local ticket status. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This is a single-context repository with one root `CONTEXT.md` and architectural decisions under `docs/adr/`. See `docs/agents/domain.md`.
+
 ## Keyboard Rule
 
 The simulated keyboard is a separate top-layer component. Before presenting anything that behaves like iOS navigation or modal UI, dismiss it first.

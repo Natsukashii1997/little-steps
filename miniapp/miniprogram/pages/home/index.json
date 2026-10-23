@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "app-header": "/components/app-header/index",
+    "app-tabbar": "/components/app-tabbar/index",
+    "add-pill": "/components/add-pill/index",
+    "undo-bar": "/components/undo-bar/index"
+  }
+}

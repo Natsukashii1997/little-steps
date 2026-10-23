@@ -1,0 +1,16 @@
+<view class="tabbar-shell">
+  <button
+    wx:for="{{items}}"
+    wx:key="id"
+    class="tab-item {{activePage === item.id ? 'is-active' : ''}}"
+    data-id="{{item.id}}"
+    data-path="{{item.path}}"
+    aria-label="{{item.label}}"
+    bindtap="navigate"
+  >
+    <view class="icon-wrap">
+      <image class="tab-icon" src="{{item.icon}}" mode="aspectFit" />
+    </view>
+    <text class="tab-label">{{item.label}}</text>
+  </button>
+</view>

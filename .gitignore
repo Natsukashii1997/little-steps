@@ -7,3 +7,6 @@ design/
 exports/
 qa/
 tmp/
+
+# 本机私密配置，不入库
+miniapp/miniprogram/config.local.js

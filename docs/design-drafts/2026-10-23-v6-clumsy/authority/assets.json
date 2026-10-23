@@ -1,0 +1,644 @@
+[
+ {
+  "id": "ill-home-sleep",
+  "purpose": "本月页头图（默认）",
+  "source": "gpt-assets/ill-home-sleep.png",
+  "source_sha256": "ab00481440582d7275a50488de934322e1415361286e3901c85221f70441e16a",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/ill-home-sleep.png",
+  "size": [
+   1015,
+   706
+  ],
+  "crop_in_source": [
+   121,
+   336,
+   1136,
+   1042
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "9a7d94e4237a3957ac3ff0bbbdf20b9ce6fccfa5784f8bba2f39c1b1b5835d77",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "本月页"
+  ]
+ },
+ {
+  "id": "ill-home-leaf",
+  "purpose": "本月页头图（新的一个月、还没有记录）",
+  "source": "gpt-assets/ill-home-leaf.png",
+  "source_sha256": "2630a3560132af5573daea554ad377f691fbfa5dbe81e5a7022c8b9f89b27340",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/ill-home-leaf.png",
+  "size": [
+   1013,
+   896
+  ],
+  "crop_in_source": [
+   122,
+   184,
+   1135,
+   1080
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "8f12ec41419e76818f5007e6fffaa00f7f7dd23c7f0be25a04f6a69b995654ee",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "本月页·空状态"
+  ]
+ },
+ {
+  "id": "ill-home-rattle",
+  "purpose": "本月页头图（备用，轮换）",
+  "source": "gpt-assets/ill-home-rattle.png",
+  "source_sha256": "a5f8b6f30fc18eb484573ee310d086bf3e66481378306ecd9c464de1c5bdd09a",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/ill-home-rattle.png",
+  "size": [
+   876,
+   693
+  ],
+  "crop_in_source": [
+   190,
+   307,
+   1066,
+   1000
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "b29d674b19d1c631be1f9c405247fae7f481f1bef6f09b617145c2cccb790501",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "本月页"
+  ]
+ },
+ {
+  "id": "ill-stage-calendar",
+  "purpose": "阶段页头图",
+  "source": "gpt-assets/ill-stage-calendar.png",
+  "source_sha256": "7c96811479f057db6a9d6295acfca2ec34828bb0a4b827aa6d46f330023c9add",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/ill-stage-calendar.png",
+  "size": [
+   942,
+   785
+  ],
+  "crop_in_source": [
+   154,
+   232,
+   1096,
+   1017
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "0a5b51dd8db53248ef1e3641cc81f16e116051cdbb2dd2617a191da196534b36",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "阶段页"
+  ]
+ },
+ {
+  "id": "ill-growth-sprout",
+  "purpose": "成长页头图",
+  "source": "gpt-assets/ill-growth-sprout.png",
+  "source_sha256": "c416c3bca093b2c9f34109007fcdce8e6b7b84304e975186950063b0d769b0f7",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/ill-growth-sprout.png",
+  "size": [
+   717,
+   719
+  ],
+  "crop_in_source": [
+   274,
+   311,
+   991,
+   1030
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "437a9d44465dc28d91d6a4b849d514509f62a15918d662cd4ab3bf779573a129",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "成长页"
+  ]
+ },
+ {
+  "id": "ill-album-camera",
+  "purpose": "相册页头图；相册空状态",
+  "source": "gpt-assets/ill-album-camera.png",
+  "source_sha256": "11a60f2e26b3ff21b59dc0d46931f8fddf26712277065951fe0ee4bf882bdc08",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/ill-album-camera.png",
+  "size": [
+   815,
+   688
+  ],
+  "crop_in_source": [
+   236,
+   263,
+   1051,
+   951
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "c8d290e6a3204aeebb72d7a6bddb0cae9556334062645d10e02ca24bae2ae7ea",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "相册页",
+   "相册·空状态"
+  ]
+ },
+ {
+  "id": "ill-review-notebook",
+  "purpose": "月度回顾头图",
+  "source": "gpt-assets/ill-review-notebook.png",
+  "source_sha256": "d585215563c32bf5419f64fd8061556f2ee7c30d4be666881590d1c8da58462d",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/ill-review-notebook.png",
+  "size": [
+   954,
+   693
+  ],
+  "crop_in_source": [
+   148,
+   271,
+   1102,
+   964
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "fbd8a788b578384ef5bec60b29a30d182410b17bd34b13a5b1827b3b83d4bd58",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "回顾页"
+  ]
+ },
+ {
+  "id": "marks-highlight",
+  "purpose": "手绘笔触：上排 3 笔淡蓝（选中下划一笔），下排 3 笔浅绿（主动作高光）；实现时按笔切开",
+  "source": "gpt-assets/marks-highlight.png",
+  "source_sha256": "7463a474300c13bfb6fc4f106ec9d964c0d744fc1b3ade628dc43cde1859d4d4",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/marks-highlight.png",
+  "size": [
+   1536,
+   477
+  ],
+  "crop_in_source": [
+   0,
+   268,
+   1536,
+   745
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "01b054c32b32c872d23a3e83bc0b4ad3803d83306928b8b8c63d1ad1f32e998e",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "选中下划线",
+   "主动作高光"
+  ]
+ },
+ {
+  "id": "title-zhegeyue",
+  "purpose": "手写标题「这个月」",
+  "source": "gpt-assets/title-zhegeyue.png",
+  "source_sha256": "95dd2c9473dfb2ddb80f926fe30c5b577524a31914c5fc573f2e3e625c7a4b9c",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/title-zhegeyue.png",
+  "size": [
+   1158,
+   529
+  ],
+  "crop_in_source": [
+   185,
+   247,
+   1343,
+   776
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "4f1114d463344b77d3e8c4a6084e0a06d1e192f5ea3c3329df5101dc3e7df463",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "阶段页"
+  ]
+ },
+ {
+  "id": "title-zhangdale",
+  "purpose": "手写标题「长大了」",
+  "source": "gpt-assets/title-zhangdale.png",
+  "source_sha256": "31b8897e411a9751a424e18d40c847f5118cd1d39dbfe3a47798674c2c63afbc",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/title-zhangdale.png",
+  "size": [
+   975,
+   474
+  ],
+  "crop_in_source": [
+   395,
+   205,
+   1370,
+   679
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "2500aaf1d4ffe81a38a8a92e8c3725cbc3be0df4a97ec53ad7eece23fe3f0f18",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "成长页"
+  ]
+ },
+ {
+  "id": "title-xiangce",
+  "purpose": "手写标题「相册」",
+  "source": "gpt-assets/title-xiangce.png",
+  "source_sha256": "5bd9593059f4fba69cfa811d310dea5be269ddb867ba38489d11f3021f59be9d",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/title-xiangce.png",
+  "size": [
+   1052,
+   557
+  ],
+  "crop_in_source": [
+   364,
+   159,
+   1416,
+   716
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "feccd63f8fbb5571143733a9a469b403af0c9b2c7a040323145d27ba577bcb64",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "相册页"
+  ]
+ },
+ {
+  "id": "title-jiyibi",
+  "purpose": "手写标题「记一笔」",
+  "source": "gpt-assets/title-jiyibi.png",
+  "source_sha256": "21dd6ffbe774d1021f550dd57c8cc7d1fb886b30012ea4f351f4daa498dce914",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/title-jiyibi.png",
+  "size": [
+   989,
+   424
+  ],
+  "crop_in_source": [
+   274,
+   300,
+   1263,
+   724
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "f41136fd075436c7b169bb7adc5d4e4b8f91f8dc3fff6804c0e8b5ff75d874a7",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "记一笔弹层"
+  ]
+ },
+ {
+  "id": "title-shanggeyue",
+  "purpose": "手写标题「上个月」",
+  "source": "gpt-assets/title-shanggeyue.png",
+  "source_sha256": "8964067f40c4aef546d3b8a2e3911f88bd8acc2682b39fc3252f240864c87ee3",
+  "derivation": "alpha.py 软阈值去白底（最暗通道 ≥242 透明、≤60 不透明，之间线性），裁到内容边界留 4% 边距",
+  "file": "gpt-assets/transparent/title-shanggeyue.png",
+  "size": [
+   1100,
+   482
+  ],
+  "crop_in_source": [
+   218,
+   267,
+   1318,
+   749
+  ],
+  "safe_area": "四周 4%（已含在文件里）",
+  "background": "contextual：只放在纸面（paper #FCFCFC）上；白色部分是透明的，不能放在深色、照片或彩色底上",
+  "sha256": "0e9cdfd3dc47f913fb39c13af368aee38f1323fde5889276c4531558fdb9a3b4",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "回顾页"
+  ]
+ },
+ {
+  "id": "00-anchor",
+  "purpose": "宝宝形象定妆参考，只作画风依据，不进界面",
+  "source": "gpt-assets/00-anchor.png",
+  "source_sha256": "41c41862a4aa3d253464b525d41b6477b05b8319b9d83c4b445ebf294d95f509",
+  "derivation": null,
+  "file": null,
+  "size": null,
+  "crop_in_source": null,
+  "safe_area": null,
+  "background": null,
+  "sha256": null,
+  "status": "reference_only",
+  "consumers": []
+ },
+ {
+  "id": "mark-todo",
+  "purpose": "状态记号·要安排（空心圈），纯黑",
+  "source": "authority/derived/sheet-components.fixed.png",
+  "source_sha256": "8a617386750e7762f66be5d6ba509f19563d4169167184dba5a23cb14b917d7c",
+  "derivation": "从源图裁 [853, 115, 901, 162]（墨迹四周留 6px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/mark-todo.png",
+  "size": [
+   48,
+   47
+  ],
+  "crop_in_source": [
+   853,
+   115,
+   901,
+   162
+  ],
+  "safe_area": "四周 6px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "c17e79693da008967d047ca6ba80cf88ed505357d96c044d9f10d297ad74ffff",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "状态记号组件"
+  ]
+ },
+ {
+  "id": "mark-done",
+  "purpose": "状态记号·办完了 / 看到了（勾），纯黑",
+  "source": "authority/derived/sheet-components.fixed.png",
+  "source_sha256": "8a617386750e7762f66be5d6ba509f19563d4169167184dba5a23cb14b917d7c",
+  "derivation": "从源图裁 [856, 189, 901, 232]（墨迹四周留 6px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/mark-done.png",
+  "size": [
+   45,
+   43
+  ],
+  "crop_in_source": [
+   856,
+   189,
+   901,
+   232
+  ],
+  "safe_area": "四周 6px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "ebd85b8db79135cbfc95f46ef4a07020ecd0c1047065d8e8d8545a0d55104faa",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "状态记号组件"
+  ]
+ },
+ {
+  "id": "mark-not-yet",
+  "purpose": "状态记号·还没看到（虚线圈），纯黑",
+  "source": "authority/derived/sheet-components.fixed.png",
+  "source_sha256": "8a617386750e7762f66be5d6ba509f19563d4169167184dba5a23cb14b917d7c",
+  "derivation": "从源图裁 [850, 259, 904, 313]（墨迹四周留 6px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/mark-not-yet.png",
+  "size": [
+   54,
+   54
+  ],
+  "crop_in_source": [
+   850,
+   259,
+   904,
+   313
+  ],
+  "safe_area": "四周 6px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "f0e6db71edb3a5c1276062fe7320c889589ff55396c7e06af1a2a71ef6c29b03",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "状态记号组件"
+  ]
+ },
+ {
+  "id": "mark-none",
+  "purpose": "状态记号·没记过（短横），纯黑",
+  "source": "authority/derived/sheet-components.fixed.png",
+  "source_sha256": "8a617386750e7762f66be5d6ba509f19563d4169167184dba5a23cb14b917d7c",
+  "derivation": "从源图裁 [856, 340, 896, 360]（墨迹四周留 6px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/mark-none.png",
+  "size": [
+   40,
+   20
+  ],
+  "crop_in_source": [
+   856,
+   340,
+   896,
+   360
+  ],
+  "safe_area": "四周 6px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "7118dbb925d9230db013459a16355e9e19f86bbf0c5348dc1402e56635b21ec2",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "状态记号组件"
+  ]
+ },
+ {
+  "id": "mark-doctor",
+  "purpose": "状态记号·医生提示要留意（叹号），纯黑，不用红色",
+  "source": "authority/derived/sheet-components.fixed.png",
+  "source_sha256": "8a617386750e7762f66be5d6ba509f19563d4169167184dba5a23cb14b917d7c",
+  "derivation": "从源图裁 [865, 382, 886, 440]（墨迹四周留 6px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/mark-doctor.png",
+  "size": [
+   21,
+   58
+  ],
+  "crop_in_source": [
+   865,
+   382,
+   886,
+   440
+  ],
+  "safe_area": "四周 6px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "96aa3e2338ec80534d2a0d19ebe78c4cec8e00b4f69fa8902a4cfd29703cc771",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "状态记号组件"
+  ]
+ },
+ {
+  "id": "mark-error",
+  "purpose": "出错提示前的圈叹号，纯黑",
+  "source": "gpt-assets/screen-15-save-failed.png",
+  "source_sha256": "199adb4ea1739dd802dbe99fa603508ce77df3fbfb8f0c042685c3fb01b77a8d",
+  "derivation": "从源图裁 [146, 1353, 204, 1413]（墨迹四周留 6px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/mark-error.png",
+  "size": [
+   58,
+   60
+  ],
+  "crop_in_source": [
+   146,
+   1353,
+   204,
+   1413
+  ],
+  "safe_area": "四周 6px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "f785d4f64935b34bb62e69ff932518499139a822f847b82cf28a3e86b213864c",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "出错提示"
+  ]
+ },
+ {
+  "id": "fab-add",
+  "purpose": "「记一笔」圆按钮（浅绿底、黑线圈、加号），下方「记一笔」三个字用字体",
+  "source": "gpt-assets/screen-1-home.png",
+  "source_sha256": "ac3d800a59ccab374b8ff734c282c24f347730e2fae99aae4702b472cf1fa531",
+  "derivation": "从源图裁 [751, 1198, 886, 1332]（墨迹四周留 6px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/fab-add.png",
+  "size": [
+   135,
+   134
+  ],
+  "crop_in_source": [
+   751,
+   1198,
+   886,
+   1332
+  ],
+  "safe_area": "四周 6px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "9677aa1dac68b89ef248a5dc932bdb20c87fd884ec0885a1dc1319ff473e3147",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "本月页·记一笔按钮"
+  ]
+ },
+ {
+  "id": "icon-observe",
+  "purpose": "记一笔类型图标·观察，显示 36pt",
+  "source": "gpt-assets/icons-quick.png",
+  "source_sha256": "1f8a3d125fa0a4ba4faf9a7446a3dae8165967e1bf26d7bf2a2ee775d43183d8",
+  "derivation": "从 icons-quick 裁 [126, 324, 373, 478]（四周留 12px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/icon-observe.png",
+  "size": [
+   247,
+   154
+  ],
+  "crop_in_source": [
+   126,
+   324,
+   373,
+   478
+  ],
+  "safe_area": "四周 12px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "d65445620258f4e8b06d79a0ddadfe9ac21e0b6b7bb240a78e5971fe414946e0",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "记一笔弹层·类型选择"
+  ]
+ },
+ {
+  "id": "icon-measure",
+  "purpose": "记一笔类型图标·测量，显示 36pt",
+  "source": "gpt-assets/icons-quick.png",
+  "source_sha256": "1f8a3d125fa0a4ba4faf9a7446a3dae8165967e1bf26d7bf2a2ee775d43183d8",
+  "derivation": "软尺黄色换成淡蓝（G3），从 icons-quick 裁 [497, 320, 750, 490]（四周留 12px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/icon-measure.png",
+  "size": [
+   253,
+   170
+  ],
+  "crop_in_source": [
+   497,
+   320,
+   750,
+   490
+  ],
+  "safe_area": "四周 12px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "4a78bc5a1dfb835ca5bf95ba12249d54eb3ea809c40006ce6cdb0fd1a33d45f5",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "记一笔弹层·类型选择"
+  ]
+ },
+ {
+  "id": "icon-photo",
+  "purpose": "记一笔类型图标·照片，显示 36pt",
+  "source": "gpt-assets/icons-quick.png",
+  "source_sha256": "1f8a3d125fa0a4ba4faf9a7446a3dae8165967e1bf26d7bf2a2ee775d43183d8",
+  "derivation": "从 icons-quick 裁 [855, 304, 1090, 499]（四周留 12px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/icon-photo.png",
+  "size": [
+   235,
+   195
+  ],
+  "crop_in_source": [
+   855,
+   304,
+   1090,
+   499
+  ],
+  "safe_area": "四周 12px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "847ed17f3e60ecacf6d9e225f5dd8c5507ad8e36c1e192fa50a47ffb1bf241b8",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "记一笔弹层·类型选择"
+  ]
+ },
+ {
+  "id": "icon-care",
+  "purpose": "记一笔类型图标·照护，显示 36pt",
+  "source": "gpt-assets/icons-quick.png",
+  "source_sha256": "1f8a3d125fa0a4ba4faf9a7446a3dae8165967e1bf26d7bf2a2ee775d43183d8",
+  "derivation": "从 icons-quick 裁 [1262, 263, 1412, 532]（四周留 12px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/icon-care.png",
+  "size": [
+   150,
+   269
+  ],
+  "crop_in_source": [
+   1262,
+   263,
+   1412,
+   532
+  ],
+  "safe_area": "四周 12px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "988b628f9c92ac89b205a1cf51b1a0c57629129d09e882ff9ba94b81022de813",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "记一笔弹层·类型选择"
+  ]
+ },
+ {
+  "id": "icon-doctor",
+  "purpose": "记一笔类型图标·问医生，显示 36pt",
+  "source": "gpt-assets/icons-quick.png",
+  "source_sha256": "1f8a3d125fa0a4ba4faf9a7446a3dae8165967e1bf26d7bf2a2ee775d43183d8",
+  "derivation": "从 icons-quick 裁 [1580, 297, 1816, 522]（四周留 12px），按 alpha.py 同一规则去白底",
+  "file": "authority/assets/icon-doctor.png",
+  "size": [
+   236,
+   225
+  ],
+  "crop_in_source": [
+   1580,
+   297,
+   1816,
+   522
+  ],
+  "safe_area": "四周 12px（已含在文件里）",
+  "background": "contextual：只放在纸面上",
+  "sha256": "5c0d4e65f55fff570753de42b237eedb48a026ddbbd53179a21da6a58a890a6e",
+  "status": "candidate（常浩批准权威包后转 production_candidate）",
+  "consumers": [
+   "记一笔弹层·类型选择"
+  ]
+ }
+]

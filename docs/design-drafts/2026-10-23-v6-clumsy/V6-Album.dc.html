@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>V6 拙趣手写 · 相册</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&amp;family=Noto+Sans+SC:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.scr{position:relative;width:390px;height:844px;overflow:hidden;background:#FCFBF8;color:#1D1B19;font-family:"Noto Sans SC",sans-serif}
+.paper{position:absolute;inset:0;pointer-events:none}
+.ink path,.ink circle{fill:none;stroke:#1D1B19;stroke-linecap:round;stroke-linejoin:round}
+.wb{filter:url(#wb);overflow:visible}
+.date{position:absolute;left:26px;top:58px;font-size:12px;color:#6B655E;letter-spacing:.06em}
+.ttl{position:absolute;left:18px;top:86px;display:flex;align-items:flex-end}
+.cam{position:absolute;right:20px;top:90px}
+.say{position:absolute;left:28px;top:200px;margin:0;font-family:"Long Cang",cursive;font-size:21px;line-height:1.6}
+.safe{position:absolute;left:28px;top:274px;display:flex;align-items:center;gap:6px;font-size:12px;color:#6B655E}
+.body{position:absolute;left:28px;right:24px;top:312px}
+.mh{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.mh b{font-family:"Long Cang",cursive;font-weight:400;font-size:23px}
+.mh span{font-size:12px;color:#6B655E}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:18px}
+.ph{position:relative;aspect-ratio:1/1;border-radius:3px;display:block}
+.ph em{position:absolute;left:6px;bottom:6px;font-style:normal;font-size:11px;font-weight:500;color:#1D1B19;background:rgba(252,251,248,.85);border-radius:999px;padding:1px 7px}
+.ph i{position:absolute;right:7px;top:7px;width:9px;height:9px;border-radius:50%;background:#C2D58A}
+.acts{position:absolute;left:28px;right:24px;top:690px;display:flex;align-items:center;justify-content:space-between}
+.acts a{font-size:13px;color:#1D1B19;text-decoration:none;padding:12px 0}
+.imp{position:relative;border:0;background:transparent;padding:10px 6px;font-family:"Long Cang",cursive;font-size:22px;color:#1D1B19;cursor:pointer}
+.imp svg{position:absolute;left:-2px;bottom:10px;z-index:0}
+.imp span{position:relative;z-index:1}
+.tab{position:absolute;left:0;right:0;bottom:0;height:86px;padding:10px 18px 30px;box-sizing:border-box;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:#FCFBF8}
+.tab a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:"Long Cang",cursive;font-size:21px;color:#6B655E;text-decoration:none}
+.tab a.on{color:#1D1B19}
+.tab a i{width:7px;height:7px;border-radius:50%;background:transparent}
+.tab a.on i{background:#C2D58A}
+</style>
+</helmet>
+<div class="scr" style="width:390px;height:844px">
+<svg class="paper" width="390" height="844" aria-hidden="true"><defs><filter id="wb"><feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="9"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter><filter id="pp"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.39  0 0 0 0 0.35  0 0 0 0.07 0"/></filter></defs><rect width="390" height="844" filter="url(#pp)"/></svg>
+
+<div class="date">312 张照片 · 28 段视频</div>
+
+<div class="ttl" role="img" aria-label="相册">
+<svg class="ink wb" width="86" height="86" viewBox="0 0 100 100" style="transform:rotate(-3deg)" aria-hidden="true"><path d="M6 32 L42 31" stroke-width="9"/><path d="M24 8 L24 94" stroke-width="11"/><path d="M23 36 Q16 56 6 70" stroke-width="8"/><path d="M27 42 L38 54" stroke-width="8"/><path d="M52 14 L52 90" stroke-width="9"/><path d="M52 14 L88 13 L88 90" stroke-width="10"/><path d="M54 38 L86 37" stroke-width="7"/><path d="M54 62 L86 61" stroke-width="8"/><path d="M52 89 L88 89" stroke-width="9"/></svg>
+<svg class="ink wb" width="76" height="76" viewBox="0 0 100 100" style="transform:rotate(4deg) translateY(-6px)" aria-hidden="true"><path d="M22 16 Q20 50 16 90" stroke-width="10"/><path d="M23 16 L44 15 Q45 50 44 84 Q43 92 36 88" stroke-width="9"/><path d="M58 16 Q57 50 54 90" stroke-width="10"/><path d="M59 16 L82 14 Q83 50 82 84 Q81 92 73 88" stroke-width="9"/><path d="M6 52 L94 50" stroke-width="11"/></svg>
+</div>
+
+<svg class="cam ink wb" width="120" height="92" viewBox="0 0 130 100" role="img" aria-label="小相机插画">
+<path d="M14 34 Q12 26 22 26 L42 26 L48 16 L80 16 L86 26 L110 26 Q118 26 118 36 L116 86 Q116 92 108 92 L22 92 Q14 92 14 84 Z" style="fill:#FCFBF8" stroke-width="2.2"/>
+<path d="M66 37 C80 37 88 47 87 59 C86 72 76 80 64 79 C52 78 45 68 46 57 C47 46 55 37 68 38" stroke-width="2.2"/>
+<circle cx="66" cy="58" r="10" style="fill:#A8C3DE" stroke-width="1.8"/>
+<path d="M96 38 L106 38" stroke-width="2.6"/>
+<circle cx="28" cy="40" r="4" style="fill:#C2D58A" stroke-width="1.4"/>
+<path d="M118 10 L122 17 M126 20 L133 18" stroke-width="1.5"/>
+</svg>
+
+<p class="say">原片都好好存着，<br>换手机也看得到。</p>
+<div class="safe"><svg class="ink wb" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 Q8 15 10 19 Q15 9 22 4" stroke-width="2.6"/></svg>2 处备份都存好了 · 共 46.2 GB · 存储位置待定</div>
+
+<div class="body">
+<div class="mh"><b>3 月龄</b><span>10月21日起 · 46 张 · 7 段</span></div>
+<div class="grid">
+<span class="ph" style="background:#ECE7DF" role="img" aria-label="照片占位"><i aria-hidden="true"></i></span>
+<span class="ph" style="background:#E3E9EE" role="img" aria-label="视频占位"><em>0:42</em></span>
+<span class="ph" style="background:#E9ECE1" role="img" aria-label="照片占位"></span>
+</div>
+<div class="mh"><b>2 月龄</b><span>128 张 · 15 段</span></div>
+<div class="grid">
+<span class="ph" style="background:#E3E9EE" role="img" aria-label="照片占位"></span>
+<span class="ph" style="background:#EFE8E3" role="img" aria-label="视频占位"><em>1:08</em></span>
+<span class="ph" style="background:#ECE7DF" role="img" aria-label="照片占位"></span>
+</div>
+</div>
+
+<div class="acts">
+<a href="#export">全部导出</a>
+<button class="imp" type="button"><svg width="128" height="12" viewBox="0 0 128 12" preserveAspectRatio="none" aria-hidden="true"><path d="M4 7 Q40 2 80 6 T124 5" fill="none" stroke="#C2D58A" stroke-width="9" stroke-linecap="round"/></svg><span>放照片进来 +</span></button>
+</div>
+
+<nav class="tab" aria-label="主导航">
+<a href="V6-Home.dc.html">本月<i></i></a>
+<a href="V6-Stage.dc.html">阶段<i></i></a>
+<a href="V6-Growth.dc.html">成长<i></i></a>
+<a class="on" href="V6-Album.dc.html" aria-current="page">相册<i></i></a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

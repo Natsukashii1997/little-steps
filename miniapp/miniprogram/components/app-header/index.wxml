@@ -1,0 +1,20 @@
+<view class="header-shell" style="padding-top: {{contentTop}}px; height: {{totalHeight || contentTop + barHeight}}px;">
+  <view class="header-row {{home ? 'is-home' : ''}}" style="height: {{barHeight}}px;">
+    <view class="header-side header-left">
+      <image wx:if="{{home}}" class="header-weather" src="/assets/ui/weather.png" mode="aspectFit" />
+      <button wx:if="{{showBack || !home}}" class="header-icon-button" aria-label="返回上一页" bindtap="handleBack">
+        <image class="header-icon-image" src="/assets/icons/arrow-left.svg" mode="aspectFit" />
+      </button>
+    </view>
+    <text class="header-title {{home ? 'is-home' : ''}}">{{pageTitle || title}}</text>
+    <view class="header-side header-actions">
+      <button wx:if="{{showNotice}}" class="header-icon-button notice-button" aria-label="通知" bindtap="handleNotice">
+        <image class="header-icon-image" src="/assets/icons/bell.svg" mode="aspectFit" />
+        <view wx:if="{{noticeUnread}}" class="notice-dot" />
+      </button>
+      <button wx:if="{{showShare}}" class="header-icon-button" aria-label="分享" open-type="share">
+        <image class="header-icon-image" src="/assets/icons/share.svg" mode="aspectFit" />
+      </button>
+    </view>
+  </view>
+</view>

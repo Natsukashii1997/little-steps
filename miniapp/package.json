@@ -1,0 +1,12 @@
+{
+  "name": "little-steps-family-miniapp",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Little Steps 婴儿成长工作台微信小程序个人体验版",
+  "scripts": {
+    "embed:paper": "node scripts/embed-paper-texture.mjs",
+    "check": "npm run embed:paper && node scripts/check-miniapp.mjs",
+    "test": "node tests/core.test.js && node tests/page-data-rules.test.js && node tests/home-trash.test.js && node tests/home-reminders.test.js && node tests/family-ui.test.js && node tests/growth-health.test.js && node tests/memory-content.test.js && node tests/migration.test.js && node tests/store-sync.test.js && node tests/store-public.test.js && node tests/store-partition-sync.test.js && node tests/media.test.js && node tests/retention.test.js && node tests/retention-store.test.js && node tests/runtime-retention.test.js && node tests/report-page.test.js && node tests/visual-contract.test.js && node tests/family-api.test.js && node tests/family-partition-api.test.js && node tests/page-undo.test.js",
+    "verify": "npm run check && npm run test && node scripts/check-cloudbase.mjs"
+  }
+}

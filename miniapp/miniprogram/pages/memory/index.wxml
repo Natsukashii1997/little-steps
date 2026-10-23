@@ -1,0 +1,135 @@
+<view class="page-shell">
+  <app-header title="回忆册" />
+
+  <scroll-view class="page-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="page-content memory-content" style="padding-top: {{headerHeight + 12}}px;">
+      <view class="memory-hero paper-card">
+        <view class="hero-copy">
+          <text class="eyebrow">MEMORY BOOK</text>
+          <text class="hero-title">硕之的成长回忆</text>
+          <text class="hero-subtitle">把小小日常，温柔地收藏起来</text>
+          <text class="hero-count">已收藏 {{totalCount}} 段回忆</text>
+        </view>
+        <image class="hero-bear" src="/assets/memory/note-bear.png" mode="aspectFit" />
+        <add-pill bind:add="openAdd" />
+      </view>
+
+      <view class="memory-filters" role="tablist" aria-label="回忆分类">
+        <button
+          wx:for="{{filters}}"
+          wx:key="value"
+          class="filter-button {{activeFilter === item.value ? 'is-active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="selectFilter"
+        >{{item.label}}</button>
+      </view>
+
+      <view wx:if="{{records.length}}" class="memory-feed">
+        <button
+          wx:for="{{records}}"
+          wx:key="id"
+          class="memory-card paper-card {{item.isPhoto ? 'photo-card' : 'story-card'}} {{item.tone}}"
+          data-id="{{item.id}}"
+          bindtap="editRecord"
+        >
+          <block wx:if="{{item.isPhoto}}">
+            <view class="photo-frame">
+              <image class="memory-photo" src="{{item.imageSrc}}" mode="aspectFill" />
+              <text class="photo-tape">{{item.displayDate}}</text>
+              <text wx:if="{{item.photoCount > 1}}" class="photo-count">共 {{item.photoCount}} 张</text>
+            </view>
+            <view class="photo-copy">
+              <view class="card-label-row"><text class="type-label">{{item.typeLabel}}</text><view class="edit-hint"><text>点击编辑</text><image src="/assets/icons/chevron-right.svg" mode="aspectFit" /></view></view>
+              <text class="card-title">{{item.title}}</text>
+              <text class="card-description">{{item.descriptionText}}</text>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="story-art"><image src="{{item.imageSrc}}" mode="aspectFit" /></view>
+            <view class="story-copy">
+              <view class="card-label-row"><text class="type-label">{{item.typeLabel}}</text><text class="memory-date">{{item.displayDate}}</text></view>
+              <text class="card-title">{{item.title}}</text>
+              <view class="story-rule" />
+              <text class="card-description">{{item.descriptionText}}</text>
+              <view
+                wx:if="{{item.hasAudio}}"
+                class="audio-memory-button {{playingAudioId === item.id ? 'is-playing' : ''}}"
+                role="button"
+                aria-label="{{playingAudioId === item.id ? '停止播放' : '播放'}}{{item.audioLabel}}"
+                data-id="{{item.id}}"
+                catchtap="playMemoryAudio"
+              >
+                <text>{{playingAudioId === item.id ? '停止播放' : '播放音频'}}</text>
+                <text class="audio-memory-name">{{item.audioLabel}}</text>
+              </view>
+              <text wx:if="{{item.sourceAbilityId}}" class="health-linked">来自发育里程碑</text>
+            </view>
+            <image class="row-chevron" src="/assets/icons/chevron-right.svg" mode="aspectFit" />
+          </block>
+        </button>
+      </view>
+      <view wx:else class="empty-book paper-card">
+        <image src="/assets/memory/note-bear.png" mode="aspectFit" />
+        <text>这一页还空着</text>
+        <text class="muted">点 Add 收藏第一段回忆吧。</text>
+        <add-pill bind:add="openAdd" />
+      </view>
+    </view>
+  </scroll-view>
+
+  <undo-bar
+    visible="{{undoVisible}}"
+    message="{{undoMessage}}"
+    token="{{undoToken}}"
+    bind:undo="undoLastDelete"
+    bind:expired="onUndoExpired"
+  />
+  <app-tabbar active-page="memory" />
+
+  <view wx:if="{{editorOpen}}" class="sheet-mask" bindtap="closeEditor">
+    <scroll-view class="sheet-panel memory-editor" scroll-y enhanced show-scrollbar="{{false}}" catchtap="noop">
+      <view class="sheet-handle" />
+      <view class="sheet-heading"><text>{{editorTitle}}</text><button class="sheet-close" bindtap="closeEditor">关闭</button></view>
+
+      <view class="field"><text class="field-label">回忆类型 *</text><picker range="{{typeOptions}}" bindchange="handleType"><view class="field-picker">{{draft.typeLabel}}</view></picker></view>
+      <view class="content-rule"><text>文字、照片或音频，保留至少一种即可</text><text>照片最多 9 张；照片与音频二选一</text></view>
+      <view class="field"><text class="field-label">标题（可选）</text><input class="field-input" value="{{draft.title}}" data-field="title" bindinput="handleInput" placeholder="例如 第一次对我笑" /></view>
+      <view class="field"><text class="field-label">日期 *</text><picker mode="date" value="{{draft.date}}" start="{{birthDate}}" end="{{today}}" bindchange="handleDate"><view class="field-picker">{{draft.date}}</view></picker></view>
+      <view class="field"><text class="field-label">写下这段回忆（可选）</text><textarea class="field-textarea" value="{{draft.description}}" data-field="description" bindinput="handleInput" maxlength="500" placeholder="发生了什么？当时有什么感受？" /></view>
+
+      <view class="field media-field">
+        <view class="media-field-heading"><text class="field-label">宝宝照片</text><text class="media-count">{{draft.photoIds.length}} / 9</text></view>
+        <view wx:if="{{draft.photoIds.length}}" class="photo-grid">
+          <view wx:for="{{draft.photoIds}}" wx:key="*this" class="draft-photo">
+            <image src="{{item}}" mode="aspectFill" data-index="{{index}}" bindtap="previewDraftPhoto" />
+            <button class="remove-media" data-index="{{index}}" catchtap="removeDraftPhoto" aria-label="移除第 {{index + 1}} 张照片">移除</button>
+          </view>
+        </view>
+        <button wx:if="{{draft.photoIds.length < 9}}" class="media-add-button" disabled="{{uploading || saving}}" bindtap="choosePhotos">
+          <image src="/assets/icons/plus.svg" mode="aspectFit" />
+          <view><text>{{uploading ? '正在保存…' : '从相册添加照片'}}</text><text class="upload-help">可多选，单张最大 12 MB</text></view>
+        </button>
+      </view>
+
+      <view class="media-divider"><view /><text>或</text><view /></view>
+
+      <view class="field media-field">
+        <view class="media-field-heading"><text class="field-label">一段音频</text><text class="media-count">最多 1 段</text></view>
+        <view wx:if="{{draft.audioId}}" class="audio-selected">
+          <view><text class="audio-selected-title">已选择音频</text><text class="audio-selected-name">{{draft.audioName || '语音回忆'}}</text></view>
+          <button class="remove-audio" disabled="{{uploading || saving}}" bindtap="removeDraftAudio">移除</button>
+        </view>
+        <button wx:else class="media-add-button audio-add-button" disabled="{{uploading || saving}}" bindtap="chooseMemoryAudio">
+          <text class="audio-mark">声音</text>
+          <view><text>{{uploading ? '正在保存…' : '从微信选择音频'}}</text><text class="upload-help">支持 mp3 / m4a / aac / wav / ogg</text></view>
+        </button>
+        <text wx:if="{{draft.photoIds.length}}" class="choice-tip">选择音频后，当前照片会从这条回忆中移除</text>
+      </view>
+
+      <view class="form-actions">
+        <button class="ink-button" disabled="{{uploading || saving}}" loading="{{saving}}" bindtap="saveRecord">{{saving ? '正在保存' : '保存回忆'}}</button>
+        <button wx:if="{{editorId}}" class="danger-button" disabled="{{uploading || saving}}" bindtap="deleteRecord">删除这段回忆</button>
+      </view>
+    </scroll-view>
+  </view>
+</view>
