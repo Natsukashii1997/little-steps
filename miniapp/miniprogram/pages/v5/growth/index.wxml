@@ -6,7 +6,41 @@
       <image class="title-art title-zhangdale" src="/assets/v5/title-zhangdale.png" mode="heightFix" aria-label="长大了" />
       <image class="head-ill" src="/assets/v5/ill-growth-sprout.png" mode="widthFix" aria-hidden="true" />
     </view>
-    <!-- 第 3 批：家里看到的 -->
+
+    <!-- 测量（S2 做记录）：还没量过时数字的位置写「还没量过」，不显示 0 或假数字（规范 5.10） -->
+    <view class="measures" aria-label="测量">
+      <view wx:for="{{measures}}" wx:key="label" class="measure">
+        <text class="small ink2 measure-num">还没量过</text>
+        <text class="small ink2 measure-label">{{item.label}}</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">
+        <text class="title">家里看到的</text>
+        <text class="small ink2">随手记下的变化</text>
+      </view>
+      <view class="section-body">
+        <block wx:if="{{hasContent}}">
+          <view wx:for="{{seenRows}}" wx:key="id" class="mark-row" hover-class="none" data-id="{{item.id}}" data-record-id="{{item.recordId}}" bindtap="tapSeen">
+            <view class="mark-col"><image class="mark-img {{item.state === 'none' ? 'mark-none' : ''}}" src="{{item.mark}}" mode="aspectFit" aria-label="{{item.right}}" /></view>
+            <text class="item row-text {{item.state === 'none' ? 'ink2' : ''}}">{{item.text}}</text>
+            <text class="small ink2 row-right">{{item.right}}</text>
+          </view>
+        </block>
+        <view wx:for="{{freeRows}}" wx:key="id" class="mark-row" hover-class="none" data-record-id="{{item.id}}" bindtap="tapFree">
+          <view class="mark-col"><image class="mark-img" src="{{item.mark}}" mode="aspectFit" aria-label="看到了" /></view>
+          <text class="item row-text">{{item.text}}</text>
+          <text class="small ink2 row-right">{{item.date}}</text>
+        </view>
+        <view wx:if="{{!hasContent && !freeRows.length}}" class="empty-inline">
+          <text class="item">这个月的观察点还没整理好。</text>
+          <text class="small ink2">看到什么，先在今天页记一笔。</text>
+        </view>
+      </view>
+    </view>
+    <text wx:if="{{draftLine}}" class="small ink2 foot-note foot-draft">{{draftLine}}</text>
   </view>
   <v5-tabbar active="growth" />
+  <v5-quick-sheet open="{{sheetOpen}}" points="{{points}}" record="{{sheetRecord}}" preset="{{sheetPreset}}" bind:close="closeSheet" bind:saved="onSaved" />
 </view>

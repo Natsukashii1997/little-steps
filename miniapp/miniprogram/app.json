@@ -5,7 +5,8 @@
     "pages/v5/growth/index",
     "pages/v5/album/index",
     "pages/v5/setup/index",
-    "pages/v5/records/index"
+    "pages/v5/records/index",
+    "pages/v5/notice/index"
   ],
   "window": {
     "navigationStyle": "custom",

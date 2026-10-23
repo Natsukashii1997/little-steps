@@ -116,10 +116,18 @@
 }
 
 .points {
+  padding-left: 16rpx;
+}
+
+.group-label {
+  display: block;
+  margin-top: 8rpx;
+}
+
+.group-items {
   display: flex;
   flex-wrap: wrap;
   gap: 0 31rpx;
-  padding-left: 16rpx;
 }
 
 .seen-options {

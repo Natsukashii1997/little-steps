@@ -6,3 +6,35 @@
   width: 165rpx; /* 盆栽插画约 85pt 宽 */
   margin-top: -40rpx;
 }
+
+/* 三个测量位并排；还没量过时数字的位置放小字（规范 5.10） */
+.measures {
+  display: flex;
+  justify-content: space-between;
+  gap: 24rpx;
+}
+
+.measure {
+  flex: 1;
+  min-width: 0;
+}
+
+.measure-num {
+  display: flex;
+  align-items: flex-end;
+  height: 48px; /* 测量数字 44 × 1.1 行高 */
+}
+
+.measure-label {
+  display: block;
+  margin-top: 4rpx;
+}
+
+.empty-inline .item,
+.empty-inline .small {
+  display: block;
+}
+
+.empty-inline .small {
+  margin-top: 8rpx;
+}

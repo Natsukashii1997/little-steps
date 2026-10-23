@@ -21,4 +21,5 @@
       <text class="small ink2">看到什么，随手记一笔。</text>
     </view>
   </view>
+  <v5-quick-sheet open="{{sheetOpen}}" points="{{points}}" record="{{sheetRecord}}" bind:close="closeSheet" bind:saved="onSaved" />
 </view>

@@ -156,3 +156,60 @@ button {
 .empty .small {
   margin-top: 8rpx;
 }
+
+/* 条目行：记号列宽 18pt、记号到字 14pt；左侧条目最多两行，右侧状态或动作不换行（规范第 4 节、5.1） */
+.mark-row {
+  display: flex;
+  align-items: center;
+  min-height: var(--row-min);
+}
+
+.mark-col {
+  display: flex;
+  flex: 0 0 35rpx;
+  align-items: center;
+  justify-content: center;
+  margin-right: 27rpx;
+}
+
+.mark-img {
+  width: 35rpx;
+  height: 35rpx;
+}
+
+.mark-img.mark-none {
+  height: 17rpx;
+}
+
+.row-text {
+  flex: 1;
+  min-width: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.row-right {
+  flex: 0 0 auto;
+  margin-left: 24rpx;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* 页头（手写标题＋插画）后的第一块离页头近一些：插画本身已经撑出了留白 */
+.head + .section,
+.head + .measures {
+  margin-top: 31rpx;
+}
+
+/* 页脚来源一句（逗号处换行） */
+.foot-note {
+  display: block;
+  margin-top: var(--section-gap);
+  white-space: pre-line;
+}
+
+.foot-note + .foot-draft {
+  margin-top: 8rpx;
+}

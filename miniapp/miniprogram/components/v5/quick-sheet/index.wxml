@@ -7,7 +7,7 @@
       <image class="sheet-title" src="/assets/v5/title-jiyibi.png" mode="heightFix" aria-label="记一笔" />
       <view class="sheet-cancel" hover-class="none" aria-role="button" bindtap="cancel"><text class="item ink2">取消</text></view>
     </view>
-    <text class="small ink2 sheet-hint">随手记下来，月底会整理进回顾。</text>
+    <text class="small ink2 sheet-hint">{{editing ? '改一改，记下就更新。' : '随手记下来，月底会整理进回顾。'}}</text>
 
     <view class="types" aria-role="radiogroup">
       <view
@@ -34,23 +34,28 @@
         <text class="item {{itemId ? '' : 'ink2'}} row-value">{{itemId ? itemText : '不挑也行 →'}}</text>
       </view>
       <view wx:if="{{pickingItem}}" class="points">
-        <v5-action
-          wx:for="{{points}}"
-          wx:key="id"
-          class="point"
-          kind="{{itemId === item.id ? 'select' : 'plain'}}"
-          muted="{{itemId !== item.id}}"
-          label="{{item.text}}"
-          data-id="{{item.id}}"
-          bind:press="choosePoint"
-        />
+        <block wx:for="{{groups}}" wx:key="kind" wx:for-item="group">
+          <text wx:if="{{groups.length > 1}}" class="small ink2 group-label">{{group.label}}</text>
+          <view class="group-items">
+            <v5-action
+              wx:for="{{group.items}}"
+              wx:key="id"
+              class="point"
+              kind="{{itemId === item.id ? 'select' : 'plain'}}"
+              muted="{{itemId !== item.id}}"
+              label="{{item.text}}"
+              data-id="{{item.id}}"
+              bind:press="choosePoint"
+            />
+          </view>
+        </block>
       </view>
 
       <view class="row seen-row">
-        <text class="item">看到了吗</text>
+        <text class="item">{{itemKind === 'play' ? '试过了吗' : '看到了吗'}}</text>
         <view class="seen-options">
-          <v5-action kind="{{seen === 'seen' ? 'select' : 'plain'}}" muted="{{seen !== 'seen'}}" label="看到了" data-seen="seen" bind:press="chooseSeen" />
-          <v5-action wx:if="{{points.length}}" kind="{{seen === 'waiting' ? 'select' : 'plain'}}" muted="{{seen !== 'waiting'}}" label="在等，还没看到" data-seen="waiting" bind:press="chooseSeen" />
+          <v5-action kind="{{seen === 'seen' ? 'select' : 'plain'}}" muted="{{seen !== 'seen'}}" label="{{itemKind === 'play' ? '试过了' : '看到了'}}" data-seen="seen" bind:press="chooseSeen" />
+          <v5-action wx:if="{{canWait}}" kind="{{seen === 'waiting' ? 'select' : 'plain'}}" muted="{{seen !== 'waiting'}}" label="在等，还没看到" data-seen="waiting" bind:press="chooseSeen" />
         </view>
       </view>
 
@@ -89,7 +94,8 @@
 
     <view class="sheet-foot">
       <view class="foot-left">
-        <v5-action wx:if="{{error}}" kind="plain" label="先放着" bind:press="hold" />
+        <v5-action wx:if="{{editing}}" kind="plain" muted="{{!confirmDelete}}" label="{{confirmDelete ? '确定删掉' : '删掉'}}" bind:press="remove" />
+        <v5-action wx:elif="{{error}}" kind="plain" label="先放着" bind:press="hold" />
         <text wx:else class="small ink2">会出现在今天和成长里</text>
       </view>
       <v5-action kind="primary" label="{{error ? '再试一次' : '记下'}}" bind:press="save" />

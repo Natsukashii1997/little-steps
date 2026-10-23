@@ -11,14 +11,17 @@ function displayText(record, points) {
   return hit ? hit.text : "";
 }
 
-function stateLabel(record) {
-  if (record.type === "observe") return record.seen === "waiting" ? "在等，还没看到" : "看到了";
-  return "";
+// points 带 kind：挂在「可以陪宝宝玩的」上的记录写「试过了」，挂观察点或没挂的写「看到了 / 在等，还没看到」
+function stateLabel(record, points) {
+  if (record.type !== "observe") return "";
+  const hit = (points || []).filter(function (p) { return p.id === record.itemId; })[0];
+  if (hit && hit.kind === "play") return "试过了";
+  return record.seen === "waiting" ? "在等，还没看到" : "看到了";
 }
 
 function rowOf(record, points, today) {
   const date = record.at.slice(0, 10);
-  const state = stateLabel(record);
+  const state = stateLabel(record, points);
   return {
     id: record.id,
     text: displayText(record, points),

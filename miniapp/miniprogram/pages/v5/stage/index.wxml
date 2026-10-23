@@ -6,7 +6,48 @@
       <image class="title-art title-zhegeyue" src="/assets/v5/title-zhegeyue.png" mode="heightFix" aria-label="这个月" />
       <image class="head-ill" src="/assets/v5/ill-stage-calendar.png" mode="widthFix" aria-hidden="true" />
     </view>
-    <!-- 第 3 批：可以陪宝宝玩的、要留意的 -->
+
+    <block wx:if="{{hasContent}}">
+      <view class="section">
+        <view class="section-title">
+          <text class="title">可以陪宝宝玩的</text>
+          <text class="small ink2">不做也没关系</text>
+        </view>
+        <view class="section-body">
+          <view wx:for="{{playRows}}" wx:key="id" class="mark-row" hover-class="none" data-id="{{item.id}}" data-record-id="{{item.recordId}}" bindtap="tapPlay">
+            <text class="item row-text">{{item.text}}</text>
+            <view wx:if="{{item.tried}}" class="row-right tried">
+              <image class="tried-mark" src="/assets/v5/mark-done.png" mode="aspectFit" aria-hidden="true" />
+              <text class="small">{{item.date}} 试过</text>
+            </view>
+            <view wx:else class="row-right"><v5-action kind="secondary" label="试过了" /></view>
+          </view>
+          <text wx:if="{{!playRows.length}}" class="item ink2">这个月没有新的。</text>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">
+          <text class="title">要留意的</text>
+          <text class="small ink2">看看就好，不用打卡</text>
+        </view>
+        <view class="section-body">
+          <view wx:for="{{noticeRows}}" wx:key="id" class="mark-row" hover-class="none" data-id="{{item.id}}" bindtap="openNotice">
+            <text class="item row-text">{{item.text}}</text>
+            <view class="row-right"><v5-action kind="secondary" label="看看" /></view>
+          </view>
+          <text wx:if="{{!noticeRows.length}}" class="item ink2">这个月没有新的。</text>
+        </view>
+      </view>
+    </block>
+    <view wx:else class="empty">
+      <text class="item">这个月的内容还没整理好。</text>
+      <text class="small ink2">整理好会出现在这里。</text>
+    </view>
+
+    <text class="small ink2 foot-note">{{sourceLine}}</text>
+    <text wx:if="{{draftLine}}" class="small ink2 foot-note foot-draft">{{draftLine}}</text>
   </view>
   <v5-tabbar active="stage" />
+  <v5-quick-sheet open="{{sheetOpen}}" points="{{points}}" record="{{sheetRecord}}" preset="{{sheetPreset}}" bind:close="closeSheet" bind:saved="onSaved" />
 </view>

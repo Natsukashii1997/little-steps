@@ -6,3 +6,15 @@
   width: 245rpx; /* 日历插画约 127pt 宽 */
   margin-top: -30rpx;
 }
+
+/* 试过的行：右侧小勾加「10月20日 试过」小字 */
+.tried {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.tried-mark {
+  width: 27rpx;
+  height: 27rpx;
+}

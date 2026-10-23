@@ -7,9 +7,13 @@ const content = require("../../../lib/v5/content");
 const recordsView = require("../../../lib/v5/records-view");
 
 Page({
-  data: { ready: false, rows: [], windowLabel: "" },
+  data: { ready: false, rows: [], windowLabel: "", points: [], sheetOpen: false, sheetRecord: null },
 
   onShow() {
+    this.refresh();
+  },
+
+  refresh() {
     const data = repo.load();
     if (!data.baby) {
       wx.redirectTo({ url: "/pages/v5/setup/index" });
@@ -17,15 +21,29 @@ Page({
     }
     const today = age.todayKey();
     const window = age.monthWindow(data.baby.birthDate, today);
-    const points = content.observePoints(window.index);
+    const points = content.pickableItems(window.index);
     this.setData({
       ready: true,
+      points: points,
       rows: recordsView.monthRows(data.records, window, points, today),
       windowLabel: window.label + "，" + age.formatRange(window.start, window.end),
     });
   },
 
-  openRecord() {
-    // 第 3 批：点开即编辑
+  // 点开即编辑：同一弹层回填（审查 B2）
+  openRecord(event) {
+    const id = event.currentTarget.dataset.id;
+    const record = repo.getData().records.filter(function (r) { return r.id === id && !r.deletedAt; })[0];
+    if (!record) return;
+    this.setData({ sheetRecord: record, sheetOpen: true });
+  },
+
+  closeSheet() {
+    this.setData({ sheetOpen: false, sheetRecord: null });
+  },
+
+  onSaved() {
+    this.closeSheet();
+    this.refresh();
   },
 });

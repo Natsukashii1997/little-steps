@@ -10,6 +10,7 @@ Page({
   data: {
     ready: false,
     sheetOpen: false,
+    sheetRecord: null,
     points: [],
   },
 
@@ -26,7 +27,7 @@ Page({
     }
     const today = age.todayKey();
     const window = age.monthWindow(data.baby.birthDate, today);
-    const points = content.observePoints(window.index);
+    const points = content.pickableItems(window.index);
     this.setData(Object.assign({ ready: true, points: points }, buildTodayView(data, today, points)));
   },
 
@@ -35,11 +36,11 @@ Page({
   },
 
   openQuick() {
-    this.setData({ sheetOpen: true });
+    this.setData({ sheetRecord: null, sheetOpen: true });
   },
 
   closeSheet() {
-    this.setData({ sheetOpen: false });
+    this.setData({ sheetOpen: false, sheetRecord: null });
   },
 
   onSaved() {
@@ -51,7 +52,11 @@ Page({
     wx.navigateTo({ url: "/pages/v5/records/index" });
   },
 
-  openRecord() {
-    // 第 3 批：点开即编辑
+  // 点开即编辑：同一弹层回填（审查 B2）
+  openRecord(event) {
+    const id = event.currentTarget.dataset.id;
+    const record = repo.getData().records.filter(function (r) { return r.id === id && !r.deletedAt; })[0];
+    if (!record) return;
+    this.setData({ sheetRecord: record, sheetOpen: true });
   },
 });

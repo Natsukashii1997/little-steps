@@ -1,0 +1,11 @@
+<view class="page">
+  <v5-topbar back="这个月" back-path="/pages/v5/stage/index" />
+  <view class="content">
+    <text class="title notice-title">{{title}}</text>
+    <view class="notice-body">
+      <text wx:for="{{paragraphs}}" wx:key="*this" class="item notice-para">{{item}}</text>
+    </view>
+    <text class="small ink2 foot-note">{{sourceLine}}</text>
+    <text wx:if="{{draftLine}}" class="small ink2 foot-note foot-draft">{{draftLine}}</text>
+  </view>
+</view>

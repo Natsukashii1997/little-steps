@@ -40,5 +40,5 @@
   </view>
 
   <v5-tabbar active="today" />
-  <v5-quick-sheet open="{{sheetOpen}}" points="{{points}}" bind:close="closeSheet" bind:saved="onSaved" />
+  <v5-quick-sheet open="{{sheetOpen}}" points="{{points}}" record="{{sheetRecord}}" bind:close="closeSheet" bind:saved="onSaved" />
 </view>
