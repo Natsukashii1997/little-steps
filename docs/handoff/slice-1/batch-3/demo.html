@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S1 本地 demo</title>
+<style>
+  :root { --paper:#FCFCFC; --ink:#111; --ink2:#707070; --blue:#B3CBE0; --green:#E0EAB8; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#ECECEA; color:var(--ink); font-family:"LXGW WenKai","PingFang SC","Hiragino Sans GB",sans-serif; }
+  .wrap { display:flex; gap:32px; padding:24px; max-width:1180px; margin:0 auto; align-items:flex-start; }
+  .phone { position:relative; flex:0 0 390px; width:390px; transform-origin:top left; background:#000; border-radius:44px; padding:6px; box-shadow:0 20px 50px rgba(0,0,0,.25); }
+  .screen { position:relative; width:378px; height:818px; overflow:hidden; border-radius:38px; background:var(--paper); }
+  .screen img { display:block; width:100%; height:100%; object-fit:cover; }
+  .hot { position:absolute; border-radius:10px; cursor:pointer; background:rgba(179,203,224,0); transition:background .15s; }
+  .hot:hover, .show-hot .hot { background:rgba(179,203,224,.35); outline:2px dashed rgba(112,112,112,.5); }
+  .side { flex:1; min-width:320px; }
+  h1 { font-size:22px; margin:0 0 6px; font-weight:700; }
+  .sub { color:var(--ink2); font-size:14px; margin:0 0 18px; line-height:1.6; }
+  .cap { font-size:18px; margin:0 0 4px; }
+  .cap small { color:var(--ink2); font-size:13px; margin-left:8px; }
+  .tip { color:var(--ink2); font-size:14px; min-height:44px; line-height:1.6; margin:0 0 12px; }
+  .btns { display:flex; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+  button { font:inherit; font-size:15px; padding:8px 14px; border:1.5px solid var(--ink); border-radius:10px; background:var(--paper); cursor:pointer; }
+  button.primary { background:var(--green); border-color:var(--green); }
+  ol { list-style:none; padding:0; margin:0; columns:2; column-gap:20px; }
+  li { break-inside:avoid; padding:5px 8px; border-radius:8px; cursor:pointer; font-size:14px; color:var(--ink2); }
+  li:hover { background:#F2F2F0; }
+  li.on { color:var(--ink); background:#E8EEF4; }
+  li b { display:inline-block; width:26px; color:var(--ink2); font-weight:400; }
+  .foot { color:var(--ink2); font-size:12px; margin-top:16px; line-height:1.6; }
+  @media (max-width: 820px) { .wrap { flex-direction:column; align-items:center; } ol { columns:1; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="phone"><div class="screen" id="screen"><img id="shot" alt=""></div></div>
+  <div class="side">
+    <h1>婴儿工作台 S1 · 本地 demo</h1>
+    <p class="sub">手机框里是隔离副本的真实运行截图（390 宽、虚构数据「硕之 2026-08-04」、霞鹜文楷）。点截图上真实的按钮位置会切到对应状态；右边清单可以直接跳。键盘 ← → 翻状态，H 显示可点区域。</p>
+    <p class="cap" id="cap"></p>
+    <p class="tip" id="tip"></p>
+    <div class="btns">
+      <button id="prev">‹ 上一个</button>
+      <button id="next" class="primary">下一个 ›</button>
+      <button id="hot">显示可点区域</button>
+    </div>
+    <ol id="list"></ol>
+    <p class="foot">提交 a68d21e / 4e75f6f；截图 2026-10-24 01:21；证据目录 docs/handoff/slice-1/batch-3/。真机 iPhone 与 320 宽还没验；字体换不换待定。</p>
+  </div>
+</div>
+<script>
+// 状态：[文件名, 标题, 说明, 可点区域 [left%, top%, width%, height%, 目标状态号]]
+const TAB = (today, stage, growth, album) => [[0,87.5,25,7,today],[25,87.5,25,7,stage],[50,87.5,25,7,growth],[75,87.5,25,7,album]];
+const S = [
+ ["01-setup-empty","首次启动","第一次打开只问名字和出生日期。点「开始」。", [[70,62,26,8,2]]],
+ ["02-today-empty","今天 · 还没有记录","点右下「记一笔」，或底栏换页。", [[76,74,20,11,21], ...TAB(2,3,7,18)]],
+ ["03-stage-fresh","这个月 · 都没试过","「试过了 →」整行可点：弹层已选好这一条。「看看 →」进注意事项正文。", [[0,34,100,5.5,4],[0,70,100,5,6], ...TAB(10,3,7,18)]],
+ ["04-stage-sheet-preset","记一笔 · 条目已选好","「关于哪一条」已经是「清醒时趴一会儿」，问的是「试过了吗」。点「记下」。", [[78,87,20,6,5],[80,46,18,6,3]]],
+ ["05-stage-tried","这个月 · 试过一条","第一条变成小勾加「今天 试过」。点「看看 →」。", [[0,70,100,5,6],[0,34,100,5.5,4], ...TAB(10,5,9,18)]],
+ ["06-notice","注意事项正文","「‹ 这个月」小字返回；标题加段落；页脚来源一句。", [[0,10,40,6,5]]],
+ ["07-growth-none","成长 · 都没记过","短横＝没记过。每一行都能点开记一笔并选好这一条。测量位写「还没量过」。", [[0,44,100,5.5,8], ...TAB(2,3,7,18)]],
+ ["08-growth-sheet-preset","记一笔 · 已选「趴着能抬头」","可以选「看到了」或「在等，还没看到」。点「记下」。", [[78,87,20,6,9],[80,46,18,6,7]]],
+ ["09-growth-states","成长 · 三种状态","勾＋日期＝看到了；虚线圈＝在等；短横＝没记过。", [[0,44,100,5.5,8], ...TAB(10,5,9,18)]],
+ ["10-today-records","今天 · 有记录","那句话取最近一条「看到了」；下面是这个月记的最近 3 条。点一条进编辑；「看看 →」进列表。", [[0,55,100,7,11],[70,49,28,5,15],[76,74,20,11,21], ...TAB(10,5,9,18)]],
+ ["11-edit-sheet","点开即编辑","同一弹层回填。左下「删掉」，右下「记下」更新。", [[2,87,22,6,12],[78,87,20,6,14],[80,46,18,6,10]]],
+ ["12-edit-confirm-delete","删掉 → 确定删掉","第一次点变成「确定删掉」，再点一次才删（软删除留 30 天）。", [[2,87,26,6,13],[80,46,18,6,10]]],
+ ["13-today-after-delete","删后","这条不见了，计数变 3。", [[0,55,100,7,11],[70,49,28,5,15], ...TAB(13,5,9,18)]],
+ ["14-today-after-edit","改后","「在等」改成「看到了」并补了一句话。", [[0,55,100,7,11],[70,49,28,5,15], ...TAB(14,17,16,18)]],
+ ["15-records-list","这个月记的列表","二级页，「‹ 今天」返回；点一条也能编辑。", [[0,10,30,6,14],[0,24,100,7,11]]],
+ ["16-growth-after-edit","成长 · 改后","「两只手碰到一起」从虚线圈变成勾。", [[0,44,100,5.5,8], ...TAB(14,17,16,18)]],
+ ["17-stage-after","这个月 · 回看","试过的保持小勾。", [[0,70,100,5,6], ...TAB(14,17,16,18)]],
+ ["18-album","相册 · 空状态","S1 只有空状态，相册在下一个切片做。", TAB(14,17,16,18)],
+ ["19-sheet-keyboard","弹层 · 键盘态（模拟）","键盘弹出时整个弹层上移，「记下」在键盘正上方。真机行为第 4 批验。", [[80,20,18,6,10]]],
+ ["20-sheet-error","弹层 · 出错态","没存上：黑色圈叹号加一句说明，左下「先放着」，右下「再试一次」。不用红色。", [[2,87,22,6,10],[76,87,22,6,10]]],
+ ["21-sheet-empty","记一笔 · 空弹层","从今天页「记一笔」打开：类型五格只开观察，关于哪一条可不挑。点「记下」。", [[78,87,20,6,10],[80,46,18,6,2]]],
+];
+let cur = 0;
+const shot = document.getElementById("shot"), screen = document.getElementById("screen"), cap = document.getElementById("cap"), tip = document.getElementById("tip"), list = document.getElementById("list");
+S.forEach((s, i) => { const li = document.createElement("li"); li.innerHTML = "<b>" + String(i + 1).padStart(2, "0") + "</b>" + s[1]; li.onclick = () => go(i); list.appendChild(li); });
+function go(i) {
+  cur = (i + S.length) % S.length;
+  const s = S[cur];
+  shot.src = s[0] + ".png";
+  cap.innerHTML = s[1] + "<small>" + s[0] + ".png</small>";
+  tip.textContent = s[2];
+  screen.querySelectorAll(".hot").forEach((h) => h.remove());
+  (s[3] || []).forEach((h) => {
+    const el = document.createElement("div"); el.className = "hot";
+    el.style.left = h[0] + "%"; el.style.top = h[1] + "%"; el.style.width = h[2] + "%"; el.style.height = h[3] + "%";
+    el.title = "→ " + S[h[4] - 1][1]; el.onclick = () => go(h[4] - 1); screen.appendChild(el);
+  });
+  list.querySelectorAll("li").forEach((li, j) => li.classList.toggle("on", j === cur));
+  location.hash = String(cur + 1);
+}
+document.getElementById("prev").onclick = () => go(cur - 1);
+document.getElementById("next").onclick = () => go(cur + 1);
+document.getElementById("hot").onclick = () => document.body.classList.toggle("show-hot");
+document.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") go(cur + 1); if (e.key === "ArrowLeft") go(cur - 1); if (e.key.toLowerCase() === "h") document.body.classList.toggle("show-hot"); });
+function fit() { const k = Math.min(1, (window.innerHeight - 48) / 842); const ph = document.querySelector(".phone"); ph.style.transform = "scale(" + k + ")"; ph.style.marginRight = (-(1 - k) * 390) + "px"; ph.style.marginBottom = (-(1 - k) * 842) + "px"; }
+window.addEventListener("resize", fit); fit();
+go(Math.max(0, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+</script>
+</body>
+</html>
