@@ -1,4 +1,4 @@
-<view class="action action-{{kind}} {{disabled ? 'is-disabled' : ''}}" hover-class="none" aria-role="button" aria-label="{{label}}" aria-disabled="{{disabled}}" bindtap="tap">
+<view class="action action-{{kind}} {{disabled ? 'is-disabled' : ''}} {{muted ? 'is-muted' : ''}}" hover-class="none" aria-role="button" aria-label="{{label}}" aria-disabled="{{disabled}}" bindtap="tap">
   <image wx:if="{{kind === 'primary'}}" class="stroke stroke-green" src="/assets/v5/stroke-green-{{size}}.png" mode="scaleToFill" aria-hidden="true" />
   <image wx:if="{{kind === 'select'}}" class="stroke stroke-blue" src="/assets/v5/stroke-blue-{{size}}.png" mode="scaleToFill" aria-hidden="true" />
   <text class="label">{{label}}{{kind === 'secondary' ? ' →' : ''}}</text>

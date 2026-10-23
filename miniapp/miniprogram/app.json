@@ -4,7 +4,8 @@
     "pages/v5/stage/index",
     "pages/v5/growth/index",
     "pages/v5/album/index",
-    "pages/v5/setup/index"
+    "pages/v5/setup/index",
+    "pages/v5/records/index"
   ],
   "window": {
     "navigationStyle": "custom",
@@ -15,7 +16,8 @@
   "usingComponents": {
     "v5-topbar": "/components/v5/topbar/index",
     "v5-tabbar": "/components/v5/tabbar/index",
-    "v5-action": "/components/v5/action/index"
+    "v5-action": "/components/v5/action/index",
+    "v5-quick-sheet": "/components/v5/quick-sheet/index"
   },
   "componentFramework": "glass-easel",
   "lazyCodeLoading": "requiredComponents",

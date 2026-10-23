@@ -218,6 +218,66 @@
       "output_sha256": "f785d4f64935b34bb62e69ff932518499139a822f847b82cf28a3e86b213864c"
     },
     {
+      "source": "authority/assets/icon-observe.png",
+      "source_sha256": "d65445620258f4e8b06d79a0ddadfe9ac21e0b6b7bb240a78e5971fe414946e0",
+      "mode": "max",
+      "value": 108,
+      "output": "icon-observe.png",
+      "size": [
+        108,
+        67
+      ],
+      "output_sha256": "ffc8045face2832eae6ca372b061fba02c7c9cbebefa0733ed4d3916ed3aa9e8"
+    },
+    {
+      "source": "authority/assets/icon-measure.png",
+      "source_sha256": "4a78bc5a1dfb835ca5bf95ba12249d54eb3ea809c40006ce6cdb0fd1a33d45f5",
+      "mode": "max",
+      "value": 108,
+      "output": "icon-measure.png",
+      "size": [
+        108,
+        73
+      ],
+      "output_sha256": "b7f7f656c0c27ab223c53159a3b0fea77df662f33cfe2797c034d3b322926403"
+    },
+    {
+      "source": "authority/assets/icon-photo.png",
+      "source_sha256": "847ed17f3e60ecacf6d9e225f5dd8c5507ad8e36c1e192fa50a47ffb1bf241b8",
+      "mode": "max",
+      "value": 108,
+      "output": "icon-photo.png",
+      "size": [
+        108,
+        90
+      ],
+      "output_sha256": "809c152a7ff8cd4b65cedfc23b46f310b30268499f63783744580daa2c1d138e"
+    },
+    {
+      "source": "authority/assets/icon-care.png",
+      "source_sha256": "988b628f9c92ac89b205a1cf51b1a0c57629129d09e882ff9ba94b81022de813",
+      "mode": "max",
+      "value": 108,
+      "output": "icon-care.png",
+      "size": [
+        60,
+        108
+      ],
+      "output_sha256": "81a0a81996090138be66f26609779e2009c8b9582a130656e188ffc5bf1ed99e"
+    },
+    {
+      "source": "authority/assets/icon-doctor.png",
+      "source_sha256": "5c0d4e65f55fff570753de42b237eedb48a026ddbbd53179a21da6a58a890a6e",
+      "mode": "max",
+      "value": 108,
+      "output": "icon-doctor.png",
+      "size": [
+        108,
+        103
+      ],
+      "output_sha256": "d88ada1e142f416a1ed6268a80c06ccb09ab15e729bbcbf582871cfb0fb42e9d"
+    },
+    {
       "source": "gpt-assets/transparent/marks-highlight.png",
       "source_sha256": "01b054c32b32c872d23a3e83bc0b4ad3803d83306928b8b8c63d1ad1f32e998e",
       "box": [

@@ -1,0 +1,197 @@
+.scrim {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--scrim);
+}
+
+/* 从底部升起，顶部圆角 20pt，纸色底；键盘弹出时整体抬到键盘上方 */
+.sheet {
+  position: fixed;
+  z-index: 101;
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--page-x) calc(var(--safe-bottom) + 24rpx);
+  border-radius: 38rpx 38rpx 0 0;
+  background: var(--paper);
+}
+
+.grabber {
+  width: 62rpx;
+  height: 6rpx;
+  margin: 16rpx auto 0;
+  border-radius: 3rpx;
+  background: var(--grabber);
+}
+
+.sheet-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24rpx;
+}
+
+.sheet-title {
+  height: 108rpx;
+  width: 252rpx; /* 392×168 按高 108rpx 换算 */
+}
+
+.sheet-cancel {
+  display: flex;
+  align-items: center;
+  min-height: var(--row-min);
+  padding: 0 8rpx;
+  margin-right: -8rpx;
+}
+
+.sheet-hint {
+  display: block;
+  margin-top: 4rpx;
+}
+
+/* 五个类型等宽；选中的名字黑色加淡蓝下划一笔，其余 ink-2 */
+.types {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 31rpx;
+}
+
+.type {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: var(--row-min);
+  color: var(--ink-2);
+}
+
+.type.is-active {
+  color: var(--ink);
+}
+
+.type-icon {
+  width: 69rpx; /* 36pt */
+  height: 69rpx;
+}
+
+.type-name {
+  position: relative;
+  margin-top: 8rpx;
+}
+
+.type-underline {
+  position: absolute;
+  left: -6rpx;
+  bottom: -6rpx;
+  width: calc(100% + 12rpx);
+  height: 12rpx;
+}
+
+.sheet-body {
+  flex: 1;
+  min-height: 0;
+  max-height: 56vh;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24rpx;
+  min-height: var(--row-min);
+  margin-top: 8rpx;
+}
+
+.row-value {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 31rpx;
+  padding-left: 16rpx;
+}
+
+.seen-options {
+  display: flex;
+  gap: 24rpx;
+}
+
+/* 只有一条下划线，1.5pt 墨线，没有框 */
+.text-input {
+  width: 100%;
+  min-height: 70rpx;
+  margin-top: 8rpx;
+  padding: 8rpx 8rpx 12rpx;
+  border-bottom: 3rpx solid var(--ink);
+  color: var(--ink);
+  font-size: var(--fs-item);
+  line-height: 1.5;
+}
+
+.placeholder {
+  color: var(--ink-2);
+}
+
+.time-row {
+  min-height: 60rpx;
+  margin-top: 12rpx;
+}
+
+.time-toggle {
+  display: flex;
+  align-items: center;
+  min-height: 60rpx;
+  padding: 0 8rpx;
+  margin-right: -8rpx;
+}
+
+.time-pickers {
+  display: flex;
+  gap: 46rpx;
+}
+
+.pick {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+  min-height: var(--row-min);
+  padding-top: 16rpx;
+}
+
+.error-row {
+  display: flex;
+  align-items: center;
+  gap: 23rpx;
+  margin-top: 16rpx;
+}
+
+.mark-error {
+  flex: 0 0 auto;
+  width: 44rpx;
+  height: 46rpx;
+}
+
+/* 主动作在右下角；次要动作「先放着」在左下（只在出错时出现） */
+.sheet-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8rpx;
+}
+
+.foot-left {
+  display: flex;
+  align-items: center;
+  min-height: var(--row-min);
+}

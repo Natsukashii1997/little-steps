@@ -1,0 +1,24 @@
+<view class="page" wx:if="{{ready}}">
+  <v5-topbar back="今天" back-path="/pages/v5/today/index" />
+  <view class="content">
+    <view class="section-title">
+      <text class="title">这个月记的</text>
+      <text class="small ink2">{{rows.length}} 条</text>
+    </view>
+    <text class="small ink2 window">{{windowLabel}}</text>
+
+    <view wx:if="{{rows.length}}" class="section-body">
+      <view wx:for="{{rows}}" wx:key="id" class="rec-row" hover-class="none" data-id="{{item.id}}" bindtap="openRecord">
+        <view class="rec-main">
+          <text class="item rec-text">{{item.text}}</text>
+          <text class="small ink2">{{item.sub}} · {{item.time}}</text>
+        </view>
+        <text class="small ink2 rec-date">{{item.date}}</text>
+      </view>
+    </view>
+    <view wx:else class="empty">
+      <text class="item">这个月还没记什么。</text>
+      <text class="small ink2">看到什么，随手记一笔。</text>
+    </view>
+  </view>
+</view>

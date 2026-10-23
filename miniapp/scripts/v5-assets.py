@@ -44,6 +44,12 @@ JOBS = [
     ("authority/assets/mark-none.png", "mark-none.png", "copy", None),
     ("authority/assets/mark-doctor.png", "mark-doctor.png", "copy", None),
     ("authority/assets/mark-error.png", "mark-error.png", "copy", None),
+    # 记一笔类型图标：显示 36pt，长边缩到 108px
+    ("authority/assets/icon-observe.png", "icon-observe.png", "max", 108),
+    ("authority/assets/icon-measure.png", "icon-measure.png", "max", 108),
+    ("authority/assets/icon-photo.png", "icon-photo.png", "max", 108),
+    ("authority/assets/icon-care.png", "icon-care.png", "max", 108),
+    ("authority/assets/icon-doctor.png", "icon-doctor.png", "max", 108),
 ]
 
 
@@ -124,6 +130,10 @@ def main():
         elif mode == "height":
             ratio = value / im.height
             im = im.resize((max(1, round(im.width * ratio)), value), Image.LANCZOS)
+        elif mode == "max":
+            ratio = value / max(im.width, im.height)
+            if ratio < 1:
+                im = im.resize((max(1, round(im.width * ratio)), max(1, round(im.height * ratio))), Image.LANCZOS)
         path = os.path.join(out_dir, name)
         if name.startswith("ill-"):
             # 水彩插画压成 256 色调色板 PNG（带透明），体积约为原来的 1/4；线条素材保持真彩。

@@ -22,6 +22,12 @@ App({
 
   onLaunch() {
     repo.load();
+    // 软删除满 30 天的记录在这里清掉
+    try {
+      repo.purgeDeleted();
+    } catch (error) {
+      console.warn("清理过期记录失败，下次再试", error);
+    }
     font.loadFonts(config).then((ready) => {
       this.globalData.fontReady = ready;
     });

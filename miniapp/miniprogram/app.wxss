@@ -99,8 +99,48 @@ button {
   gap: 0 20rpx;
 }
 
+.section-spacer {
+  flex: 1;
+}
+
 .section-body {
   margin-top: var(--title-gap);
+}
+
+/* 记录行：左边一句话和小字说明，右边日期；可点的行最小 44pt */
+.rec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24rpx;
+  min-height: var(--row-min);
+  padding: 8rpx 0;
+}
+
+.rec-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.rec-main .item,
+.rec-main .small {
+  display: block;
+}
+
+.rec-text {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.rec-main .small {
+  margin-top: 4rpx;
+}
+
+.rec-date {
+  flex: 0 0 auto;
+  padding-top: 6rpx;
 }
 
 /* 空状态：一张插画加一句话（插画由页头提供时只放文字） */

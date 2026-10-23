@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "v5-action": "/components/v5/action/index"
+  }
+}

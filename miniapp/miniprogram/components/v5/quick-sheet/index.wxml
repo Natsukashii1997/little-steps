@@ -1,0 +1,98 @@
+<view wx:if="{{open}}" class="sheet-root">
+  <view class="scrim" bindtap="hold" aria-hidden="true" />
+  <view class="sheet" style="bottom: {{keyboardHeight}}px; max-height: calc(100vh - {{keyboardHeight}}px - 60px);">
+    <view class="grabber" aria-hidden="true" />
+
+    <view class="sheet-head">
+      <image class="sheet-title" src="/assets/v5/title-jiyibi.png" mode="heightFix" aria-label="记一笔" />
+      <view class="sheet-cancel" hover-class="none" aria-role="button" bindtap="cancel"><text class="item ink2">取消</text></view>
+    </view>
+    <text class="small ink2 sheet-hint">随手记下来，月底会整理进回顾。</text>
+
+    <view class="types" aria-role="radiogroup">
+      <view
+        wx:for="{{types}}"
+        wx:key="id"
+        class="type {{type === item.id ? 'is-active' : ''}} {{item.id === 'observe' ? '' : 'is-off'}}"
+        hover-class="none"
+        data-id="{{item.id}}"
+        aria-role="radio"
+        aria-checked="{{type === item.id}}"
+        bindtap="chooseType"
+      >
+        <image class="type-icon" src="/assets/v5/{{item.icon}}.png" mode="aspectFit" aria-hidden="true" />
+        <view class="type-name">
+          <text class="item">{{item.label}}</text>
+          <image wx:if="{{type === item.id}}" class="type-underline" src="/assets/v5/stroke-blue-s.png" mode="scaleToFill" aria-hidden="true" />
+        </view>
+      </view>
+    </view>
+
+    <scroll-view class="sheet-body" scroll-y enhanced show-scrollbar="{{false}}">
+      <view wx:if="{{points.length}}" class="row" hover-class="none" aria-role="button" bindtap="togglePick">
+        <text class="item">关于哪一条</text>
+        <text class="item {{itemId ? '' : 'ink2'}} row-value">{{itemId ? itemText : '不挑也行 →'}}</text>
+      </view>
+      <view wx:if="{{pickingItem}}" class="points">
+        <v5-action
+          wx:for="{{points}}"
+          wx:key="id"
+          class="point"
+          kind="{{itemId === item.id ? 'select' : 'plain'}}"
+          muted="{{itemId !== item.id}}"
+          label="{{item.text}}"
+          data-id="{{item.id}}"
+          bind:press="choosePoint"
+        />
+      </view>
+
+      <view class="row seen-row">
+        <text class="item">看到了吗</text>
+        <view class="seen-options">
+          <v5-action kind="{{seen === 'seen' ? 'select' : 'plain'}}" muted="{{seen !== 'seen'}}" label="看到了" data-seen="seen" bind:press="chooseSeen" />
+          <v5-action wx:if="{{points.length}}" kind="{{seen === 'waiting' ? 'select' : 'plain'}}" muted="{{seen !== 'waiting'}}" label="在等，还没看到" data-seen="waiting" bind:press="chooseSeen" />
+        </view>
+      </view>
+
+      <textarea
+        class="text-input"
+        value="{{text}}"
+        placeholder="比如：抓着我的手指不放，好久都不松开。"
+        placeholder-class="placeholder"
+        maxlength="200"
+        auto-height
+        adjust-position="{{false}}"
+        show-confirm-bar="{{false}}"
+        bindinput="onInput"
+        bindkeyboardheightchange="onKeyboard"
+        bindblur="onBlur"
+      />
+
+      <view class="row time-row">
+        <text class="small ink2">{{atLabel}}</text>
+        <view class="time-toggle" hover-class="none" aria-role="button" bindtap="toggleTime"><text class="small">改时间</text></view>
+      </view>
+      <view wx:if="{{editingTime}}" class="time-pickers">
+        <picker mode="date" value="{{dateValue}}" start="2000-01-01" end="{{today}}" bindchange="onDate">
+          <view class="pick"><text class="small ink2">哪天</text><text class="item">{{dateLabel}}</text></view>
+        </picker>
+        <picker mode="time" value="{{timeValue}}" bindchange="onTime">
+          <view class="pick"><text class="small ink2">几点</text><text class="item">{{timeValue}}</text></view>
+        </picker>
+      </view>
+
+      <view wx:if="{{error}}" class="error-row">
+        <image class="mark-error" src="/assets/v5/mark-error.png" mode="aspectFit" aria-hidden="true" />
+        <text class="item">{{error}}</text>
+      </view>
+    </scroll-view>
+
+    <view class="sheet-foot">
+      <view class="foot-left">
+        <v5-action wx:if="{{error}}" kind="plain" label="先放着" bind:press="hold" />
+        <text wx:else class="small ink2">会出现在今天和成长里</text>
+      </view>
+      <v5-action kind="primary" label="{{error ? '再试一次' : '记下'}}" bind:press="save" />
+    </view>
+  </view>
+</view>

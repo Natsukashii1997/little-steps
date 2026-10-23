@@ -3,7 +3,9 @@
 // 动作与选中（规范 5.2、5.3）：
 // - primary：字下一笔浅绿（每屏只一处）；
 // - secondary：字加「→」，没有底色；
-// - select：选中的字下一笔淡蓝。
+// - select：选中的字下一笔淡蓝；
+// - plain：只有字（二选一里没选中的那个、「先放着」）。
+// muted 把字变成 ink-2（未选中的选项）。
 // 笔触按字数挑长短：≤2 字用 s，≤4 字用 m，其余 l。对外事件名 press，避免和原生 tap 重复触发。
 
 Component({
@@ -11,6 +13,7 @@ Component({
     label: { type: String, value: "" },
     kind: { type: String, value: "secondary" },
     disabled: { type: Boolean, value: false },
+    muted: { type: Boolean, value: false },
   },
   data: {
     size: "m",
