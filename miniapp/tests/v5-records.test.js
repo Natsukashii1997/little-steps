@@ -118,9 +118,9 @@ test("今天页：这个月记的最多 3 条，总数另算；那句话跳过�
 
 test("内容表：没列出的月份没有观察点；草稿或确认后能读到", () => {
   assert.deepEqual(content.observePoints(7), []);
-  assert.equal(content.isDraft(2), true);
-  content.__setStages({ confirmedMonths: [2], draftMonths: [], months: { "2": { observe: POINTS } }, source: "测试来源" });
   assert.equal(content.isDraft(2), false);
+  content.__setStages({ confirmedMonths: [], draftMonths: [2], months: { "2": { observe: POINTS } }, source: "测试来源" });
+  assert.equal(content.isDraft(2), true);
   assert.equal(content.observePoints(2).length, 2);
   assert.equal(content.pointText(2, "m2-smile"), "逗一逗会笑出声");
   assert.deepEqual(content.observePoints(3), []);

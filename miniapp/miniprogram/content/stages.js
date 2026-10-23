@@ -9,8 +9,9 @@
 module.exports = {
   version: "2026-10-24",
   source: "内容整理自公开的儿童保健资料，以儿保医生的意见为准",
-  confirmedMonths: [],
-  draftMonths: [2, 3],
+  // 常浩 2026-10-24 确认：「内容表 2–3 和 3–4 月龄都确认，转正式、去掉草稿行，记下哈希。」
+  confirmedMonths: [2, 3],
+  draftMonths: [],
   months: {
     "2": {
       observe: [

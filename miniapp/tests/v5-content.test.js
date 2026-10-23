@@ -62,8 +62,9 @@ test("草稿月份和确认月份不重叠；都在表里", () => {
   stages.confirmedMonths.forEach((m) => assert.ok(stages.months[String(m)], "确认 " + m));
 });
 
-test("content：草稿月份可读且标草稿，没列的月份为空", () => {
-  assert.equal(content.isDraft(2), true);
+test("content：确认过的月份可读、不标草稿，没列的月份为空", () => {
+  assert.equal(content.isDraft(2), false);
+  assert.ok(content.monthContent(2) && content.monthContent(3));
   assert.ok(content.observePoints(2).length >= 4);
   assert.equal(content.pickableItems(2).filter((p) => p.kind === "play").length, content.playItems(2).length);
   assert.equal(content.noticeItem(2, "m2-notice-sleep").body.length >= 2, true);
