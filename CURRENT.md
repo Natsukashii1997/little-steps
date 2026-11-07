@@ -2,6 +2,17 @@
 
 更新：2026-11-07。Little Steps 育儿记录已转为活跃项目（数字分身名册 v1.3）：目录挪进正式项目目录，补了协作骨架，建了 GitHub 私有仓库。产品停在 10-24「内容表 2–3、3–4 月龄转正式」之后（见 [HANDOFF.md](HANDOFF.md)）。唯一下一步：常浩定下一个切片做什么，再按 HANDOFF 接着做。
 
+## AGENTS 补「AI 接入」一节（2026-11-07，Claude，常浩定全局规则 P-13 后母会话派来，常浩看过计划说「按计划开工」；已提交到 `claude/1-ai-access`、PR 待合并、无需发布）
+
+- 时间：开工 `2026-11-07 23:33`（`date '+%F %H:%M'` 记录）。★ 来由：全局规则 P-13 要求每个应用在设置里讲清 AI 接入；本应用没有 AI 功能，按例外只在 AGENTS.md 写声明（issue #1）。
+- 改了哪些文件：`AGENTS.md`（文末加「AI 接入」一节：本应用当前不调用 AI；数据对象无；对外开放无；`.openai/hosting.json` 和 `gpt-assets/` 不算 AI 接入；第一次加 AI 功能时按 P-13 补设置栏）；本文件。
+- 测试：`npx tsc --noEmit` 无输出、退出 0；`node --test tests/*.test.mjs` 原样结果 `ℹ pass 8` / `ℹ fail 0`；`node scripts/check-rules.mjs` 输出 `通用规则检查通过`。新 worktree 里第一次跑是 `ℹ fail 1`（`sites-worker` 找不到 `dist/client/index.html`），先 `npm run build` 再跑才全过。
+- 验证：只读核实了 `src/`、`worker/`、`miniapp/miniprogram/`、`miniapp/cloudfunctions/familyApi`（只依赖 `wx-server-sdk`）、`scripts/`，没有 AI 调用。
+- 截图：无。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：① 全新 worktree 要先 `npm run build` 测试才能全过，AGENTS 的测试命令里没写这一步，本轮没改。② 主目录那批没跟踪的文件照旧没动。
+- 本轮新坑：无。
+
 ## 转为活跃：挪目录、补协作骨架、建私有远端（2026-11-07，Claude，常浩说「Little Steps 调为活跃、建 GitHub 仓库」，选「照原样推私有库」「挪到 work/little-steps」；已提交并推送、无需发布）
 
 - 时间：开工 `2026-11-07 19:55`（`date '+%F %H:%M'` 记录）。来由：常浩看过全量项目盘点后，把 Little Steps 从「只登记」调为活跃。

@@ -123,3 +123,12 @@ When any text-entry control loses focus, dismiss the simulated keyboard. If the 
 - 项目目录 2026-11-07 从 `~/Documents/AI 项目/baby-care-workbench` 挪到 `~/Documents/ChatGPT/个人/work/little-steps`；远端是 GitHub 私有仓库 `Natsukashii1997/little-steps`。仓库里有宝宝的名字和出生数据，常浩同意放私有库；仓库不得改为公开，也不往里放账号、凭据和 `miniapp/miniprogram/config.local.js`。
 - 交接写在 [CURRENT.md](CURRENT.md) 顶部，骨架照 [docs/templates/handoff.md](docs/templates/handoff.md)；坑记在 [docs/LESSONS.md](docs/LESSONS.md)；交接写法与验收见 [docs/OPERATIONS.md](docs/OPERATIONS.md)；改动怎么走见 `/Users/nat/Documents/ChatGPT/个人/work/agent-kit/工程流程.md`。
 - 测试：`npx tsc --noEmit`、`node --test tests/*.test.mjs`（站点 worker、交接格式、通用规则）、`node scripts/check-rules.mjs`；端到端 `npx playwright test` 需先装 Playwright 浏览器。
+
+## AI 接入
+
+本应用当前不调用 AI：网页原型（`src/`、`worker/`）、微信小程序（`miniapp/miniprogram/`）和云函数 `familyApi` 都没有 AI 调用，记录内容全部由家人手动录入（2026-11-07 核实）。
+
+- 数据对象：无。
+- 对外开放：无（云函数 `familyApi` 只给本小程序同步家庭数据，没有 MCP，也没有给外部 AI 的接口）。
+- 不算 AI 接入的两处：`.openai/hosting.json` 是网页版托管到 ChatGPT Sites 的部署配置；`miniapp/scripts/v5-assets.py` 处理的 `gpt-assets/` 是开发阶段准备好的静态插画。两者运行时都不调用 AI。
+- 第一次加 AI 功能时，按全局规则 P-13（`~/.claude/CLAUDE.md` 第 14 节「应用里的 AI 接入写进设置」）补设置栏，并改写本节。
