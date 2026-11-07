@@ -82,7 +82,7 @@ See `src/mobile/COMPONENTS.md` for the full component and gesture contract.
 
 ### Issue tracker
 
-This solo project tracks specs and implementation tickets as local Markdown under `.scratch/`. See `docs/agents/issue-tracker.md`.
+需求与任务用本仓库 GitHub Issues（`Natsukashii1997/little-steps`，2026-11-07 起）；`.scratch/` 里是之前的本地票，只作历史。见 `docs/agents/issue-tracker.md`。
 
 ### Triage labels
 
@@ -117,3 +117,9 @@ When any text-entry control loses focus, dismiss the simulated keyboard. If the 
 - Fixed phone chrome should not animate with pushed screens. Screen content can animate; the status bar, camera cutout, and preview chrome should stay put.
 - Keep the keyboard below the home indicator/safe area layer in z-index, and above ordinary app UI while visible.
 - Keep the home indicator as the topmost safe-area layer in the z-index above everything else in the prototype.
+
+## 协作骨架（2026-11-07 补铺）
+
+- 项目目录 2026-11-07 从 `~/Documents/AI 项目/baby-care-workbench` 挪到 `~/Documents/ChatGPT/个人/work/little-steps`；远端是 GitHub 私有仓库 `Natsukashii1997/little-steps`。仓库里有宝宝的名字和出生数据，常浩同意放私有库；仓库不得改为公开，也不往里放账号、凭据和 `miniapp/miniprogram/config.local.js`。
+- 交接写在 [CURRENT.md](CURRENT.md) 顶部，骨架照 [docs/templates/handoff.md](docs/templates/handoff.md)；坑记在 [docs/LESSONS.md](docs/LESSONS.md)；交接写法与验收见 [docs/OPERATIONS.md](docs/OPERATIONS.md)；改动怎么走见 `/Users/nat/Documents/ChatGPT/个人/work/agent-kit/工程流程.md`。
+- 测试：`npx tsc --noEmit`、`node --test tests/*.test.mjs`（站点 worker、交接格式、通用规则）、`node scripts/check-rules.mjs`；端到端 `npx playwright test` 需先装 Playwright 浏览器。
