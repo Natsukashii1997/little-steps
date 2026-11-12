@@ -14,7 +14,19 @@ Page({
   },
 
   refresh() {
-    const data = repo.load();
+    let data;
+    try {
+      data = repo.load();
+    } catch (error) {
+      wx.showModal({
+        title: "记录没有读出来",
+        content: error.message,
+        confirmText: "重试读取",
+        showCancel: false,
+        success: (result) => { if (result.confirm) this.refresh(); },
+      });
+      return;
+    }
     if (!data.baby) {
       wx.redirectTo({ url: "/pages/v5/setup/index" });
       return;

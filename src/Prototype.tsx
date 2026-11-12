@@ -23,7 +23,7 @@ import {
   StarFilledIcon,
   TrashIcon,
 } from "@radix-ui/react-icons";
-import { openDB } from "idb";
+import { openDB, type IDBPTransaction } from "idb";
 import {
   CartesianGrid,
   LabelList,
@@ -1249,10 +1249,53 @@ async function readAudioDuration(file: File) {
   }
 }
 
-async function deleteAsset(id?: string) {
-  if (!id) return;
+// uploads 的 readwrite 事务在同源标签页之间串行执行；所有元数据写入共享此锁。
+async function withStorageLock<T>(action: (transaction: IDBPTransaction<unknown, [typeof ASSET_STORE], "readwrite">) => T | Promise<T>): Promise<T> {
   const db = await assetDb;
-  await db.delete(ASSET_STORE, id);
+  const transaction = db.transaction(ASSET_STORE, "readwrite");
+  try {
+    await transaction.store.get(APP_STORAGE_KEY);
+    const result = await action(transaction);
+    await transaction.done;
+    return result;
+  } catch (error) {
+    try { transaction.abort(); } catch { /* 已结束的事务无需再次中止。 */ }
+    await transaction.done.catch(() => undefined);
+    throw error;
+  }
+}
+
+function storageErrorMessage(error: unknown, fallback = "记录未能保存，请检查浏览器存储空间后重试") {
+  return error instanceof Error && error.message.startsWith("其他窗口已更新") ? error.message : fallback;
+}
+
+function queueAssetCleanup(ids: Iterable<string>) {
+  // 每个 Blob 单独留一个持久标记，避免清理队列本身发生整包覆盖。
+  for (const id of ids) localStorage.setItem(`${APP_STORAGE_KEY}-cleanup:${id}`, id);
+}
+
+async function flushAssetCleanup() {
+  const prefix = `${APP_STORAGE_KEY}-cleanup:`;
+  const keys = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index))
+    .filter((key): key is string => Boolean(key?.startsWith(prefix)));
+  for (const key of keys) {
+    let deleted = false;
+    await withStorageLock(async (transaction) => {
+      const id = localStorage.getItem(key);
+      const stored = localStorage.getItem(APP_STORAGE_KEY);
+      if (!id || !stored) return;
+      const current = JSON.parse(stored) as AppData;
+      if (assetReferenceCount(current, id) === 0) {
+        await transaction.store.delete(id);
+        deleted = true;
+      } else {
+        // 保存失败或仍被其他记录引用；在锁内移除本次候选，不碰 Blob。
+        localStorage.removeItem(key);
+      }
+    });
+    // Blob 事务提交成功后才移除重试标记；重新取锁以免与另一个标签页提交交错。
+    if (deleted) await withStorageLock(() => localStorage.removeItem(key));
+  }
 }
 
 function assetReferenceCount(data: AppData, id?: string) {
@@ -1646,7 +1689,9 @@ export default function Prototype() {
   const keyboard = useKeyboard();
   const [page, setPage] = useState<Page>("home");
   const [homeNow, setHomeNow] = useState(() => Date.now());
-  const [data, setData] = useState<AppData>(loadData);
+  const [{ data, snapshot }, setStoredState] = useState(() => ({
+    data: loadData(), snapshot: localStorage.getItem(APP_STORAGE_KEY),
+  }));
   const [overlay, setOverlay] = useState<OverlayState>(null);
   const [editor, setEditor] = useState<EditorState>(null);
   const [editorReturnOverlay, setEditorReturnOverlay] = useState<ActiveOverlay | null>(null);
@@ -1680,6 +1725,7 @@ export default function Prototype() {
 
   useEffect(() => {
     document.title = "Little Steps · 婴儿工作台";
+    void flushAssetCleanup().catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -1694,12 +1740,27 @@ export default function Prototype() {
   }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(data));
-    } catch {
-      setToast("当前浏览器没有成功保存，请释放存储空间后重试");
-    }
-  }, [data]);
+    // 仅首次加载提交规范化/迁移结果；后续数据变更在操作入口提交，禁止 effect 重放旧快照。
+    void persistEditorData(data).catch((error) => notify(storageErrorMessage(error)));
+  }, []);
+
+  useEffect(() => {
+    const refresh = () => {
+      if (editor || pendingDelete || savingEditor) return;
+      try {
+        const raw = localStorage.getItem(APP_STORAGE_KEY);
+        if (raw !== snapshot) setStoredState({ data: loadData(), snapshot: raw });
+      } catch {
+        notify("当前浏览器读取失败，请重试");
+      }
+    };
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === APP_STORAGE_KEY || event.key === null) refresh();
+    };
+    refresh();
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [editor, pendingDelete, savingEditor, snapshot]);
 
   useEffect(() => {
     if (!toast) return;
@@ -2003,16 +2064,38 @@ export default function Prototype() {
     return undefined;
   };
 
-  const persistEditorData = (update: AppData | ((current: AppData) => AppData)) => {
-    const next = typeof update === "function" ? update(data) : update;
-    localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(next));
-    setData(next);
+  const persistEditorData = async (update: AppData | ((current: AppData) => AppData), cleanupIds: Iterable<string> = []) => {
+    const next = await withStorageLock(() => {
+      if (localStorage.getItem(APP_STORAGE_KEY) !== snapshot) {
+        throw new Error("其他窗口已更新记录，请重新打开此记录后重试；当前内容尚未保存");
+      }
+      const value = typeof update === "function" ? update(data) : update;
+      queueAssetCleanup(cleanupIds);
+      const serialized = JSON.stringify(value);
+      localStorage.setItem(APP_STORAGE_KEY, serialized);
+      if (localStorage.getItem(APP_STORAGE_KEY) !== serialized) throw new Error("记录未能保存，请检查浏览器存储空间后重试");
+      return value;
+    });
+    setStoredState({ data: next, snapshot: JSON.stringify(next) });
+    void flushAssetCleanup().catch(() => undefined);
     return next;
+  };
+
+  const persistAction = async (update: (current: AppData) => AppData) => {
+    try {
+      await persistEditorData(update);
+      return true;
+    } catch (error) {
+      notify(storageErrorMessage(error));
+      return false;
+    }
   };
 
   const saveEditor = async () => {
     if (!editor || savingEditor) return;
     const { kind, id: editingId } = editor;
+    const cleanupIds = new Set<string>();
+    const commitEditorData = (update: AppData | ((current: AppData) => AppData)) => persistEditorData(update, cleanupIds);
     const id = editingId ?? uid();
     const fail = (message: string) => {
       setSavingEditor(false);
@@ -2083,6 +2166,7 @@ export default function Prototype() {
     if (kind === "learning" && upload && upload.size > 12 * 1024 * 1024) return void fail("学习卡片图片请控制在 12 MB 以内");
 
     const previousAssetId = recordAssetId(kind, editingId);
+    if (previousAssetId && upload) cleanupIds.add(previousAssetId);
     let uploadedId: string | undefined;
     setSavingEditor(true);
     try {
@@ -2135,26 +2219,24 @@ export default function Prototype() {
         next.stories = data.stories.filter((item) => !demoIds.has(item.id));
         next.learningItems = data.learningItems.filter((item) => !demoIds.has(item.id));
       }
-      persistEditorData(next);
-      demoAssetIds.forEach((assetId) => {
-        if (assetReferenceCount(next, assetId) === 0) void deleteAsset(assetId).catch(() => undefined);
-      });
+      demoAssetIds.forEach((assetId) => cleanupIds.add(assetId));
+      await commitEditorData(next);
     }
     if (kind === "feeding") {
       const item: Feeding = { id, time: new Date(draftValue("time")).toISOString(), amount: Number(draftValue("amount")), milkType: draftValue("milkType"), note: draftValue("note") };
-      persistEditorData((current) => ({ ...current, feedings: [...current.feedings.filter((x) => x.id !== id), item] }));
+      await commitEditorData((current) => ({ ...current, feedings: [...current.feedings.filter((x) => x.id !== id), item] }));
     }
     if (kind === "sleep") {
       const item: Sleep = { id, start: new Date(draftValue("start")).toISOString(), end: new Date(draftValue("end")).toISOString(), note: draftValue("note") };
-      persistEditorData((current) => ({ ...current, sleeps: [...current.sleeps.filter((x) => x.id !== id), item] }));
+      await commitEditorData((current) => ({ ...current, sleeps: [...current.sleeps.filter((x) => x.id !== id), item] }));
     }
     if (kind === "diaper") {
       const item: Diaper = { id, time: new Date(draftValue("time")).toISOString(), status: draftValue("status"), note: draftValue("note") };
-      persistEditorData((current) => ({ ...current, diapers: [...current.diapers.filter((x) => x.id !== id), item] }));
+      await commitEditorData((current) => ({ ...current, diapers: [...current.diapers.filter((x) => x.id !== id), item] }));
     }
     if (kind === "supplement") {
       const item: Supplement = { id, name: draftValue("name"), date: draftValue("date"), completed: Boolean(draft.completed) };
-      persistEditorData((current) => ({
+      await commitEditorData((current) => ({
         ...current,
         supplements: [
           ...current.supplements.filter((x) => x.id !== id && !(isVitaminDSupplement(item) && isVitaminDSupplement(x) && x.date === item.date)),
@@ -2164,12 +2246,12 @@ export default function Prototype() {
     }
     if (kind === "todo") {
       const item: Todo = { id, title: draftValue("title"), completed: Boolean(draft.completed) };
-      persistEditorData((current) => ({ ...current, todos: [...current.todos.filter((x) => x.id !== id), item] }));
+      await commitEditorData((current) => ({ ...current, todos: [...current.todos.filter((x) => x.id !== id), item] }));
     }
     if (kind === "memory") {
       const sourceAbilityId = draftValue("sourceAbilityId") || undefined;
       const item: Memory = { id, type: sourceAbilityId ? "moment" : draftValue("type") as MemoryType, title: draftValue("title"), date: draftValue("date"), description: draftValue("description"), assetId: uploadedId ?? (draftValue("assetId") || undefined), sourceAbilityId };
-      persistEditorData((current) => ({
+      await commitEditorData((current) => ({
         ...current,
         memories: upsertById(current.memories, item),
         abilities: sourceAbilityId ? current.abilities.map((ability) => ability.id === sourceAbilityId ? { ...ability, date: item.date, name: item.title, description: item.description, imageId: item.assetId } : ability) : current.abilities,
@@ -2177,7 +2259,7 @@ export default function Prototype() {
     }
     if (kind === "growth") {
       const item: GrowthRecord = { id, date: draftValue("date"), height: draftValue("height").trim() ? Number(draftValue("height")) : undefined, weight: draftValue("weight").trim() ? Number(draftValue("weight")) : undefined, note: draftValue("note").trim() || undefined };
-      persistEditorData((current) => ({ ...current, growthRecords: [...current.growthRecords.filter((x) => x.id !== id), item] }));
+      await commitEditorData((current) => ({ ...current, growthRecords: [...current.growthRecords.filter((x) => x.id !== id), item] }));
     }
     if (kind === "vaccine") {
       const previous = data.vaccines.find((item) => item.id === id);
@@ -2193,11 +2275,11 @@ export default function Prototype() {
         protects: draftValue("protects").trim() || previous?.protects || "按当地接种门诊安排",
         note: draftValue("note").trim() || undefined,
       };
-      persistEditorData((current) => ({ ...current, vaccines: upsertById(current.vaccines, item) }));
+      await commitEditorData((current) => ({ ...current, vaccines: upsertById(current.vaccines, item) }));
     }
     if (kind === "ability") {
       const item: Ability = { id, date: draftValue("date"), name: draftValue("name"), description: draftValue("description"), imageId: uploadedId ?? (draftValue("imageId") || undefined) };
-      persistEditorData((current) => {
+      await commitEditorData((current) => {
         const linked = current.memories.find((memory) => memory.sourceAbilityId === id);
         const linkedMemory: Memory = { id: linked?.id ?? uid(), type: "moment", title: item.name, date: item.date, description: item.description, assetId: item.imageId, sourceAbilityId: id };
         const memories = Boolean(draft.syncMemory)
@@ -2214,7 +2296,7 @@ export default function Prototype() {
         tips: draftValue("tips"),
         completedDate: Boolean(draft.completed) ? draftValue("completedDate") : undefined,
       };
-      persistEditorData((current) => ({ ...current, checkups: upsertById(current.checkups, item) }));
+      await commitEditorData((current) => ({ ...current, checkups: upsertById(current.checkups, item) }));
     }
     if (kind === "music") {
       if (upload && (playingId === id || pausedId === id)) {
@@ -2240,11 +2322,11 @@ export default function Prototype() {
         durationSeconds,
         assetId: uploadedId ?? draftValue("assetId"),
       };
-      persistEditorData((current) => ({ ...current, musicTracks: upsertById(current.musicTracks, item) }));
+      await commitEditorData((current) => ({ ...current, musicTracks: upsertById(current.musicTracks, item) }));
     }
     if (kind === "story") {
       const item: Story = { id, name: draftValue("name"), link: draftValue("link"), coverId: uploadedId ?? (draftValue("coverId") || undefined) };
-      persistEditorData((current) => ({ ...current, stories: upsertById(current.stories, item) }));
+      await commitEditorData((current) => ({ ...current, stories: upsertById(current.stories, item) }));
     }
     if (kind === "learning") {
       const nextKind = draftValue("kind") as StudyTab;
@@ -2259,16 +2341,16 @@ export default function Prototype() {
         imageId: uploadedId ?? (draftValue("imageId") || undefined),
         artworkKey,
       };
-      persistEditorData((current) => ({ ...current, learningItems: upsertById(current.learningItems, item) }));
+      await commitEditorData((current) => ({ ...current, learningItems: upsertById(current.learningItems, item) }));
       setStudyTab(nextKind);
     }
-    if (uploadedId && previousAssetId && uploadedId !== previousAssetId) {
-      const linkedReplacementCount = kind === "ability" || (kind === "memory" && draftValue("sourceAbilityId")) ? 2 : 1;
-      if (assetReferenceCount(data, previousAssetId) <= linkedReplacementCount) void deleteAsset(previousAssetId).catch(() => undefined);
-    }
-    } catch {
-      if (uploadedId) await deleteAsset(uploadedId).catch(() => undefined);
-      return void fail("记录未能保存，请检查浏览器存储空间后重试");
+    } catch (error) {
+      // 回读或事务结果不明时，上传的 Blob 可能已经被元数据引用，不能直接物理删除。
+      if (uploadedId) {
+        try { queueAssetCleanup([uploadedId]); } catch { /* 保留 Blob，优先避免坏引用。 */ }
+        void flushAssetCleanup().catch(() => undefined);
+      }
+      return void fail(storageErrorMessage(error));
     }
     const returnTo = editorReturnOverlay;
     keyboard.hide();
@@ -2320,7 +2402,7 @@ export default function Prototype() {
     setOverlay(returnTo);
   };
 
-  const performRemoveItem = (kind: DeletableKind, id: string) => {
+  const performRemoveItem = async (kind: DeletableKind, id: string) => {
     if (kind === "vaccine" && data.vaccines.some((item) => item.id === id && item.scheduleKey)) {
       notify("内置疫苗计划不能删除");
       return;
@@ -2355,25 +2437,28 @@ export default function Prototype() {
     if (kind === "story") next.stories = data.stories.filter((x) => x.id !== id);
     if (kind === "learning") next.learningItems = data.learningItems.filter((x) => x.id !== id);
     next.demoRecordIds = data.demoRecordIds.filter((recordId) => !deletedIds.has(recordId));
-    setData(next);
-    candidateAssetIds.forEach((assetId) => {
-      if (assetReferenceCount(next, assetId) === 0) void deleteAsset(assetId).catch(() => undefined);
-    });
+    try {
+      await persistEditorData(next, candidateAssetIds);
+    } catch (error) {
+      notify(storageErrorMessage(error, "记录未能删除，请检查浏览器存储空间后重试"));
+      return false;
+    }
     notify(kind === "memory" && linkedAbilityId ? "已从成长回忆移除，健康记录仍保留" : "记录已删除");
+    return true;
   };
 
-  const toggleTodo = (id: string) => {
+  const toggleTodo = async (id: string) => {
     const item = data.todos.find((todo) => todo.id === id);
-    setData((current) => ({ ...current, todos: current.todos.map((todo) => todo.id === id ? { ...todo, completed: !todo.completed } : todo) }));
+    if (!await persistAction((current) => ({ ...current, todos: current.todos.map((todo) => todo.id === id ? { ...todo, completed: !todo.completed } : todo) }))) return;
     if (item) notify(item.completed ? `已恢复为待办：${item.title}` : `已完成：${item.title}`);
   };
 
-  const toggleSupplement = (id: string) => {
-    setData((current) => ({ ...current, supplements: current.supplements.map((item) => item.id === id ? { ...item, completed: !item.completed, date: today() } : item) }));
+  const toggleSupplement = async (id: string) => {
+    if (!await persistAction((current) => ({ ...current, supplements: current.supplements.map((item) => item.id === id ? { ...item, completed: !item.completed, date: today() } : item) }))) return;
     notify("补剂状态已同步到首页");
   };
 
-  const setVaccineCompletedDate = (id: string, completedDate?: string) => {
+  const setVaccineCompletedDate = async (id: string, completedDate?: string) => {
     const item = data.vaccines.find((vaccine) => vaccine.id === id);
     if (!item) return false;
     if (completedDate && (completedDate > today() || completedDate < FIXED_BIRTH_DATE)) {
@@ -2391,7 +2476,7 @@ export default function Prototype() {
         return false;
       }
     }
-    setData((current) => {
+    if (!await persistAction((current) => {
       const currentItem = current.vaccines.find((candidate) => candidate.id === id);
       return {
         ...current,
@@ -2400,49 +2485,49 @@ export default function Prototype() {
           : current.demoVaccineCompletionKeys,
         vaccines: current.vaccines.map((candidate) => candidate.id === id ? { ...candidate, completedDate: completedDate || undefined } : candidate),
       };
-    });
+    })) return false;
     return true;
   };
 
-  const toggleVaccineCompletion = (id: string) => {
+  const toggleVaccineCompletion = async (id: string) => {
     const item = data.vaccines.find((vaccine) => vaccine.id === id);
     if (!item) return;
     const completedDate = item.completedDate ? undefined : today();
-    if (setVaccineCompletedDate(id, completedDate)) {
+    if (await setVaccineCompletedDate(id, completedDate)) {
       notify(completedDate ? `已记录：${item.name} ${item.dose}` : `已取消：${item.name} ${item.dose}`);
     }
   };
 
-  const quickLogPoop = () => {
+  const quickLogPoop = async () => {
     const item: Diaper = {
       id: uid(),
       time: new Date().toISOString(),
       status: "正常软便",
       note: "首页快速记录",
     };
-    setData((current) => ({ ...current, diapers: [...current.diapers, item] }));
+    if (!await persistAction((current) => ({ ...current, diapers: [...current.diapers, item] }))) return;
     setPoopCheckPulse(true);
     window.setTimeout(() => setPoopCheckPulse(false), 650);
     notify(`已记录今天第 ${todayPoopCount + 1} 次便便`);
   };
 
-  const quickToggleVitaminD = () => {
+  const quickToggleVitaminD = async () => {
     const date = localDateValue(new Date());
     if (todayVitaminDRecords.length) {
       const nextCompleted = !todayVitaminDRecords.some((item) => item.completed);
       const canonicalId = todayVitaminDRecords[0].id;
       const duplicateIds = new Set(todayVitaminDRecords.slice(1).map((item) => item.id));
-      setData((current) => ({
+      if (!await persistAction((current) => ({
         ...current,
         supplements: current.supplements
           .filter((item) => !duplicateIds.has(item.id))
           .map((item) => item.id === canonicalId ? { ...item, name: "维生素 D", date, completed: nextCompleted } : item),
-      }));
+      }))) return;
       notify(nextCompleted ? "已确认今天服用维生素 D" : "已取消今天的维生素 D 确认");
       return;
     }
     const item: Supplement = { id: uid(), name: "维生素 D", date, completed: true };
-    setData((current) => ({ ...current, supplements: [...current.supplements, item] }));
+    if (!await persistAction((current) => ({ ...current, supplements: [...current.supplements, item] }))) return;
     notify("已确认今天服用维生素 D");
   };
 
@@ -3974,7 +4059,7 @@ export default function Prototype() {
       <BottomSheet open={Boolean(pendingDelete)} onOpenChange={(open) => { if (!open) closeDeleteConfirmation(false); }} title="确认删除" description={pendingDelete ? deletePrompt(pendingDelete.kind, pendingDelete.id) : undefined} snap={0.36}>
         <div className="confirm-sheet">
           <button className="secondary-button" type="button" onClick={() => closeDeleteConfirmation(false)} data-scroll-drag="ignore">取消</button>
-          <button className="danger-button" type="button" onClick={() => { if (!pendingDelete) return; performRemoveItem(pendingDelete.kind, pendingDelete.id); closeDeleteConfirmation(true); }} data-scroll-drag="ignore"><TrashIcon /> 确认删除</button>
+          <button className="danger-button" type="button" onClick={async () => { if (!pendingDelete) return; if (await performRemoveItem(pendingDelete.kind, pendingDelete.id)) closeDeleteConfirmation(true); }} data-scroll-drag="ignore"><TrashIcon /> 确认删除</button>
         </div>
       </BottomSheet>
 

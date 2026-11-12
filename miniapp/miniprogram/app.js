@@ -21,12 +21,12 @@ App({
   },
 
   onLaunch() {
-    repo.load();
-    // 软删除满 30 天的记录在这里清掉
+    // 读取失败保持原副本，由页面提供重试；软删除满 30 天才清掉。
     try {
+      repo.load();
       repo.purgeDeleted();
     } catch (error) {
-      console.warn("清理过期记录失败，下次再试", error);
+      console.warn("读取或清理本机记录失败，请在页面重试", error);
     }
     font.loadFonts(config).then((ready) => {
       this.globalData.fontReady = ready;

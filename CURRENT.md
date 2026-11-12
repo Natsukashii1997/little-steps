@@ -13,6 +13,17 @@
 - 截图：无。
 - 发布与回读：无需发布。
 - 与授权不一致之处、遗留问题、范围外发现：规则检查没有接进 CI 或提交前钩子，只在手动跑测试时生效。Playwright 浏览器版本对不上，端到端没跑通（见上）。
+
+## 三项审计高危的限定修复（2026-11-12，Codex，常浩明确授权本 worktree 修复报告第 20/30/32 行；未提交、未发布）
+
+- 时间：开工 `2026-11-12 10:56`（`date '+%F %H:%M'` 记录）。来由：先核实现状，再逐项保留失败测试、做最小修复；start_head 为 `4fcd1205af9b9551220225d593cdb34cc3c0e436`。
+- 改了哪些文件：`miniapp/miniprogram/lib/v5/repo.js`（读取失败/坏结构不再初始化空档案，成功重读前禁止写入）；`miniapp/miniprogram/app.js`、`pages/v5/{today,setup,records,growth,stage,album}/index.js`（启动不中断，所有读取页面原生提示重试）；`src/Prototype.tsx`（事务串行保护元数据提交、拒绝过期快照、同步跨标签页状态；元数据保存回读成功后才清媒体，持久标记重试）；`miniapp/tests/v5-repo.test.js`、`tests/web-storage-safety.test.mjs`、`tests/storage-safety.spec.ts`（故障注入、并发回归及待运行的浏览器用例）；本文件。
+- 测试：`npm run build` 退出 0；`npx --no-install tsc --noEmit` 无输出、退出 0；`node --test tests/*.test.mjs` 原样结果 `ℹ pass 14` / `ℹ fail 0`；`node scripts/check-rules.mjs` 输出 `通用规则检查通过`；`npm run check:runtime` 输出 `Mobile runtime integrity check passed (28 protected files).`；`node miniapp/scripts/check-cloudbase.mjs` 输出 `CloudBase family backend structure: OK`。逐个 `node miniapp/tests/*.test.js`：27 个入口，24 个退出 0、3 个退出 1；本轮 v5-repo 为 `v5-repo：通过 10，失败 0`。
+- 验证：仅合成 wx、内存存储及原生产函数故障注入；三项均有修前失败与修后通过日志。失败的 `report-page`、`runtime-retention`、`visual-contract` 在本地 HEAD 原实现下复跑亦失败，属于审计已记录的旧契约问题；未改测试以掩盖失败。`npx --no-install playwright test` 受离线防护阻断；独立预览尝试为 `listen EPERM`，改用无服务器的资源拦截后 Chromium 启动 `SIGABRT`，两条新浏览器用例未实际进入交互。
+- 截图：无。未修改视觉、素材、CSS 或受保护运行时；真实浏览器对照、微信开发者工具/真机验收未完成。
+- 发布与回读：未提交、未推送、未发布；真实运行环境未采用。没有访问网络、真实业务数据、钥匙串或私人日志；旧云函数/store.js 四项高危未改。
+- 与授权不一致之处、遗留问题、范围外发现：无范围外代码改动。证据与逐项总结见 `/Users/nat/Library/Application Support/little-steps/evidence/2026-11-12-codex-fix/summary.md`；唯一下一步是在可启动隔离浏览器的环境运行 `tests/storage-safety.spec.ts` 并检查原有浏览器套件。项目业务切片的暂停决定保持。
+- 第 2 轮（2026-11-12）：据常浩转述，Claude 沙箱外实跑 `tests/storage-safety.spec.ts`：原第 88 行跨窗口用例通过，原第 69 行删除配额失败用例找不到默认角色定位的 status。静态核对及原生产删除函数单元验证确认已有失败 toast；仅将该用例改为定位现有 `.toast[role="status"]` 并断言可见和准确文案，补强单元测试的失败返回值与提示断言。产品代码未改；本沙箱不跑浏览器，修后 E2E 待 Claude 在沙箱外复跑。完整原因、检查结果和本轮增量见证据 `summary.md` 末尾「第 2 轮」。
 - 本轮新坑：无。
 
 ## AGENTS 补「AI 接入」一节（2026-11-07，Claude，常浩定全局规则 P-13 后母会话派来，常浩看过计划说「按计划开工」；已提交到 `claude/1-ai-access`、PR 待合并、无需发布）
