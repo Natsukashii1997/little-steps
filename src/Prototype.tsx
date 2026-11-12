@@ -980,9 +980,13 @@ function createSeedData(): AppData {
   return seed;
 }
 
-function loadData(): AppData {
+function loadStoredState() {
+  const snapshot = localStorage.getItem(APP_STORAGE_KEY);
+  return { data: loadData(snapshot), snapshot };
+}
+
+function loadData(stored: string | null): AppData {
   try {
-    const stored = localStorage.getItem(APP_STORAGE_KEY);
     if (!stored) return createSeedData();
     const decoded = JSON.parse(stored) as unknown;
     const raw: JsonRecord = isJsonRecord(decoded) ? decoded : {};
@@ -1249,8 +1253,12 @@ async function readAudioDuration(file: File) {
   }
 }
 
-// uploads 的 readwrite 事务在同源标签页之间串行执行；所有元数据写入共享此锁。
-async function withStorageLock<T>(action: (transaction: IDBPTransaction<unknown, [typeof ASSET_STORE], "readwrite">) => T | Promise<T>): Promise<T> {
+// 元数据和媒体清理共用同源 Web Lock，纯文本保存不必等待媒体数据库。
+// 没有 Web Locks 的旧浏览器仍使用原有事务保护，绝不退回无锁写入。
+async function withStorageLock<T>(action: (transaction?: IDBPTransaction<unknown, [typeof ASSET_STORE], "readwrite">) => T | Promise<T>): Promise<T> {
+  if (typeof navigator !== "undefined" && navigator.locks) {
+    return navigator.locks.request(APP_STORAGE_KEY, () => action());
+  }
   const db = await assetDb;
   const transaction = db.transaction(ASSET_STORE, "readwrite");
   try {
@@ -1278,6 +1286,9 @@ async function flushAssetCleanup() {
   const prefix = `${APP_STORAGE_KEY}-cleanup:`;
   const keys = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index))
     .filter((key): key is string => Boolean(key?.startsWith(prefix)));
+  if (!keys.length) return;
+  // 数据库打开受阻时不得占着元数据锁；保留标记供下次清理重试。
+  const db = await assetDb;
   for (const key of keys) {
     let deleted = false;
     await withStorageLock(async (transaction) => {
@@ -1286,7 +1297,8 @@ async function flushAssetCleanup() {
       if (!id || !stored) return;
       const current = JSON.parse(stored) as AppData;
       if (assetReferenceCount(current, id) === 0) {
-        await transaction.store.delete(id);
+        if (transaction) await transaction.store.delete(id);
+        else await db.delete(ASSET_STORE, id);
         deleted = true;
       } else {
         // 保存失败或仍被其他记录引用；在锁内移除本次候选，不碰 Blob。
@@ -1689,9 +1701,7 @@ export default function Prototype() {
   const keyboard = useKeyboard();
   const [page, setPage] = useState<Page>("home");
   const [homeNow, setHomeNow] = useState(() => Date.now());
-  const [{ data, snapshot }, setStoredState] = useState(() => ({
-    data: loadData(), snapshot: localStorage.getItem(APP_STORAGE_KEY),
-  }));
+  const [{ data, snapshot }, setStoredState] = useState(loadStoredState);
   const [overlay, setOverlay] = useState<OverlayState>(null);
   const [editor, setEditor] = useState<EditorState>(null);
   const [editorReturnOverlay, setEditorReturnOverlay] = useState<ActiveOverlay | null>(null);
@@ -1748,8 +1758,8 @@ export default function Prototype() {
     const refresh = () => {
       if (editor || pendingDelete || savingEditor) return;
       try {
-        const raw = localStorage.getItem(APP_STORAGE_KEY);
-        if (raw !== snapshot) setStoredState({ data: loadData(), snapshot: raw });
+        const stored = loadStoredState();
+        if (stored.snapshot !== snapshot) setStoredState(stored);
       } catch {
         notify("当前浏览器读取失败，请重试");
       }

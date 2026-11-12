@@ -14,6 +14,18 @@
 - 发布与回读：无需发布。
 - 与授权不一致之处、遗留问题、范围外发现：规则检查没有接进 CI 或提交前钩子，只在手动跑测试时生效。Playwright 浏览器版本对不上，端到端没跑通（见上）。
 
+## 交叉审查返修（2026-11-12，Codex，常浩授权 PR #4 本 worktree 返修；未提交、未推送）
+
+- 时间：开工 `2026-11-12 15:48`（本轮 `date '+%F %H:%M'` 首次记录）。start_head `4708286bfa93291f1384864f6a5addc60f1c9b0b`，分支 `codex/audit-fix-1112`，开工时工作区干净。业务切片暂停决定不变；只处理指定交叉审查报告。
+- 改了哪些文件：`src/Prototype.tsx`（启动/刷新由同一原始字符串生成数据与快照；元数据与清理共享 Web Lock，纯文本不等媒体库；无 Web Locks 环境保留事务保护）；`miniapp/miniprogram/lib/v5/repo.js`（写入/回读结果不明后阻止旧缓存写入，成功重读再恢复）；`miniapp/tests/v5-repo.test.js`（抛错、不一致、重读再失败与草稿保留回归）；`tests/web-storage-safety.test.mjs`、`tests/helpers/storage-concurrency-worker.mjs`（单次读取、媒体库拒绝/阻塞、清理和独立线程交错，撤锁反证）；本文件。未顺手改产品其他功能，未改视觉、素材、CSS、数据格式或受保护运行时。
+- 测试：`npm run build`、`node node_modules/typescript/bin/tsc --noEmit` 退出 0；全部根测试原样 `ℹ pass 21` / `ℹ fail 0`，其中网页存储 13/13；`v5-repo：通过 12，失败 0`。全部 27 个小程序测试入口逐个执行，24 个退出 0，3 个退出 1；`report-page`、`runtime-retention`、`visual-contract` 三项在 PR 基线 `4fcd120` 的原模块下复跑同样失败。`check-miniapp.mjs` 因旧四页路由契约失败，基线同样失败；不修或放宽旧契约来制造绿灯。规则、28 个受保护文件、Sites 四项测试、CloudBase 本地结构检查均通过。
+- 验证：发现 1–3 均保留修前失败、修后通过；发现 4 复现旧六项撤锁仍通过，新增独立线程测试在 Web Lock / 事务等待各自被撤掉时均原样报 `2 !== 1`，保留锁后通过。仅合成数据、存储边界替身与 Node 独立线程；不等同真实多标签页浏览器的 Web Locks / IndexedDB 验收。
+- 截图：无。Playwright 发现 `Total: 12 tests in 3 files`，执行因离线防护 `Error: AUDIT_OFFLINE: network disabled` 退出 1，未进入浏览器交互。本轮未监听端口或启动浏览器，未把历史 EPERM/SIGABRT 结果冒充本轮结果。
+- 发布与回读：只改本 worktree 与指定证据目录；未提交、推送、联网、发布或读取真实家庭存储。记录为本地候选版，PR #4 远端未更新。证据入口：`/Users/nat/Library/Application Support/little-steps/evidence/2026-11-12-codex-fix/summary.md` 末尾「交叉审查返修」，本轮原样日志与变异副本在同目录 `rework/`。
+- 与授权不一致之处、遗留问题、范围外发现：报告四项均成立；全部在本轮授权范围内处理。没有 Web Locks 的旧浏览器仍依赖媒体事务提供安全锁，媒体库同时不可用时不会降级为无锁保存；这一兼容边界须在沙箱外复验。三个旧测试失败和旧四页离线自检建议另开 issue；没有据此恢复旧页面或改已定内容。当前 AGENTS.md 未规定此次必须升版本/写 CHANGELOG，仓库无 CHANGELOG 文件，本轮未制造版本改动。需要常浩确认后才能实施的新行为：无。
+- 唯一下一步：在允许监听本地端口、启动隔离 Chromium 的环境复跑本 worktree 全部 Playwright 测试，并重点验证媒体库故障下的纯文本保存、真实双窗口争锁与过期拒绝；验明前保持“待复验”，不得合并结论替代真机验收。
+- 本轮新坑：无。
+
 ## 三项审计高危的限定修复（2026-11-12，Codex，常浩明确授权本 worktree 修复报告第 20/30/32 行；未提交、未发布）
 
 - 时间：开工 `2026-11-12 10:56`（`date '+%F %H:%M'` 记录）。来由：先核实现状，再逐项保留失败测试、做最小修复；start_head 为 `4fcd1205af9b9551220225d593cdb34cc3c0e436`。

@@ -59,7 +59,7 @@ function load() {
     readError = null;
     return clone(cache);
   } catch (error) {
-    readError = new Error("本机记录读取失败，原记录未改动，请重试读取。");
+    readError = readError || new Error("本机记录读取失败，原记录未改动，请重试读取。");
     throw readError;
   }
 }
@@ -77,10 +77,14 @@ function save(next, now) {
   const data = normalize(next);
   data.updatedAt = new Date(now || Date.now()).toISOString();
   if (!api || typeof api.setStorageSync !== "function") throw new Error("没存上，这里写不了本机存储。");
-  api.setStorageSync(STORAGE_KEY, clone(data));
-  const readBack = api.getStorageSync(STORAGE_KEY);
-  if (JSON.stringify(readBack) !== JSON.stringify(data)) {
-    throw new Error("没存上，写进去的和读出来的不一样。");
+  try {
+    api.setStorageSync(STORAGE_KEY, clone(data));
+    const readBack = api.getStorageSync(STORAGE_KEY);
+    if (JSON.stringify(readBack) !== JSON.stringify(data)) throw new Error("存储回读不一致");
+  } catch (error) {
+    // 写入可能已经成功；只有重新读取当前磁盘后才能恢复写入，不能重放旧缓存。
+    readError = new Error("保存结果未能确认，请重试读取并核对刚才的记录。你写的都还在。");
+    throw readError;
   }
   cache = clone(data);
   return clone(cache);

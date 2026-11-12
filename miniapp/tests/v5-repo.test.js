@@ -58,8 +58,9 @@ test("写宝宝信息，写后回读，再次读取还在", () => {
 test("写失败时报错，不更新缓存", () => {
   const api = fakeWx({ failWrite: true });
   repo.__setApi(api);
-  assert.throws(() => repo.setBaby({ name: "硕之", birthDate: "2026-08-04" }), /没存上/);
-  assert.equal(repo.getData().baby, null);
+  assert.throws(() => repo.setBaby({ name: "硕之", birthDate: "2026-08-04" }), /确认/);
+  assert.throws(() => repo.getData(), /读取|确认/);
+  assert.equal(repo.load().baby, null);
 });
 
 test("宝宝信息校验", () => {
@@ -170,6 +171,41 @@ test("启动读取失败不会中断进入页面的重试路径", () => {
     console.warn = originalWarn;
   }
 });
+
+for (const failure of ["throw", "mismatch"]) {
+  test("写盘成功但回读" + failure + "后锁住旧缓存，成功重读保留原提交和草稿", () => {
+    const api = fakeWx();
+    repo.__setApi(api);
+    repo.setBaby({ name: "硕之", birthDate: "2026-08-04" });
+    repo.addRecord({ at: "2026-11-01T10:00", text: "original" });
+    const draft = { at: "2026-11-02T10:00", text: "new-A" };
+    repo.saveDraft(draft);
+    const read = api.getStorageSync;
+    let failNextRead = true;
+    api.getStorageSync = key => {
+      if (key === repo.STORAGE_KEY && failNextRead) {
+        failNextRead = false;
+        if (failure === "throw") throw new Error("synthetic-readback");
+        return { schemaVersion: 5, baby: null, records: [], updatedAt: "" };
+      }
+      return read(key);
+    };
+    assert.throws(() => repo.addRecord(draft));
+    assert.deepEqual(api.storage[repo.STORAGE_KEY].records.map(x => x.text), ["original", "new-A"]);
+    const saved = JSON.stringify(api.storage[repo.STORAGE_KEY]);
+    assert.throws(() => repo.addRecord({ at: "2026-11-03T10:00", text: "new-B" }), /读取|确认/);
+    assert.throws(() => repo.save(repo.emptyData()), /读取|确认/);
+    assert.equal(JSON.stringify(api.storage[repo.STORAGE_KEY]), saved);
+    assert.deepEqual(repo.loadDraft(), draft);
+    api.getStorageSync = key => { if (key === repo.STORAGE_KEY) throw new Error("retry-read-failed"); return read(key); };
+    assert.throws(() => repo.load(), /保存结果未能确认/);
+    assert.throws(() => repo.addRecord({ at: "2026-11-03T10:00", text: "still-blocked" }), /确认/);
+    api.getStorageSync = read;
+    assert.deepEqual(repo.load().records.map(x => x.text), ["original", "new-A"]);
+    repo.addRecord({ at: "2026-11-03T10:00", text: "new-B" });
+    assert.deepEqual(repo.listRecords().map(x => x.text), ["original", "new-A", "new-B"]);
+  });
+}
 
 console.log("v5-repo：通过 " + passed + "，失败 " + failed);
 if (failed) process.exit(1);
