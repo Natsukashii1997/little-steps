@@ -13,6 +13,18 @@
 - 截图：无。
 - 发布与回读：无需发布。
 - 与授权不一致之处、遗留问题、范围外发现：规则检查没有接进 CI 或提交前钩子，只在手动跑测试时生效。Playwright 浏览器版本对不上，端到端没跑通（见上）。
+- 本轮新坑：无。
+
+## 安全审计 PR #4 续跑收口（2026-11-18，Codex，常浩授权继续原任务；可合并、待推送回读）
+
+- 时间：开工 `2026-11-18 10:18`（本轮证据 start.json 记录）。
+- 改了哪些文件：`tests/mobile-runtime.spec.ts` 修正遮罩圆角外点击、输入框内拖动的错误坐标；`miniapp/tests/report-page.test.js`、`visual-contract.test.js` 对齐已批准 S1 的七个路由；`runtime-retention.test.js` 校验当前 S1 启动顺序、读取/清理失败恢复及禁止旧云入口；`miniapp/scripts/check-miniapp.mjs` 按当前 S1 组件、独立存储和实际 packOptions 排除规则检查，保留 2MB 限制，并拒绝排除已注册页面或组件；本节。
+- 测试：根全量原样 `ℹ pass 21` / `ℹ fail 0`；全部小程序 27 个测试入口退出码均为 0，S1 repo `v5-repo：通过 12，失败 0`，启动编排 `S1 runtime retention orchestration tests: 3/3 passed`；浏览器完整原样 `12 passed (54.6s)` / `EXIT_CODE=0`；类型、规则、28 个受保护运行时文件、CloudBase 与小程序自检全过。构建在本轮修复前通过，应用源码与当时构建一致。原样日志在 `~/Library/Application Support/little-steps/evidence/2026-11-17-refresh/resume-20261118-101825/`，最终日志在 `final/`。
+- 验证：此前将旧测试契约当成待确认基线过于保守。HANDOFF 第 114–120 行已明确 10-23 常浩批准 S1，旧页保留但不注册。按该决定修测试与自检；实际输入命中证明旧遮罩点落在 HTML、旧拖动点落在 INPUT，合法区域真实鼠标操作通过。续跑首轮浏览器 10 过 / 2 败，修正后 12/12；一次把 trial-click 放进通用拖动助手导致横向滚动 27px，已限定到键盘空白区，首败日志保留。自检在隔离复制中能拒绝旧路由、云启动、排除当前页面与超过 2MB 的主包，恢复后通过。
+- 截图：本轮证据目录 sheet-before/after.png、keyboard-before/after.png，用于命中定位；全部为合成 fixture。实际页面源码与小程序业务源码相对 `4f18ddc` 无增量改动，受保护运行时检查通过。
+- 发布与回读：只更新指定审计分支和 PR #4；完整通过后转为可审查非草稿，运行采用另行验收。
+- 遗留问题：无工程阻断项；默认 Chromium 缓存缺失，按既有配置使用本机 Chrome 完整验证。
+- 本轮新坑：无。
 
 ## 安全审计 PR #4 刷新（2026-11-17，Codex，常浩授权变基、验证、推送；仍有阻断）
 

@@ -4,7 +4,7 @@
 // 任何一项失败都会明确指出文件或原因，避免把不可用的体验版上传给家人。
 import { access, readFile, readdir, stat } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { dirname, extname, relative, resolve } from "node:path";
+import { dirname, extname, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
@@ -14,19 +14,13 @@ const miniprogramRoot = resolve(root, "miniprogram");
 const require = createRequire(import.meta.url);
 const { BABY, VACCINE_SCHEDULE, VACCINE_AGE_ORDER } = require("../miniprogram/lib/constants.js");
 
-const PAGES = ["home", "memory", "growth", "health"];
-const EXPECTED_ROUTES = [
-  "pages/home/index",
-  "pages/report/index",
-  "pages/memory/index",
-  "pages/growth/index",
-  "pages/health/index",
-];
+const PAGES = ["v5/today", "v5/stage", "v5/growth", "v5/album", "v5/setup", "v5/records", "v5/notice"];
+const EXPECTED_ROUTES = PAGES.map(page => "pages/" + page + "/index");
 const EXPECTED_TAB_ITEMS = [
-  { id: "home", label: "Home", path: "/pages/home/index", icon: "/assets/nav/nav-home.png" },
-  { id: "memory", label: "Memory", path: "/pages/memory/index", icon: "/assets/nav/nav-memory.png" },
-  { id: "growth", label: "Growth", path: "/pages/growth/index", icon: "/assets/nav/nav-growth.png" },
-  { id: "health", label: "Health", path: "/pages/health/index", icon: "/assets/nav/nav-health.png" },
+  { id: "today", label: "今天", path: "/pages/v5/today/index" },
+  { id: "stage", label: "这个月", path: "/pages/v5/stage/index" },
+  { id: "growth", label: "成长", path: "/pages/v5/growth/index" },
+  { id: "album", label: "相册", path: "/pages/v5/album/index" },
 ];
 const REMOVED_FEATURE_PATHS = [
   "pages/education",
@@ -40,7 +34,7 @@ const PAGE_FILES = ["index.js", "index.json", "index.wxml", "index.wxss"];
 const MAX_MAIN_PACKAGE_BYTES = 2 * 1024 * 1024;
 const ASSET_PATTERN = /(?:\/assets\/|\.\.\/assets\/|\.\/assets\/)([A-Za-z0-9_./-]+\.(?:png|jpe?g|webp|gif|svg|mp3|m4a|aac|ogg|wav|mp4))/g;
 const ALLOWED_WXML_TAGS = new Set([
-  "add-pill", "app-header", "app-tabbar", "segmented-tabs", "undo-bar", "block", "button", "canvas", "checkbox", "checkbox-group",
+  "v5-topbar", "v5-tabbar", "v5-action", "v5-quick-sheet", "add-pill", "app-header", "app-tabbar", "segmented-tabs", "undo-bar", "block", "button", "canvas", "checkbox", "checkbox-group",
   "image", "input", "label", "picker", "scroll-view", "slider", "text", "textarea", "view",
 ]);
 
@@ -62,11 +56,11 @@ async function walk(folder) {
   return files;
 }
 
-async function checkPages() {
+async function checkPages(files) {
   const appConfig = JSON.parse(await readFile(resolve(miniprogramRoot, "app.json"), "utf8"));
   const configured = appConfig.pages || [];
   if (JSON.stringify(configured) !== JSON.stringify(EXPECTED_ROUTES)) {
-    fail("app.json 路由必须精确为 Home / 成长摘要 / Memory / Growth / Health，当前为：" + configured.join(", "));
+    fail("app.json 路由必须匹配已批准的 S1 七个页面，当前为：" + configured.join(", "));
   }
   for (const page of PAGES) {
     const pagePath = "pages/" + page + "/index";
@@ -74,6 +68,7 @@ async function checkPages() {
     for (const file of PAGE_FILES) {
       const fullPath = resolve(miniprogramRoot, pagePath + "." + file.split(".").pop());
       if (!await fileExists(fullPath)) fail("主页面文件缺失：" + relative(root, fullPath));
+      if (!files.includes(fullPath)) fail("注册页面被打包配置排除：" + relative(root, fullPath));
     }
   }
   for (const removedPath of REMOVED_FEATURE_PATHS) {
@@ -81,23 +76,23 @@ async function checkPages() {
     if (await fileExists(fullPath)) fail("已移除功能仍有页面或素材残留：" + relative(root, fullPath));
   }
 
-  const tabbarSource = await readFile(resolve(miniprogramRoot, "components/app-tabbar/index.js"), "utf8");
+  const tabbarSource = await readFile(resolve(miniprogramRoot, "components/v5/tabbar/index.js"), "utf8");
   const itemBlock = tabbarSource.match(/const ITEMS\s*=\s*\[([\s\S]*?)\];/);
   if (!itemBlock) fail("共享底栏缺少 ITEMS 配置");
   const itemCount = (itemBlock[1].match(/\{\s*id:/g) || []).length;
   if (itemCount !== EXPECTED_TAB_ITEMS.length) fail("共享底栏必须精确为 4 项，当前为 " + itemCount + " 项");
   let previousIndex = -1;
   for (const item of EXPECTED_TAB_ITEMS) {
-    const fragment = `{ id: "${item.id}", label: "${item.label}", path: "${item.path}", icon: "${item.icon}" }`;
+    const fragment = `{ id: "${item.id}", label: "${item.label}", path: "${item.path}" }`;
     const index = itemBlock[1].indexOf(fragment);
-    if (index <= previousIndex) fail("共享底栏必须按 Home / Memory / Growth / Health 的精确顺序配置");
+    if (index <= previousIndex) fail("S1 共享底栏必须按 今天 / 这个月 / 成长 / 相册 的精确顺序配置");
     previousIndex = index;
   }
-  const tabbarStyle = await readFile(resolve(miniprogramRoot, "components/app-tabbar/index.wxss"), "utf8");
+  const tabbarStyle = await readFile(resolve(miniprogramRoot, "components/v5/tabbar/index.wxss"), "utf8");
   if (!/grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/.test(tabbarStyle)) {
     fail("共享底栏必须使用 4 列等宽布局");
   }
-  ok("4 个主页面、成长摘要路由、4 项等宽底栏和已移除功能零残留检查通过");
+  ok("S1 七个页面、四项等宽底栏和已退役功能零残留检查通过");
 }
 
 function checkDomainData() {
@@ -166,37 +161,29 @@ async function checkWxmlAndWxss(files) {
   ok("WXML 标签、可见图标与 WXSS 本地背景规则检查通过");
 }
 
-async function checkSharedRuntime() {
-  const header = await readFile(resolve(miniprogramRoot, "components/app-header/index.js"), "utf8");
-  const sharedNoticeIsVisible = /showNotice:\s*\{[^}]*value:\s*true/.test(header);
-  const sharedNoticeHasRealRoute = /if \(this\.properties\.home\)[\s\S]*triggerEvent\("notice"\)[\s\S]*wx\.reLaunch\(\{ url: "\/pages\/home\/index\?openNotices=1" \}\)/.test(header);
-  if (!sharedNoticeIsVisible || !sharedNoticeHasRealRoute) {
-    fail("共享页头提醒入口必须可见，并能打开首页真实提醒面板");
-  }
-  const store = await readFile(resolve(miniprogramRoot, "lib/store.js"), "utf8");
-  const familyConnectCalls = (store.match(/await connectCurrentFamily\(hadLocalChanges\)/g) || []).length;
-  const familyConnectKeepsLocalEdits = /async function connectCurrentFamily\(hadLocalChanges\)[\s\S]*?loadRemoteFamily\(\{ mergeLocal: Boolean\(hadLocalChanges\) \}\)/.test(store);
-  if (familyConnectCalls < 2 || !familyConnectKeepsLocalEdits) {
-    fail("创建或加入家庭必须只在有真实本机修改时合并，避免记录丢失或固定初始资料重复");
-  }
+async function checkSharedRuntime(files) {
+  // HANDOFF 2026-10-23 已批准 S1：本机新存储键，旧页面与云同步不进入启动路径。
   const appSource = await readFile(resolve(miniprogramRoot, "app.js"), "utf8");
-  if (!/onShow\(\)[\s\S]*store\.init\(\{ config \}\)/.test(appSource)) {
-    fail("小程序从后台恢复时必须重新拉取家庭云端数据");
+  if (!appSource.includes('require("./lib/v5/repo")') ||
+      !appSource.includes("repo.load()") || !appSource.includes("repo.purgeDeleted()")) {
+    fail("S1 启动必须读取当前记录并清理到期的本地软删除记录");
   }
-  const homeSource = await readFile(resolve(miniprogramRoot, "pages/home/index.js"), "utf8");
-  const homeTemplate = await readFile(resolve(miniprogramRoot, "pages/home/index.wxml"), "utf8");
-  const clientBackupRequirements = [
-    [homeSource, /store\.listBackups\(/, "首页缺少家庭备份列表调用"],
-    [homeSource, /store\.exportFamily\(/, "首页缺少家庭数据导出调用"],
-    [homeSource, /store\.restoreBackup\(/, "首页缺少家庭备份恢复调用"],
-    [homeSource, /wx\.getFileSystemManager\(\)/, "家庭数据导出没有写入真实文件"],
-    [homeTemplate, /bindtap="exportFamilyData"/, "家庭数据导出按钮没有真实事件"],
-    [homeTemplate, /bindtap="restoreFamilyBackup"/, "家庭备份恢复按钮没有真实事件"],
-  ];
-  for (const [source, pattern, message] of clientBackupRequirements) {
-    if (!pattern.test(source)) fail(message);
+  if (/wx\.cloud|require\(["']\.\/lib\/(?:store|media)["']\)/.test(appSource)) {
+    fail("S1 启动不得连接旧家庭存储、媒体清理或云环境");
   }
-  ok("共享头部、家庭同步防丢与自助备份恢复约束存在");
+  const repoSource = await readFile(resolve(miniprogramRoot, "lib/v5/repo.js"), "utf8");
+  if (!/const STORAGE_KEY = "baby-workbench-v5"/.test(repoSource)) fail("S1 必须使用独立的 v5 存储键");
+  const config = JSON.parse(await readFile(resolve(miniprogramRoot, "app.json"), "utf8"));
+  for (const component of ["topbar", "tabbar", "action", "quick-sheet"]) {
+    const base = "/components/v5/" + component + "/index";
+    if (config.usingComponents?.["v5-" + component] !== base) fail("S1 共享组件登记不正确：" + component);
+    for (const extension of ["js", "json", "wxml", "wxss"]) {
+      const componentFile = resolve(miniprogramRoot, "." + base + "." + extension);
+      if (!await fileExists(componentFile)) fail("S1 共享组件缺失：" + base + "." + extension);
+      if (!files.includes(componentFile)) fail("S1 共享组件被打包配置排除：" + base + "." + extension);
+    }
+  }
+  ok("S1 启动、独立存储键与四个共享组件检查通过");
 }
 
 function checkJavaScript(files) {
@@ -209,17 +196,11 @@ function checkJavaScript(files) {
   ok("小程序 JavaScript 语法检查通过");
 }
 
-async function directorySize(folder) {
-  const files = await walk(folder);
-  let bytes = 0;
-  for (const file of files) bytes += (await stat(file)).size;
-  return bytes;
-}
-
 function formatBytes(bytes) { return (bytes / 1024 / 1024).toFixed(2) + " MB"; }
 
-async function checkMainPackageSize() {
-  const bytes = await directorySize(miniprogramRoot);
+async function checkMainPackageSize(files) {
+  let bytes = 0;
+  for (const file of files) bytes += (await stat(file)).size;
   if (bytes > MAX_MAIN_PACKAGE_BYTES) {
     fail("主包超出 2MB：当前 " + formatBytes(bytes) + "，上限 2.00 MB。请压缩或移出 miniprogram/assets 中的大资源后再上传体验版。");
   }
@@ -228,16 +209,27 @@ async function checkMainPackageSize() {
 
 async function main() {
   console.log("Little Steps 小程序离线自检");
-  const files = await walk(miniprogramRoot);
-  await checkPages();
+  const project = JSON.parse(await readFile(resolve(root, "project.config.json"), "utf8"));
+  const ignored = project.packOptions?.ignore ?? [];
+  for (const entry of ignored) {
+    if (!["folder", "file"].includes(entry.type)) fail("自检暂不识别此打包排除类型：" + entry.type);
+  }
+  const files = (await walk(miniprogramRoot)).filter(file => {
+    const name = relative(root, file).split(sep).join("/");
+    return !ignored.some(entry => name === entry.value || (entry.type === "folder" && name.startsWith(entry.value + "/")));
+  });
+  for (const entry of ["app.js", "app.json", "app.wxss"]) {
+    if (!files.includes(resolve(miniprogramRoot, entry))) fail("小程序入口被打包配置排除：" + entry);
+  }
+  await checkPages(files);
   checkDomainData();
   await checkJson(files);
   await checkLocalAssets(files);
   await checkWxmlAndWxss(files);
-  await checkSharedRuntime();
+  await checkSharedRuntime(files);
   checkJavaScript(files);
-  await checkMainPackageSize();
-  console.log("自检完成：可以继续在微信开发者工具中编译和上传体验版。");
+  await checkMainPackageSize(files);
+  console.log("S1 离线自检完成；实际预览与发布按单独授权执行。");
 }
 
 main().catch((error) => {
