@@ -4,6 +4,17 @@
 
 更新：2026-11-07。Little Steps 育儿记录已转为活跃项目（数字分身名册 v1.3）：目录挪进正式项目目录，补了协作骨架，建了 GitHub 私有仓库。产品停在 10-24「内容表 2–3、3–4 月龄转正式」之后（见 [HANDOFF.md](HANDOFF.md)）。唯一下一步：常浩定下一个切片做什么，再按 HANDOFF 接着做。
 
+## LESSONS 升级行补层级词、加规则检查（2026-11-19，Claude，跨项目复盘收尾子 agent，常浩批了「老项目接入 LESSONS 升级行检查：一次补齐」；已提交到 `claude/lessons-level`、PR 待合并、无需发布）
+
+- 时间：开工 `2026-11-19 10:18`（`date '+%F %H:%M'` 记录）。来由：跨项目复盘 D 批，各项目 LESSONS 的「升级」行统一带层级词，并由规则检查守住。
+- 改了哪些文件：`scripts/check-rules.mjs`（加 `lessons` 规则：每条 `## L-xx` 要有以〔结构〕〔机检〕〔体检〕〔文字〕〔提醒〕开头的「- 升级：」一行，写法照起步骨架）；`tests/check-rules.test.mjs`（加 1 条测试：缺升级行、升级行不带层级词各报一次，格式样例和合规条目不误报）；`docs/LESSONS.md`（「怎么升级」补一条层级词要求，格式样例改成「〔提醒〕未升级。」，与起步骨架一致）；本仓库 LESSONS 还没有真实条目，规则在真实文件上为绿。另修起步骨架带来的漏报：判断占位标题前先去掉反引号里的内容（标题里的 `<all_urls>` 之类原来会让整条不查），写法同 chatgpt-clipper#10（`cd80285`），并加 1 条测试；骨架本身由主会话另行处理。本节交接。
+- 测试：`npx tsc --noEmit` 改前改后都无输出、退出码 0；`node --test tests/*.test.mjs` 改前在新 worktree 里 `ℹ pass 7` / `ℹ fail 1`（`sites-worker` 要先 `npm run build` 产出 `dist/`），build 后 `ℹ pass 8` / `ℹ fail 0`，改后 `ℹ pass 10` / `ℹ fail 0`；`node scripts/check-rules.mjs` 改前改后都输出 `通用规则检查通过`。`npx playwright test` 改前 `10 failed`，原因是本机缺 Playwright 要的 `chromium_headless_shell-1228`（装的是 1248），与本次改动无关，改后未跑。
+- 验证：在 worktree `~/Sandbox/worktrees/little-steps-lessons-level` 里跑；改前改后日志在 `~/Library/Application Support/little-steps/evidence/2026-11-19-lessons-level/`。
+- 截图：无。
+- 发布与回读：无需发布。
+- 与授权不一致之处、遗留问题、范围外发现：规则检查没有接进 CI 或提交前钩子，只在手动跑测试时生效。Playwright 浏览器版本对不上，端到端没跑通（见上）。
+- 本轮新坑：无。
+
 ## AGENTS 补「AI 接入」一节（2026-11-07，Claude，常浩定全局规则 P-13 后母会话派来，常浩看过计划说「按计划开工」；已提交到 `claude/1-ai-access`、PR 待合并、无需发布）
 
 - 时间：开工 `2026-11-07 23:33`（`date '+%F %H:%M'` 记录）。★ 来由：全局规则 P-13 要求每个应用在设置里讲清 AI 接入；本应用没有 AI 功能，按例外只在 AGENTS.md 写声明（issue #1）。
