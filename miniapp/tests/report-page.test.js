@@ -190,7 +190,8 @@ async function run() {
   assert.ok(template.includes('bindtap="shareGeneratedReport"'), "生成后必须提供真实分享入口");
 
   const appConfig = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../miniprogram/app.json"), "utf8"));
-  assert.ok(appConfig.pages.includes("pages/report/index"), "分享长图必须有可到达的小程序页面");
+  assert.equal(appConfig.pages.includes("pages/report/index"), false, "S1 保留旧成长摘要实现作资产，但不注册旧页面（HANDOFF 2026-10-23）");
+  assert.equal(appConfig.pages[0], "pages/v5/today/index", "S1 从今天页启动");
   const homeTemplate = fs.readFileSync(path.resolve(__dirname, "../miniprogram/pages/home/index.wxml"), "utf8");
   const homeSource = fs.readFileSync(path.resolve(__dirname, "../miniprogram/pages/home/index.js"), "utf8");
   assert.ok(homeTemplate.includes('bindtap="openReport"'), "首页必须提供清晰的成长摘要入口");

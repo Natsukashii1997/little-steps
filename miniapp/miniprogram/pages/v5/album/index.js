@@ -8,7 +8,19 @@ Page({
 
   onShow() {
     // 每次进页面都从本机存储重读，不信任模块缓存（存储可能被清）
-    const data = repo.load();
+    let data;
+    try {
+      data = repo.load();
+    } catch (error) {
+      wx.showModal({
+        title: "记录没有读出来",
+        content: error.message,
+        confirmText: "重试读取",
+        showCancel: false,
+        success: (result) => { if (result.confirm) this.onShow(); },
+      });
+      return;
+    }
     if (!data.baby) {
       wx.redirectTo({ url: "/pages/v5/setup/index" });
       return;

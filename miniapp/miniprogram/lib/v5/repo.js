@@ -11,6 +11,7 @@ const SCHEMA_VERSION = 5;
 
 let injectedApi = null;
 let cache = null;
+let readError = null;
 
 function wxApi() {
   if (injectedApi) return injectedApi;
@@ -42,30 +43,48 @@ function normalize(raw) {
 
 function load() {
   const api = wxApi();
-  let raw = null;
   try {
-    raw = api && typeof api.getStorageSync === "function" ? api.getStorageSync(STORAGE_KEY) : null;
+    if (!api || typeof api.getStorageSync !== "function") throw new Error("存储不可用");
+    const raw = api.getStorageSync(STORAGE_KEY);
+    // wx 仅在键不存在时返回空字符串；已有但不完整的副本不能当作首次使用。
+    const missing = raw === "" || raw === undefined;
+    if (!missing && (!raw || typeof raw !== "object" || Array.isArray(raw)
+      || raw.schemaVersion !== SCHEMA_VERSION || !Array.isArray(raw.records)
+      || !(raw.baby === null || (raw.baby && raw.baby.name && age.parseDate(raw.baby.birthDate)))
+      || raw.records.some(function (record) { return !record || typeof record.id !== "string" || !record.id; }))) {
+      throw new Error("存储结构损坏");
+    }
+    const next = normalize(missing ? null : raw);
+    cache = next;
+    readError = null;
+    return clone(cache);
   } catch (error) {
-    raw = null;
+    readError = readError || new Error("本机记录读取失败，原记录未改动，请重试读取。");
+    throw readError;
   }
-  cache = normalize(raw);
-  return clone(cache);
 }
 
 function getData() {
+  if (readError) throw readError;
   if (!cache) load();
   return clone(cache);
 }
 
 function save(next, now) {
+  if (readError) throw readError;
+  if (!cache) load();
   const api = wxApi();
   const data = normalize(next);
   data.updatedAt = new Date(now || Date.now()).toISOString();
   if (!api || typeof api.setStorageSync !== "function") throw new Error("没存上，这里写不了本机存储。");
-  api.setStorageSync(STORAGE_KEY, clone(data));
-  const readBack = api.getStorageSync(STORAGE_KEY);
-  if (JSON.stringify(readBack) !== JSON.stringify(data)) {
-    throw new Error("没存上，写进去的和读出来的不一样。");
+  try {
+    api.setStorageSync(STORAGE_KEY, clone(data));
+    const readBack = api.getStorageSync(STORAGE_KEY);
+    if (JSON.stringify(readBack) !== JSON.stringify(data)) throw new Error("存储回读不一致");
+  } catch (error) {
+    // 写入可能已经成功；只有重新读取当前磁盘后才能恢复写入，不能重放旧缓存。
+    readError = new Error("保存结果未能确认，请重试读取并核对刚才的记录。你写的都还在。");
+    throw readError;
   }
   cache = clone(data);
   return clone(cache);
@@ -219,5 +238,6 @@ module.exports = {
   __setApi(api) {
     injectedApi = api;
     cache = null;
+    readError = null;
   },
 };

@@ -2,167 +2,69 @@
 
 const assert = require("node:assert/strict");
 
+// HANDOFF 2026-10-23：S1 启动只加载自己的存储并清理本地软删除记录。
+// 旧家庭同步与媒体清理由各自模块测试保留覆盖，当前 app 不触发它们。
 const APP_PATH = require.resolve("../miniprogram/app");
+const REPO_PATH = require.resolve("../miniprogram/lib/v5/repo");
+const FONT_PATH = require.resolve("../miniprogram/lib/v5/font");
 const STORE_PATH = require.resolve("../miniprogram/lib/store");
 const MEDIA_PATH = require.resolve("../miniprogram/lib/media");
 
-async function run() {
+async function checkLaunch(failureAt, expectedCalls) {
   const calls = [];
-  const currentData = { memories: [{ id: "still-live" }], trashEntries: [], recordHistory: [] };
-  const removedTrashEntries = [{ record: { photoIds: ["cloud://test/expired-photo"] } }];
-  const removedHistoryEntries = [{ before: { audioId: "cloud://test/expired-audio" } }];
-
-  const store = {
-    async init() { calls.push("store.init"); return currentData; },
-    getData() { return currentData; },
-    async pruneExpiredRecoveryData() {
-      calls.push("store.pruneExpiredRecoveryData");
-      return { changed: true, data: currentData, removedTrashEntries, removedHistoryEntries };
+  const repo = {
+    load() {
+      calls.push("repo.load");
+      if (failureAt === "load") throw new Error("synthetic-read-failure");
     },
-    getSyncStatus() {
-      return { mode: "cloud", familyId: "family-1" };
+    purgeDeleted() {
+      calls.push("repo.purgeDeleted");
+      if (failureAt === "purge") throw new Error("synthetic-cleanup-failure");
     },
-    async getProtectedMediaReferences() {
-      calls.push("store.getProtectedMediaReferences");
-      return ["cloud://test/expired-photo"];
-    },
-    async mutate() { throw new Error("无媒体迁移时不应写入 Store"); },
   };
-  const media = {
-    configure() { calls.push("media.configure"); },
-    mediaReferences(value) {
-      calls.push("media.mediaReferences");
-      assert.deepEqual(value, { trashEntries: removedTrashEntries, recordHistory: removedHistoryEntries });
-      return ["cloud://test/expired-photo", "cloud://test/expired-audio"];
-    },
-    async removeWithMedia(options) {
-      calls.push("media.removeWithMedia");
-      assert.deepEqual(options.refs, ["cloud://test/expired-photo", "cloud://test/expired-audio"]);
-      assert.deepEqual(options.protectedRefs, ["cloud://test/expired-photo"]);
-      assert.equal(await options.persist(), currentData, "物理删除前必须用最新快照复查引用");
-      return currentData;
-    },
-    async flushCleanupQueue(snapshot, options) {
-      calls.push("media.flushCleanupQueue");
-      assert.equal(snapshot, currentData);
-      assert.deepEqual(options.protectedRefs, ["cloud://test/expired-photo"]);
-    },
-    async migrateSnapshotMedia(snapshot) {
-      calls.push("media.migrateSnapshotMedia");
-      assert.equal(snapshot, currentData);
-      return { changed: false, data: snapshot, originalRefs: [], currentRefs: [] };
-    },
-    async commitChange() { throw new Error("无媒体迁移时不应提交变更"); },
+  const font = {
+    loadFonts() { calls.push("font.loadFonts"); return Promise.resolve(true); },
   };
-
-  const oldStore = require.cache[STORE_PATH];
-  const oldMedia = require.cache[MEDIA_PATH];
+  const legacy = new Proxy({}, {
+    get() { throw new Error("S1 不得调用旧存储与媒体模块"); },
+  });
+  const replacements = [[REPO_PATH, repo], [FONT_PATH, font], [STORE_PATH, legacy], [MEDIA_PATH, legacy]];
+  const savedModules = new Map([APP_PATH, ...replacements.map(([file]) => file)].map(file => [file, require.cache[file]]));
   const oldApp = global.App;
   const oldWx = global.wx;
+  const oldWarn = console.warn;
   let definition;
-
-  require.cache[STORE_PATH] = { id: STORE_PATH, filename: STORE_PATH, loaded: true, exports: store };
-  require.cache[MEDIA_PATH] = { id: MEDIA_PATH, filename: MEDIA_PATH, loaded: true, exports: media };
-  global.wx = { showToast() {} };
-  global.App = function (value) { definition = value; };
-
+  for (const [file, exports] of replacements) require.cache[file] = { id: file, filename: file, loaded: true, exports };
+  global.App = value => { definition = value; };
+  global.wx = { cloud: { init() { throw new Error("S1 不得初始化云环境"); } } };
+  console.warn = () => { calls.push("read-warning"); };
   try {
     delete require.cache[APP_PATH];
     require(APP_PATH);
     assert.ok(definition, "app.js 必须注册小程序");
     definition.onLaunch.call(definition);
-    await definition.globalData.ready;
+    await Promise.resolve();
+    assert.equal(definition.globalData.fontReady, true, "读取或清理故障也不妨碍字体与页面恢复");
+    assert.deepEqual(calls, expectedCalls);
   } finally {
-    delete require.cache[APP_PATH];
-    if (oldStore) require.cache[STORE_PATH] = oldStore;
-    else delete require.cache[STORE_PATH];
-    if (oldMedia) require.cache[MEDIA_PATH] = oldMedia;
-    else delete require.cache[MEDIA_PATH];
-    global.App = oldApp;
-    global.wx = oldWx;
-  }
-
-  assert.deepEqual(calls, [
-    "media.configure",
-    "store.init",
-    "store.pruneExpiredRecoveryData",
-    "media.mediaReferences",
-    "store.getProtectedMediaReferences",
-    "media.removeWithMedia",
-    "media.flushCleanupQueue",
-    "media.migrateSnapshotMedia",
-  ]);
-  await runOfflineProtection();
-  console.log("Runtime retention orchestration tests: 2/2 passed");
-}
-
-async function runOfflineProtection() {
-  const expiredRef = "cloud://test/expired-photo";
-  const queuedRef = "cloud://test/queued-audio";
-  const currentData = { memories: [], trashEntries: [], recordHistory: [] };
-  const store = {
-    async init() { return currentData; },
-    getData() { return currentData; },
-    async pruneExpiredRecoveryData() {
-      return {
-        changed: true,
-        data: currentData,
-        removedTrashEntries: [{ record: { photoId: expiredRef } }],
-        removedHistoryEntries: [],
-      };
-    },
-    getSyncStatus() { return { mode: "local", familyId: "family-offline" }; },
-    async getProtectedMediaReferences() { throw new Error("模拟云端离线"); },
-    async mutate() { throw new Error("无媒体迁移时不应写入 Store"); },
-  };
-  const media = {
-    configure() {},
-    mediaReferences() { return [expiredRef]; },
-    getCleanupQueue() { return [queuedRef]; },
-    async removeWithMedia(options) {
-      assert.deepEqual(options.protectedRefs, [expiredRef, queuedRef], "云端核对失败时不得删除过期或排队媒体");
-      return options.persist();
-    },
-    async flushCleanupQueue(snapshot, options) {
-      assert.equal(snapshot, currentData);
-      assert.deepEqual(options.protectedRefs, [expiredRef, queuedRef], "离线时清理队列也必须整体延后");
-    },
-    async migrateSnapshotMedia(snapshot) {
-      return { changed: false, data: snapshot, originalRefs: [], currentRefs: [] };
-    },
-    async commitChange() { throw new Error("无媒体迁移时不应提交变更"); },
-  };
-
-  const oldStore = require.cache[STORE_PATH];
-  const oldMedia = require.cache[MEDIA_PATH];
-  const oldApp = global.App;
-  const oldWx = global.wx;
-  const oldWarn = console.warn;
-  let definition;
-  require.cache[STORE_PATH] = { id: STORE_PATH, filename: STORE_PATH, loaded: true, exports: store };
-  require.cache[MEDIA_PATH] = { id: MEDIA_PATH, filename: MEDIA_PATH, loaded: true, exports: media };
-  global.wx = { showToast() {} };
-  global.App = function (value) { definition = value; };
-  console.warn = function () {};
-
-  try {
-    delete require.cache[APP_PATH];
-    require(APP_PATH);
-    definition.onLaunch.call(definition);
-    await definition.globalData.ready;
-  } finally {
-    delete require.cache[APP_PATH];
-    if (oldStore) require.cache[STORE_PATH] = oldStore;
-    else delete require.cache[STORE_PATH];
-    if (oldMedia) require.cache[MEDIA_PATH] = oldMedia;
-    else delete require.cache[MEDIA_PATH];
+    for (const [file, original] of savedModules) {
+      if (original) require.cache[file] = original;
+      else delete require.cache[file];
+    }
     global.App = oldApp;
     global.wx = oldWx;
     console.warn = oldWarn;
   }
 }
 
-run().catch(function (error) {
+async function run() {
+  await checkLaunch(null, ["repo.load", "repo.purgeDeleted", "font.loadFonts"]);
+  await checkLaunch("load", ["repo.load", "read-warning", "font.loadFonts"]);
+  await checkLaunch("purge", ["repo.load", "repo.purgeDeleted", "read-warning", "font.loadFonts"]);
+  console.log("S1 runtime retention orchestration tests: 3/3 passed");
+}
+
+run().catch(error => {
   console.error(error);
   process.exitCode = 1;
 });

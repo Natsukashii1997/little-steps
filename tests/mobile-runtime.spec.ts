@@ -1,10 +1,10 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-async function drag(page: Page, locator: Locator, deltaX: number, deltaY: number, steps = 8) {
+async function drag(page: Page, locator: Locator, deltaX: number, deltaY: number, steps = 8, position?: { x: number; y: number }) {
   const box = await locator.boundingBox();
   if (!box) throw new Error("Drag target has no bounding box");
-  const startX = box.x + box.width / 2;
-  const startY = box.y + box.height / 2;
+  const startX = box.x + (position?.x ?? box.width / 2);
+  const startY = box.y + (position?.y ?? box.height / 2);
 
   await page.mouse.move(startX, startY);
   await page.mouse.down();
@@ -91,7 +91,11 @@ test("BottomSheet remains mounted while its default exit animation plays", async
   await page.locator(".sheet-trigger").click();
   await expect(page.getByTestId("bottom-sheet")).toBeVisible();
 
-  await page.getByTestId("sheet-overlay").click({ position: { x: 8, y: 8 } });
+  const overlay = page.getByTestId("sheet-overlay");
+  const overlayBox = await overlay.boundingBox();
+  if (!overlayBox) throw new Error("Sheet overlay has no bounding box");
+  // The phone clips its rounded corners. Use the visible scrim below its chrome.
+  await overlay.click({ position: { x: overlayBox.width / 2, y: 80 } });
   await expect(page.getByTestId("bottom-sheet")).toHaveCount(1);
   await page.waitForTimeout(500);
   await expect(page.getByTestId("bottom-sheet")).toHaveCount(0);
@@ -105,7 +109,9 @@ test("keyboard and its attached footer dismiss on the same transition", async ({
 
   await input.click();
   await expect(keyboard).toHaveAttribute("data-visible", "true");
-  await drag(page, footer, 0, 120, 5);
+  // Begin in footer padding. Inputs deliberately retain their editing gestures.
+  await footer.click({ trial: true, position: { x: 4, y: 4 } });
+  await drag(page, footer, 0, 120, 5, { x: 4, y: 4 });
   await expect(keyboard).toHaveAttribute("data-visible", "false");
 
   await page.waitForTimeout(100);

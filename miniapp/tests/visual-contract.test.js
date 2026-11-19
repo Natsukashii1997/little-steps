@@ -240,15 +240,17 @@ test("共享底栏精确保留四项并等宽重排，图标透明且激活态�
   assert.match(tabbarStyle, /\.tab-item\.is-active::before\s*\{[^}]*border-radius\s*:\s*999rpx[^}]*background\s*:\s*rgba\(247,\s*197,\s*78,/s, "激活态缺少扁平黄色笔刷");
 });
 
-test("路由、页面目录、业务素材与底栏图标彻底移除已下线功能", function () {
+test("S1 只注册七个当前页面，旧页面保留为资产，已退役功能零残留", function () {
   const appConfig = JSON.parse(read("miniprogram/app.json"));
   assert.deepStrictEqual(appConfig.pages, [
-    "pages/home/index",
-    "pages/report/index",
-    "pages/memory/index",
-    "pages/growth/index",
-    "pages/health/index",
-  ], "app.json 必须只保留四个主功能及成长摘要辅助页");
+    "pages/v5/today/index",
+    "pages/v5/stage/index",
+    "pages/v5/growth/index",
+    "pages/v5/album/index",
+    "pages/v5/setup/index",
+    "pages/v5/records/index",
+    "pages/v5/notice/index",
+  ], "app.json 必须匹配常浩已批准的 S1 路由");
   [
     "miniprogram/pages/education",
     "miniprogram/pages/study",
