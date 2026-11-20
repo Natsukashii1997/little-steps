@@ -123,6 +123,7 @@ When any text-entry control loses focus, dismiss the simulated keyboard. If the 
 - 项目目录 2026-11-07 从 `~/Documents/AI 项目/baby-care-workbench` 挪到 `~/Documents/ChatGPT/个人/work/little-steps`；远端是 GitHub 私有仓库 `Natsukashii1997/little-steps`。仓库里有宝宝的名字和出生数据，常浩同意放私有库；仓库不得改为公开，也不往里放账号、凭据和 `miniapp/miniprogram/config.local.js`。
 - 交接写在 [CURRENT.md](CURRENT.md) 顶部，骨架照 [docs/templates/handoff.md](docs/templates/handoff.md)；坑记在 [docs/LESSONS.md](docs/LESSONS.md)；交接写法与验收见 [docs/OPERATIONS.md](docs/OPERATIONS.md)；改动怎么走见 `/Users/nat/Documents/ChatGPT/个人/work/agent-kit/工程流程.md`。
 - 测试：`npx tsc --noEmit`、`node --test tests/*.test.mjs`（站点 worker、交接格式、通用规则）、`node scripts/check-rules.mjs`；端到端 `npx playwright test` 需先装 Playwright 浏览器。
+钩子：`git config core.hooksPath scripts/hooks` 装提交、推送前的必经检查（每个克隆、每台电脑各一次；推送前跑 `node scripts/check-rules.mjs` 和 `npm run build && node --test tests/*.test.mjs`（构建含 tsc，约 5 秒；站点 worker 的用例要读构建产物）；不用 --no-verify 绕过）。
 
 ## AI 接入
 
